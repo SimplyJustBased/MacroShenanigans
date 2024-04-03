@@ -1,3 +1,4 @@
+; What?
 ﻿#Requires AutoHotkey v2.0
 
 R_Zone6() { ; Vending
