@@ -1,3 +1,4 @@
+; What?
 ﻿#Requires AutoHotkey v2.0 
 ; Functions that arent really apart of the mainscript but will help it out
 
