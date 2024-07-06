@@ -1,4 +1,4 @@
-﻿; /[V1.0.0|20240706151715]\ (Used for auto-update)
+﻿; /[V1.0.0]\ (Used for auto-update)
 
 
 #Requires AutoHotkey v2.0
