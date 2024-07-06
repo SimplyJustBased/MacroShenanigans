@@ -1,4 +1,4 @@
-﻿; /[V1.0.0]\
+; /[V1.0.0]\
 
 #Requires AutoHotkey v2.0
 
@@ -8,6 +8,8 @@ InfoUI.Opt("-SysMenu -Caption +AlwaysOnTop")
 InfoUI.SetFont("s15")
 InfoText := InfoUI.Add("Text","","Checking Folders... | If this gets stuck, Hit F8")
 InfoUI.Show()
+
+MHLink := "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/MacroHub.ahk"
 
 FoldersToCheck := [
     A_MyDocuments "\PS99_Macros",
@@ -48,7 +50,26 @@ For _, FolderPath in FoldersToCheck {
     if not DirExist(FolderPath) {
         DirCreate(FolderPath)
     }
+
 }
+InfoText.Text := "Checking Macro Hub... | If this gets stuck, Hit F8"
+
+whr := ComObject("WinHttp.WinHttpRequest.5.1")
+whr.Open("GET", MHLink, true)
+whr.Send()
+whr.WaitForResponse()
+DifferenceInMHVersion := VersionCheck(A_ScriptFullPath, whr.ResponseText)
+
+if DifferenceInMHVersion.R {
+    InfoUI.Hide()
+
+    Path := A_ScriptFullPath
+    FileDelete(Path)
+    FileAppend(whr.ResponseText, Path, "UTF-8-RAW")
+    Run Path
+    ExitApp
+}
+
 
 InfoText.Text := "Checking Fonts... | If this gets stuck, Hit F8"
 
