@@ -1,4 +1,4 @@
-﻿; /[V1.0.0]\ (Used for auto-update)
+; /[V2.Test]\ (Used for auto-update)
 
 
 #Requires AutoHotkey v2.0
@@ -12,7 +12,7 @@ CoordMode "Mouse", "Screen"
 CoordMode "Pixel", "Screen"
 SetMouseDelay -1
 
-global Version := "2.0.0"
+global Version := "2.[Test]"
 global MacroSetup := true
 global TEVal := 0
 global TotalEstimatedValue := "1"
@@ -24,7 +24,7 @@ global Routes := Map(
     "SpawnToDoor", "tp:Enchanted Forest|w_nV:TpWaitTime|r:[0%Q10&0%D400&420%W1540&2250%Q10]",
 )
 
-Description := "F3 : Start`nF8 : Stop`nF5 : Debug`n`nMake sure to check out the video on the macro below, and join the discord if you have any issues / any questions on the macro"
+Description := "F3 : Start`nF8 : Stop`nF6 : Pause`nF5 : Debug`n`nMake sure to check out the video on the macro below, and join the discord if you have any issues / any questions on the macro"
 
 global PositionMap := Map(
     "IBC_Item1", [620, 630],
@@ -466,11 +466,41 @@ TheMostScuffedNumberCreation(Num) {
     return BestText
 }
 
+TheMostScuffedTimeCreation(Num) {
+    NumMap := Map(
+        "s", 1000,
+        "m", (1000 * 60),
+        "h", ((1000 * 60) * 60),
+        "d", (((1000*60)*60)*24)
+    )
+    NumOrder := ["d", "h", "m", "s"]
+    CurrentNum := Num
+
+    BestText := ""
+
+    for _, Abrev in NumOrder {
+        if CurrentNum / (NumMap[Abrev]) > 1 {
+            Amount := Floor(CurrentNum/NumMap[Abrev])
+            CurrentNum -= (NumMap[Abrev] * Amount)
+
+            Huh := String("" Amount)
+            if InStr(Huh, ".") {
+                Split := StrSplit(BestText, ".")
+                NewPastPeriod := SubStr(Split[2], 1, 3)
+                BestText := BestText Split[1] Abrev " "
+            } else {
+                BestText := BestText Huh Abrev " "
+            }
+        }
+    }
+
+    return BestText
+}
+
 UpdateText() {
     global Text
     global WorldResets
-    Text.Text := "Times Opened : " KeysUsed " | Estimated RAP Value : " TheMostScuffedNumberCreation(TEVal) "`nMacro Run Time : " Floor((A_TickCount - MacroRunTime)/1000) "s | World Resets : " WorldResets
-
+    Text.Text := "Times Opened : " KeysUsed " | Estimated RAP Value : " TheMostScuffedNumberCreation(TEVal) "`nMacro Run Time : " TheMostScuffedTimeCreation((A_TickCount - MacroRunTime)) " | World Resets : " WorldResets
 }
 
 UIOBject.EnableButton.OnEvent("Click", MacroEnabled)
@@ -614,6 +644,7 @@ F3::{
 
                 if A_TickCount - EscapeTime_1 >= 5000 {
                     StupidWorldSwtich()
+                    WorldResets += 1
                     Die := true
                     break
                 }
@@ -667,6 +698,7 @@ F3::{
 
         ;-- So heres the main loop, we start with the inside part so we can save on code
         loop {
+            BlowUpAndDie := false
             Sleep(NumberValueMap["WalkWaitTime"])
             SendEvent "{W Down}"
 
@@ -706,7 +738,7 @@ F3::{
                 Sleep(10)
             }
 
-            if KeyResetAmount >= NumberValueMap["KeyResetAmount"] {
+            if KeyResetAmount >= NumberValueMap["KeyResetAmount"] and ToggleValueMap["DoKeyReset"] {
                 KeyResetAmount := 0
                 break
             }
@@ -778,7 +810,10 @@ F3::{
                             break
                         }
         
-                        if A_TickCount - EscapeTime_6 >= 12000 {
+                        if A_TickCount - EscapeTime_6 >= 20000 {
+                            StupidWorldSwtich()
+                            KeyResetAmount := 0
+                            BlowUpAndDie := true
                             break
                         }
     
@@ -788,6 +823,10 @@ F3::{
                         Sleep(500)
                         SendEvent "{S Up}"
                         Sleep(10)
+                    }
+
+                    if BlowUpAndDie {
+                        break
                     }
                 }
             }
@@ -800,8 +839,8 @@ F3::{
     }
 }
 
-F6::{
-    StupidWorldSwtich()
+F6::Pause -1
+F5::{
+    MsgBox("No debug yet.....")
 }
-
 F8::ExitApp
