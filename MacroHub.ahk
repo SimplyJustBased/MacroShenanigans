@@ -1,4 +1,4 @@
-; /[V1.0.0TEST]\
+; /[V1.0.1TEST]\
 
 #Requires AutoHotkey v2.0
 
@@ -39,9 +39,20 @@ Macros := Map(
         StatusColor:"Green",
         RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/TreeHouseMacroV2.ahk",
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/TreeHouseMacroV2.ahk&page=1&per_page=1",
-        MacroFile:"TreeHouseMacroV2.ahk"
+        MacroFile:"TreeHouseMacroV2.ahk",
+        Existant:true
+    },
+    "MultiMacroV4", {
+        Status:"Coming Soon | Testing Soon",
+        StatusColor:"0x484848",
+        RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/MultiMacroV4.ahk",
+        APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/MultiMacroV4.ahk&page=1&per_page=1",
+        MacroFile:"MultiMacroV4.ahk",
+        Existant:false
     },
 )
+
+MacroOrder := ["MultiMacroV4", "TreeHouseMacroV2"]
 
 Xs := [40, 270, 500]
 Ys := [60, 220, 440]
@@ -111,8 +122,6 @@ for ModuleName, ModuleLink in ModulesToDownload {
         FileDelete(A_MyDocuments "\PS99_Macros\Modules\" ModuleName)
     }
 
-    A_Clipboard := whr.ResponseText
-
     FileAppend(whr.ResponseText, A_MyDocuments "\PS99_Macros\Modules\" ModuleName, "UTF-8-RAW")
 }
 
@@ -148,8 +157,12 @@ CreateMacroBox(MacroObject) {
     MacroHubUI.AddText("xs+5 ys+60 h30 w190 Center", MacroObject.Status).SetFont("s11 c" MacroObject.StatusColor)
     MacroHubUI.AddText("xs+5 ys+90 h30 w190 Center", "Last Updated").SetFont("s11 w600 underline")
     MacroHubUI.AddText("xs+5 ys+110 h30 w190 Center", LastUpdateTimeObj.Time " " LastUpdateTimeObj.Word " Ago").SetFont("s11")
-    RunMacroButton := MacroHubUI.AddButton("xs+5 ys+140 h30 w190 Center", "Run Macro")
-    RunMacroButton.SetFont("s11")
+
+    if MacroObject.Existant {
+        RunMacroButton := MacroHubUI.AddButton("xs+5 ys+140 h30 w190 Center", "Run Macro")
+        RunMacroButton.SetFont("s11")
+        RunMacroButton.OnEvent("Click", RunButtonFunction)
+    }
 
     RunButtonFunction(*) {
         whr := ComObject("WinHttp.WinHttpRequest.5.1")
@@ -178,11 +191,11 @@ CreateMacroBox(MacroObject) {
 
                 } else if Result = "No" {
                     Run(A_MyDocuments "\PS99_Macros\MacroFiles\" MacroObject.MacroFile)
-                    ExitApp
+                    ExitApp()
                 }
             } else {
                 Run(A_MyDocuments "\PS99_Macros\MacroFiles\" MacroObject.MacroFile)
-                ExitApp
+                ExitApp()
             }
         } else {
             Result := MsgBox("It seems you currently don't have this macro installed, would you like to install it?", "Macro Installation", "0x1032 0x4")
@@ -198,11 +211,11 @@ CreateMacroBox(MacroObject) {
             }
         }
     }
-
-    RunMacroButton.OnEvent("Click", RunButtonFunction)
 }
 
-for MacroName, MacroObject in Macros {
+for _, MacroName in MacroOrder {
+    MacroObject := Macros[MacroName]
+
     MacrosLoaded += 1
     MacrosOnLine += 1
     
@@ -224,7 +237,7 @@ for MacroName, MacroObject in Macros {
 
 InfoUI.Hide()
 MacroHubUI.Show()
-MacroHubUI.OnEvent("Close", (*) => ExitApp)
+MacroHubUI.OnEvent("Close", (*) => ExitApp())
 
 ;- cuz i cant do a stupid include im going to blow up and die
 Jxon_Load(&src, args*) {
