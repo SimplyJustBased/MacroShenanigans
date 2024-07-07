@@ -1,4 +1,4 @@
-; /[V1.0.0]\
+; /[V1.0.0TEST]\
 
 #Requires AutoHotkey v2.0
 
