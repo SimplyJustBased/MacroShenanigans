@@ -1,4 +1,4 @@
-; /[V2.02Test]\ (Used for auto-update)
+; /[V2Test]\ (Used for auto-update)
 
 
 #Requires AutoHotkey v2.0
@@ -302,7 +302,7 @@ ItemCheck(ItemNum) {
     Sleep(100)
     SendEvent "{Click, " MouseMoveCoord[1] ", " MouseMoveCoord[2] ", 0}"
     Sleep(NumberValueMap["OCRDelayTime"])
-    OCRResults := OCR.FromRect(MouseMoveCoord[1] + OffsetX, MouseMoveCoord[2] + OffsetY, SizeX, SizeY,, Scale)
+    OCRResults := OCR.FromRect(MouseMoveCoord[1] + OffsetX, MouseMoveCoord[2] + OffsetY, SizeX, SizeY, "en-US", Scale)
     
     Value := 0
     CappedValue := false
