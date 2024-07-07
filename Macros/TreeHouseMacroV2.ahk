@@ -1,4 +1,4 @@
-; /[V2Test]\ (Used for auto-update)
+; /[V2.1Test]\ (Used for auto-update)
 
 
 #Requires AutoHotkey v2.0
@@ -19,6 +19,7 @@ global TotalEstimatedValue := "1"
 global MacroRunTime := 0
 global KeysUsed := 0
 global WorldResets := 0
+global ItemPickMap := Map()
 
 global Routes := Map(
     "SpawnToDoor", "tp:Enchanted Forest|w_nV:TpWaitTime|r:[0%Q10&0%D400&420%W1540&2250%Q10]",
@@ -344,6 +345,7 @@ ItemCheck(ItemNum) {
 }
 
 Itemical() {
+    global ItemPickMap
     ItemMap := Map()
     HighestItem := "Item1"
     HighestValue := 0
@@ -368,7 +370,7 @@ Itemical() {
             for Item, ItemObject in ItemMap {
                 if ItemObject.RarityValue > 3 and ColorsAndStuffMap[HighestItemRarity].RarityValue < ItemObject.RarityValue {
                     HighestItem := Item
-                    HighestValue := ItemObject.Value
+                    HighestValue := ItemObject.RapValue
                     HighestItemRarity := ItemObject.Rarity
                 }
             }
@@ -387,6 +389,16 @@ Itemical() {
 
         if not EvilSearch(PixelSearchTables["X"], false)[1] {
             global TEVal += HighestValue
+
+            if ItemPickMap.Has(ItemMap[HighestItem].ItemName) {
+                ItemPickMap[ItemMap[HighestItem].ItemName].Amount += 1
+            } else {
+                ItemPickMap[ItemMap[HighestItem].ItemName] := {
+                    Amount:1,
+                    Rap:HighestValue
+                }
+            }
+
             break
         }
 
@@ -840,7 +852,24 @@ F3::{
 }
 
 F6::Pause -1
+
+EvilUI := ""
 F5::{
-    MsgBox("No debug yet.....")
+    EvilText := "TreeHouseMacroV2 Debug`n--Item Picks--`n"
+
+    for Item, ItemInfo in ItemPickMap {
+        EvilText := EvilText Item " | Amount : " ItemInfo.Amount " | TotalValue : " (ItemInfo.Amount * ItemInfo.Rap) " | Rap Value : " ItemInfo.Rap "`n"
+    }
+
+    if not DirExist(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug") {
+        DirCreate(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug")
+    }
+
+    if FileExist(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug\Output.txt") {
+        FileDelete(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug\Output.txt")
+    }
+
+    FileAppend(EvilText, A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug\Output.txt")
+    Run A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug\Output.txt"
 }
 F8::ExitApp
