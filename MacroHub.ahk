@@ -6,7 +6,7 @@ global Version := "1.0.0"
 global InfoUI := Gui()
 InfoUI.Opt("-SysMenu -Caption +AlwaysOnTop")
 InfoUI.SetFont("s15")
-InfoText := InfoUI.Add("Text","","Checking Folders... | If this gets stuck, Hit F8")
+InfoText := InfoUI.Add("Text","w600 Center","Checking Folders... | If this gets stuck, Hit F8")
 InfoUI.Show()
 
 MHLink := "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/MacroHub.ahk"
@@ -30,7 +30,7 @@ ModulesToDownload := Map(
 
 FontsDownload := Map(
     "F_One.ttf", "https://github.com/SimplyJustBased/MacroShenanigans/raw/main/Fonts/F_One.ttf",
-    "T_NR.ttf", "https://github.com/SimplyJustBased/MacroShenanigans/blob/main/Fonts/T_NR.ttf"
+    "T_NR.ttf", "https://github.com/SimplyJustBased/MacroShenanigans/raw/main/Fonts/T_NR.ttf"
 )
 
 Macros := Map(
@@ -74,9 +74,7 @@ if DifferenceInMHVersion.R {
 InfoText.Text := "Checking Fonts... | If this gets stuck, Hit F8"
 
 For Font, FontLink in FontsDownload {
-    if not FileExist(A_MyDocuments "\PS99_Macros\Storage\Fonts\" Font) {
-        Download(FontLink, A_MyDocuments "\PS99_Macros\Storage\Fonts\" Font)
-    }
+    Download(FontLink, A_MyDocuments "\PS99_Macros\Storage\Fonts\" Font)
 }
 
 GoodTimeDiff(IsoTime) {
