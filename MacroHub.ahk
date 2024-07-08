@@ -1,4 +1,4 @@
-; /[V1.0.1TEST]\
+; /[V1.0.0]\
 
 #Requires AutoHotkey v2.0
 
@@ -55,7 +55,7 @@ Macros := Map(
 MacroOrder := ["MultiMacroV4", "TreeHouseMacroV2"]
 
 Xs := [40, 270, 500]
-Ys := [60, 220, 440]
+Ys := [60, 250, 440]
 
 For _, FolderPath in FoldersToCheck {
     if not DirExist(FolderPath) {
@@ -230,12 +230,38 @@ for _, MacroName in MacroOrder {
     whr.WaitForResponse()
     APIString := whr.ResponseText
 
-    LastUpdateTimeObj := GoodTimeDiff(Jxon_Load(&APIString)[1]["commit"]["author"]["date"])
+    LastUpdateTimeObj :=  {Time:1, Word:"A"} ;GoodTimeDiff(Jxon_Load(&APIString)[1]["commit"]["author"]["date"])
 
     CreateMacroBox(MacroObject)
 }
 
 InfoUI.Hide()
+
+DonateUI := Gui(,"Donations")
+DonateUI.Opt("+AlwaysOnTop")
+
+DiscordButton := MacroHubUI.AddButton("w120 h30 x40 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Discord Server")
+YoutubeButton := MacroHubUI.AddButton("w140 h30 x165 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Youtube Channel")
+DonateButton := MacroHubUI.AddButton("w90 h30 x310 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Donate")
+
+DiscordButton.SetFont("s10")
+YoutubeButton.SetFont("s10")
+DonateButton.SetFont("s10")
+
+DiscordButton.OnEvent("Click", (*) => run("https://discord.com/invite/JrwB6jVxkR"))
+YoutubeButton.OnEvent("Click", (*) => run("https://www.youtube.com/channel/UCKOkQGvHO71nqQjwTiJX5Ww"))
+DonateButton.OnEvent("Click", (*) => DonateUI.Show())
+
+DonateUI.Add("Text", "Section w400 Center h30", "Donation Section").SetFont("s15 q5 w700")
+DonateUI.Add("Text", "xs yp+50 Wrap w400 h200", "(Please note that you dont have to donate, but it is very much appreciated)`n`nIf you wish to donate, you can send me items via mailbox, my user is oliyopi!`n`nOr if you wish to donate money, you can send some via paypal with the button below`n(If you donate via paypal make sure to input your discord username so i can give you a role ❤️)").SetFont("s11 w700")
+CopyUsernameButton := DonateUI.Add("Button", " w140 h30 x140 y265", "Copy Username")
+CopyUsernameButton.SetFont("s11")
+CopyUsernameButton.OnEvent("Click", (*) => A_Clipboard := "oliyopi")
+
+OpenPaypalButton := DonateUI.Add("Button", " w140 h30 x140 y300", "Donate Via Paypal")
+OpenPaypalButton.SetFont("s11")
+OpenPaypalButton.OnEvent("Click", (*) => run("https://paypal.me/JeneneT"))
+
 MacroHubUI.Show()
 MacroHubUI.OnEvent("Close", (*) => ExitApp())
 
