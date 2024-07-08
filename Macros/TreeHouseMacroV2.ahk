@@ -1,5 +1,4 @@
-; /[V2.1Test]\ (Used for auto-update)
-
+; /[V2.15Test]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -13,13 +12,14 @@ CoordMode "Pixel", "Screen"
 SetMouseDelay -1
 
 global Version := "2.[Test]"
-global MacroSetup := true
+global MacroSetup := false
 global TEVal := 0
 global TotalEstimatedValue := "1"
 global MacroRunTime := 0
 global KeysUsed := 0
 global WorldResets := 0
 global ItemPickMap := Map()
+global CharmDetectionAmount := 0
 
 global Routes := Map(
     "SpawnToDoor", "tp:Enchanted Forest|w_nV:TpWaitTime|r:[0%Q10&0%D400&420%W1540&2250%Q10]",
@@ -62,7 +62,8 @@ global OCRMap := Map(
     "OffsetY", 10,
     "SizeX", 292,
     "SizeY", 85,
-    "Scale", 5
+    "Scale", 5,
+    "Scalar", 5
 )
 
 global NumberValueMap := Map(
@@ -82,37 +83,37 @@ global ToggleValueMap := Map(
 
 global ColorsAndStuffMap := Map(
     "Basic", {
-        Color:0xDBDAE6, RarityValue:1, CappedValue:100, ToCapValue:true
+        Color:0xDBDAE6, RarityValue:1, CappedValue:100, ToCapValue:true, Numeral:"I"
     },
     "Rare", {
-        Color:0xBFFFA8, RarityValue:2, CappedValue:500, ToCapValue:true
+        Color:0xBFFFA8, RarityValue:2, CappedValue:500, ToCapValue:true, Numeral:"II"
     },
     "Epic", {
-        Color:0x9EEFFF, RarityValue:3, CappedValue:3000, ToCapValue:true
+        Color:0x9EEFFF, RarityValue:3, CappedValue:3000, ToCapValue:true, Numeral:"III"
     },
     "Legendary", {
-        Color:0xFFDAA6, RarityValue:4, CappedValue:65000, ToCapValue:true
+        Color:0xFFDAA6, RarityValue:4, CappedValue:65000, ToCapValue:true, Numeral:"IV"
     },
     "Mythical", {
-        Color:0xFFB1BC, RarityValue:5, CappedValue:50000, ToCapValue:false
+        Color:0xFFB1BC, RarityValue:5, CappedValue:50000, ToCapValue:false, Numeral:"V"
     },
     "Exotic", {
-        Color:0xFFBAFE, RarityValue:6, CappedValue:100000, ToCapValue:false
+        Color:0xFFBAFE, RarityValue:6, CappedValue:100000, ToCapValue:false, Numeral:"VI"
     },
     "Divine", {
-        Color:0xFFF8B9, RarityValue:7, CappedValue:65005, ToCapValue:false
+        Color:0xFFF8B9, RarityValue:7, CappedValue:65005, ToCapValue:false, Numeral:"VII"
     },
     "Superior", {
-        Color:0xEEFFFF, RarityValue:8, CappedValue:(10**6), ToCapValue:false
+        Color:0xEEFFFF, RarityValue:8, CappedValue:(10**6), ToCapValue:false, Numeral:"VIII"
     },
     "Celestial", {
-        Color:0xF6E3FE, RarityValue:9, CappedValue:(25*(10**7)), ToCapValue:false
+        Color:0xF6E3FE, RarityValue:9, CappedValue:(25*(10**7)), ToCapValue:false, Numeral:"IX"
     },
     "Exclusive", {
-        Color:0xD8BFFF, RarityValue:10, CappedValue:(2*(10**9)), ToCapValue:false
+        Color:0xD8BFFF, RarityValue:10, CappedValue:(2*(10**9)), ToCapValue:false, Numeral:"X"
     },
     "Unknown", {
-        Color:0x000000, RarityValue:3, CappedValue:(125000), ToCapValue:false
+        Color:0x000000, RarityValue:3, CappedValue:(125000), ToCapValue:false, Numeral:"I"
     }
 )
 
@@ -280,6 +281,7 @@ ItemCheck(ItemNum) {
     SizeX := OCRMap["SizeX"]
     SizeY := OCRMap["SizeY"]
     Scale := OCRMap["Scale"]
+    Scalar := OCRMap["Scalar"]
 
     LastRarity := ""
     LastRarityValue := -1
@@ -303,37 +305,78 @@ ItemCheck(ItemNum) {
     Sleep(100)
     SendEvent "{Click, " MouseMoveCoord[1] ", " MouseMoveCoord[2] ", 0}"
     Sleep(NumberValueMap["OCRDelayTime"])
-    OCRResults := OCR.FromRect(MouseMoveCoord[1] + OffsetX, MouseMoveCoord[2] + OffsetY, SizeX, SizeY, "en-US", Scale)
     
+    PhsyicalValue := 0
     Value := 0
+    SetValue := false
     CappedValue := false
     CurrentFurthestMap := RapMap
     ItemName := ""
 
-    for _, OCR_Word in OCRResults.Words {
-        if RegExMatch(OCR_Word.Text, "i)hug|huge|lum|lumi|axo|axol|axolotl") {
-            Value := (10 ** 9)
-            break
+    loop 3 {
+        OCRResults := OCR.FromRect(
+            (MouseMoveCoord[1] + OffsetX) - ((A_Index-1) * Scalar * 0.5), 
+            (MouseMoveCoord[2] + OffsetY) - ((A_Index-1) * Scalar * 0.5), 
+            (SizeX) + ((A_Index-1) * Scalar), 
+            (SizeY) + ((A_Index-1) * Scalar), 
+            ("en-US"), 
+            (Scale)
+        )
+
+        for _, OCR_Word in OCRResults.Words {
+            if RegExMatch(OCR_Word.Text, "i)hug|huge|lum|lumi|axo|axol|axolotl") {
+                Value := (10 ** 9)
+                SetValue := true
+            }
+    
+            if RegExMatch(OCR_Word.Text, "i)over|overlo|overload|roy|royal|royalty") {
+                global CharmDetectionAmount += 1
+            }
+            Word := OCR_Word.Text
+    
+            if CurrentFurthestMap.Has(Word) {
+                
+                if ItemName = "" {
+                    ItemName := Word
+                } else {
+                    ItemName := ItemName " " Word
+                }
+    
+                CurrentFurthestMap := CurrentFurthestMap[Word]
+
+                if CurrentFurthestMap.Has("Value") {
+                    PhsyicalValue := CurrentFurthestMap["Value"]
+                    if not SetValue {
+                        Value := CurrentFurthestMap["Value"]
+                    }
+                }
+            }
+
+            if A_Index = OCRResults.Words.Length {
+                if CurrentFurthestMap.Has(ColorsAndStuffMap[LastRarity].Numeral) {
+                    ItemName := ItemName " " ColorsAndStuffMap[LastRarity].Numeral
+
+                    CurrentFurthestMap := CurrentFurthestMap[ColorsAndStuffMap[LastRarity].Numeral]
+
+                    if CurrentFurthestMap.Has("Value") {
+                        PhsyicalValue := CurrentFurthestMap["Value"]
+                        if not SetValue {
+                            Value := CurrentFurthestMap["Value"]
+                        }
+                    }
+                }
+            }
         }
 
-        Word := OCR_Word.Text
-
-        if CurrentFurthestMap.Has(Word) {
-            
-            if ItemName = "" {
-                ItemName := Word
-            } else {
-                ItemName := ItemName " " Word
-            }
-
-            CurrentFurthestMap := CurrentFurthestMap[Word]
-
-            if CurrentFurthestMap.Has("Value") {
-                Value := CurrentFurthestMap["Value"]
-            }
+        if Value > 0 or PhsyicalValue > 0{
+            break
+        } else {
+            ItemName := ""
+            CurrentFurthestMap := RapMap
+            CappedValue := false
+            SetValue := false
         }
     }
-
 
     lastValue := Value
     Value := Min(lastValue, ColorsAndStuffMap[LastRarity].CappedValue)
@@ -341,7 +384,7 @@ ItemCheck(ItemNum) {
         CappedValue := true
     }
 
-    return {ItemName:ItemName, Rarity:LastRarity, RarityValue:LastRarityValue, RapValue:Value, ValueCapped:CappedValue}
+    return {ItemName:ItemName, Rarity:LastRarity, RarityValue:LastRarityValue, RapValue:Value, ValueCapped:CappedValue, PHYV:PhsyicalValue}
 }
 
 Itemical() {
@@ -388,14 +431,14 @@ Itemical() {
         }
 
         if not EvilSearch(PixelSearchTables["X"], false)[1] {
-            global TEVal += HighestValue
+            global TEVal += ItemMap[HighestItem].PHYV
 
             if ItemPickMap.Has(ItemMap[HighestItem].ItemName) {
                 ItemPickMap[ItemMap[HighestItem].ItemName].Amount += 1
             } else {
                 ItemPickMap[ItemMap[HighestItem].ItemName] := {
                     Amount:1,
-                    Rap:HighestValue
+                    Rap:ItemMap[HighestItem].PHYV
                 }
             }
 
@@ -860,6 +903,9 @@ F5::{
     for Item, ItemInfo in ItemPickMap {
         EvilText := EvilText Item " | Amount : " ItemInfo.Amount " | TotalValue : " (ItemInfo.Amount * ItemInfo.Rap) " | Rap Value : " ItemInfo.Rap "`n"
     }
+
+    
+    EvilText := EvilText "`nValueCharmDetections: " CharmDetectionAmount
 
     if not DirExist(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug") {
         DirCreate(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug")
