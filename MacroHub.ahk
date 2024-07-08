@@ -230,7 +230,7 @@ for _, MacroName in MacroOrder {
     whr.WaitForResponse()
     APIString := whr.ResponseText
 
-    LastUpdateTimeObj :=  {Time:1, Word:"A"} ;GoodTimeDiff(Jxon_Load(&APIString)[1]["commit"]["author"]["date"])
+    LastUpdateTimeObj := GoodTimeDiff(Jxon_Load(&APIString)[1]["commit"]["author"]["date"])
 
     CreateMacroBox(MacroObject)
 }
