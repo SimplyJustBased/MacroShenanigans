@@ -1,4 +1,4 @@
-; /[V2.0.0]\ (Used for auto-update)
+; /[V2.0.01]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -458,7 +458,7 @@ UIOBject := CreateBaseUI(Map(
         {Map:PositionMap, Name:"Positioning Settings", SaveName:"PositionSettings", Type:"Position", IsAdvanced:false},
         {
         Map:ColorsAndStuffMap, Name:"Rarity Settings", SaveName:"RaritySettings", Type:"Object", IsAdvanced:false, 
-        Booleans:Map("ToCapValue", true), ObjectIgnore:Map("Color", true, "RarityValue", true), ObjectOrder:ObjectOrder,
+        Booleans:Map("ToCapValue", true), ObjectIgnore:Map("Color", true, "RarityValue", true, "Numeral", true), ObjectOrder:ObjectOrder,
         ObjectsPerPage:5
         },
         {Map:Routes, Name:"Routes", SaveName:"Routes", Type:"Text", IsAdvanced:true},
