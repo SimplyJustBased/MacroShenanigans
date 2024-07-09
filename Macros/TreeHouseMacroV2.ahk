@@ -1,4 +1,4 @@
-; /[V2.15Test]\ (Used for auto-update)
+; /[V2.0.0]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -11,7 +11,7 @@ CoordMode "Mouse", "Screen"
 CoordMode "Pixel", "Screen"
 SetMouseDelay -1
 
-global Version := "2.[Test]"
+global Version := "2.0.0"
 global MacroSetup := false
 global TEVal := 0
 global TotalEstimatedValue := "1"
