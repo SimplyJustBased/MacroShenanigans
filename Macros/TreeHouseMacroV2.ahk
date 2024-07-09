@@ -1,4 +1,4 @@
-; /[V2.0.01]\ (Used for auto-update)
+; /[V2.0.02]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -451,7 +451,7 @@ Itemical() {
 
 ObjectOrder := ["Basic", "Rare", "Epic", "Legendary", "Mythical", "Exotic", "Divine", "Superior", "Celestial", "Exclusive", "Unknown"]
 UIOBject := CreateBaseUI(Map(
-    "Main", {Title:"TreeHouseMacro", Video:"X", Description:Description, Version:Version, DescY:250, MacroName:"Tree House Macro", IncludeFonts:true},
+    "Main", {Title:"TreeHouseMacro", Video:"https://www.youtube.com/watch?v=9hHHg_fG36Q", Description:Description, Version:Version, DescY:250, MacroName:"Tree House Macro", IncludeFonts:true},
     "Settings", [
         {Map:ToggleValueMap, Name:"Toggle Settings", SaveName:"ToggleSettings", Type:"Toggle", IsAdvanced:false},
         {Map:NumberValueMap, Name:"Number Settings", SaveName:"NumberSettings", Type:"Number", IsAdvanced:false},
