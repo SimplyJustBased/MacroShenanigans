@@ -1,4 +1,4 @@
-﻿#Requires AutoHotkey v2.0 
+#Requires AutoHotkey v2.0 
 
 CoordMode "Mouse", "Screen"
 
@@ -250,6 +250,7 @@ CreateBaseUI(MapIndex) {
                     }
                 default:
                     for Key, Value in SettingObject.Map {
+                        OutputDebug("`n" Key " | " Value)
                         IniWrite(Value, FileToSaveTo, SettingObject.SaveName, Key)
                     }
             }
@@ -453,6 +454,7 @@ Create_TNTP_UI(_MapOBJ, BaseUI) {
 
     SubmitFunction(*) {
         SettingsUI.Hide()
+        Sumbit := SettingsUI.Submit()
         ReturnedValues := ObjToMap(SettingsUI.Submit())
 
         switch _MapOBJ.Type {
@@ -461,8 +463,8 @@ Create_TNTP_UI(_MapOBJ, BaseUI) {
                     _Map[Key] := [ReturnedValues[Key "XPos"], ReturnedValues[Key "YPos"]]
                 }
             default:
-                for Key, Value in ReturnedValues {
-                    _Map[Key] := Value
+                for Key, Value in _Map {
+                    _Map[Key] := Sumbit.%Key%
                 }
         }
     }
