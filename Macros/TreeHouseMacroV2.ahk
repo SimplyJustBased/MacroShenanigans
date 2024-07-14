@@ -1,4 +1,4 @@
-; /[V2.0.02]\ (Used for auto-update)
+; /[V2.0.03]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -11,14 +11,19 @@ CoordMode "Mouse", "Screen"
 CoordMode "Pixel", "Screen"
 SetMouseDelay -1
 
-global Version := "2.0.0"
+global Version := "2.0.1"
 global MacroSetup := false
+
+; For Active UI
 global TEVal := 0
 global TotalEstimatedValue := "1"
 global MacroRunTime := 0
 global KeysUsed := 0
 global WorldResets := 0
+
+; Debug Items
 global ItemPickMap := Map()
+global ItemSkipMap := Map()
 global CharmDetectionAmount := 0
 
 global Routes := Map(
@@ -55,6 +60,11 @@ global PositionMap := Map(
     "HomeButton", [966, 934],
     "SpawnWorldButton", [410, 451],
     "TechWorldButton", [410, 511],
+    "StupidCatBR", [903, 515],
+    "StupidCatTL", [1001, 606],
+    "DisconnectedBackgroundLS", [777, 444],
+    "DisconnectedBackgroundRS", [1143, 442],
+    "ReconnectButton", [1009, 623],
 )
 
 global OCRMap := Map(
@@ -83,39 +93,41 @@ global ToggleValueMap := Map(
 
 global ColorsAndStuffMap := Map(
     "Basic", {
-        Color:0xDBDAE6, RarityValue:1, CappedValue:100, ToCapValue:true, Numeral:"I"
+        Color:0xDBDAE6, RarityValue:1, CappedValue:100, ToCapValue:true, Numeral:"I", SkipRarity:true
     },
     "Rare", {
-        Color:0xBFFFA8, RarityValue:2, CappedValue:500, ToCapValue:true, Numeral:"II"
+        Color:0xBFFFA8, RarityValue:2, CappedValue:500, ToCapValue:true, Numeral:"II", SkipRarity:true
     },
     "Epic", {
-        Color:0x9EEFFF, RarityValue:3, CappedValue:3000, ToCapValue:true, Numeral:"III"
+        Color:0x9EEFFF, RarityValue:3, CappedValue:3000, ToCapValue:true, Numeral:"III", SkipRarity:true
     },
     "Legendary", {
-        Color:0xFFDAA6, RarityValue:4, CappedValue:65000, ToCapValue:true, Numeral:"IV"
+        Color:0xFFDAA6, RarityValue:4, CappedValue:65000, ToCapValue:true, Numeral:"IV", SkipRarity:false
     },
     "Mythical", {
-        Color:0xFFB1BC, RarityValue:5, CappedValue:50000, ToCapValue:false, Numeral:"V"
+        Color:0xFFB1BC, RarityValue:5, CappedValue:50000, ToCapValue:false, Numeral:"V", SkipRarity:false
     },
     "Exotic", {
-        Color:0xFFBAFE, RarityValue:6, CappedValue:100000, ToCapValue:false, Numeral:"VI"
+        Color:0xFFBAFE, RarityValue:6, CappedValue:100000, ToCapValue:false, Numeral:"VI", SkipRarity:false
     },
     "Divine", {
-        Color:0xFFF8B9, RarityValue:7, CappedValue:65005, ToCapValue:false, Numeral:"VII"
+        Color:0xFFF8B9, RarityValue:7, CappedValue:65005, ToCapValue:false, Numeral:"VII", SkipRarity:false
     },
     "Superior", {
-        Color:0xEEFFFF, RarityValue:8, CappedValue:(10**6), ToCapValue:false, Numeral:"VIII"
+        Color:0xEEFFFF, RarityValue:8, CappedValue:(10**6), ToCapValue:false, Numeral:"VIII", SkipRarity:false
     },
     "Celestial", {
-        Color:0xF6E3FE, RarityValue:9, CappedValue:(25*(10**7)), ToCapValue:false, Numeral:"IX"
+        Color:0xF6E3FE, RarityValue:9, CappedValue:(25*(10**7)), ToCapValue:false, Numeral:"IX", SkipRarity:false
     },
     "Exclusive", {
-        Color:0xD8BFFF, RarityValue:10, CappedValue:(2*(10**9)), ToCapValue:false, Numeral:"X"
+        Color:0xD8BFFF, RarityValue:10, CappedValue:(2*(10**9)), ToCapValue:false, Numeral:"X", SkipRarity:false
     },
     "Unknown", {
-        Color:0x000000, RarityValue:3, CappedValue:(125000), ToCapValue:false, Numeral:"I"
+        Color:0x000000, RarityValue:3, CappedValue:(125000), ToCapValue:false, Numeral:"I", SkipRarity:false
     }
 )
+
+global PixelSearchTables := Map()
 
 NumeralToTier := [
     "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI"
@@ -201,39 +213,6 @@ OutputDebug("`nFinished Setting up values")
 
 RapUI.Hide()
 
-PixelSearchTables := Map(
-    "X", [
-        PositionMap["XTL"][1], PositionMap["XTL"][2],
-        PositionMap["XBR"][1], PositionMap["XBR"][2],
-        0xFF0B4E, 5
-    ],
-    "MiniX", [
-        PositionMap["MiniXTL"][1], PositionMap["MiniXTL"][2],
-        PositionMap["MiniXBR"][1], PositionMap["MiniXBR"][2],
-        0xFF0B4E, 5
-    ],
-    ; "StupidCat", [
-    ;     PositionMap["StupidCatBR"][1], PositionMap["StupidCatBR"][2],
-    ;     PositionMap["StupidCatTL"][1], PositionMap["StupidCatTL"][2],
-    ;     0x95AACD, 10
-    ; ],
-    "TpButton", [
-        PositionMap["TPButtonTL"][1], PositionMap["TPButtonTL"][2],
-        PositionMap["TPButtonBR"][1], PositionMap["TPButtonBR"][2],
-        0xEC0D3A, 15
-    ],
-    "YesButton", [
-        PositionMap["YesButtonTL"][1], PositionMap["YesButtonTL"][2],
-        PositionMap["YesButtonBR"][1], PositionMap["YesButtonBR"][2],
-        0x7DF50D, 10
-    ],
-    "OkButtonRightSide", [
-        PositionMap["OkButtonRightSide"][1], PositionMap["OkButtonRightSide"][2],
-        PositionMap["OkButtonRightSide"][1], PositionMap["OkButtonRightSide"][2],
-        0x7DF50D, 10
-    ]
-)
-
 global PMString := ""
 PrintMap(Map, SpaceIndicator) {
     global PMString
@@ -302,6 +281,10 @@ ItemCheck(ItemNum) {
         }
     }
     
+    if ColorsAndStuffMap[LastRarity].SkipRarity {
+        return {Rarity:LastRarity, Value:LastRarityValue, SkippedSearch:true, ItemName:"Skipped", RapValue:LastRarityValue, ValueCapped:false, RarityValue:LastRarityValue}
+    }
+
     Sleep(100)
     SendEvent "{Click, " MouseMoveCoord[1] ", " MouseMoveCoord[2] ", 0}"
     Sleep(NumberValueMap["OCRDelayTime"])
@@ -312,6 +295,7 @@ ItemCheck(ItemNum) {
     CappedValue := false
     CurrentFurthestMap := RapMap
     ItemName := ""
+    SkippedSearch := false
 
     loop 3 {
         OCRResults := OCR.FromRect(
@@ -332,41 +316,98 @@ ItemCheck(ItemNum) {
             if RegExMatch(OCR_Word.Text, "i)over|overlo|overload|roy|royal|royalty") {
                 global CharmDetectionAmount += 1
             }
+
             Word := OCR_Word.Text
-    
-            if CurrentFurthestMap.Has(Word) {
-                
-                if ItemName = "" {
-                    ItemName := Word
-                } else {
-                    ItemName := ItemName " " Word
-                }
-    
-                CurrentFurthestMap := CurrentFurthestMap[Word]
+            Numeral := ColorsAndStuffMap[LastRarity].Numeral
 
-                if CurrentFurthestMap.Has("Value") {
-                    PhsyicalValue := CurrentFurthestMap["Value"]
-                    if not SetValue {
-                        Value := CurrentFurthestMap["Value"]
-                    }
-                }
-            }
+            ; Switch isnt needed here, i just like how it looks
+            switch {
+                case CurrentFurthestMap.Has(Word):
+                    ; it has the word, A-Okay!
+                    ItemName := ItemName Word " "
 
-            if A_Index = OCRResults.Words.Length {
-                if CurrentFurthestMap.Has(ColorsAndStuffMap[LastRarity].Numeral) {
-                    ItemName := ItemName " " ColorsAndStuffMap[LastRarity].Numeral
-
-                    CurrentFurthestMap := CurrentFurthestMap[ColorsAndStuffMap[LastRarity].Numeral]
-
+                    CurrentFurthestMap := CurrentFurthestMap[Word]
                     if CurrentFurthestMap.Has("Value") {
                         PhsyicalValue := CurrentFurthestMap["Value"]
+
+                        ; Sometimes i will manipulate the value that the script uses to help a item get picked better
                         if not SetValue {
                             Value := CurrentFurthestMap["Value"]
                         }
                     }
-                }
+                case (not CurrentFurthestMap.Has(Word)) and (not CurrentFurthestMap.Has(Numeral)):
+                    ; Cannot find the word nor add a numeral, attempt to check if we can fix the ocr
+                    AboveOutcomeMap := Map()
+
+                    ; We will search through each key in the currentfurthestmap, using the current word we found
+                    ; we'll try to subtract as many matching letters as we can to see how low we can get the number
+                    for PossibleOutcome, OutcomeMap in CurrentFurthestMap {
+                        if PossibleOutcome = "Value" {
+                            continue
+                        }
+
+                        SubtractKey := PossibleOutcome
+                        RemovedLetters := 0
+                        ExistingLetters := StrLen(SubtractKey)
+
+                        for _, Letter in StrSplit(Word, "") {
+                            if InStr(SubtractKey, Letter) {
+                                RemovedLetters += 1
+                                ExistingLetters -= 1
+
+                                SubtractKey := StrReplace(SubtractKey, Letter, "", 0,, 1)
+                            }
+                        }
+
+                        AboveOutcomeMap[PossibleOutcome] := {RemovedLetters:RemovedLetters, ExistingLetters:ExistingLetters, SubtractKey:SubtractKey}
+                    }
+
+                    ; We now make sure it meets standerds to be searched, if so we add it to a map and we'll sort through the map soon enough
+                    OutcomeAmountMap := Map()
+                    for Outcome, OutcomeObject in AboveOutcomeMap {
+                        OutcomeLength := StrLen(Outcome)
+                        WordLength := StrLen(Word)
+
+                        
+                        if (OutcomeObject.ExistingLetters / OutcomeLength) > 0.4 or (OutcomeObject.RemovedLetters / OutcomeLength) < 0.5 {
+                            continue
+                        }
+                    
+                        OutcomeAmountMap[Outcome] := (ExistingLetters * (2 - (OutcomeObject.RemovedLetters / OutcomeLength)))
+                    }
+
+                    ; this could've been done in the loop above, i just like it being cleaner to read
+                    BestOutcome := {Outcome:"Nil", Amount:1000}
+                    for Outcome, Amount in OutcomeAmountMap {
+                        OutputDebug("`nOutcome : " Outcome " | Amount : " Amount)
+
+                        if BestOutcome.Amount > Amount {
+                            BestOutcome := {Outcome:Outcome, Amount:Amount}
+                        }
+                    }
+
+                    if BestOutcome.Outcome != "Nil" {
+                        ItemName := ItemName BestOutcome.Outcome " "
+
+                        CurrentFurthestMap := CurrentFurthestMap[BestOutcome.Outcome]
+                    }
+                case (not CurrentFurthestMap.Has(Word)) and (CurrentFurthestMap.Has(Numeral)):
+                    ; Cannot find the word in the map, but we can add a numeral onto the end of it
+                    ItemName := ItemName Numeral " "
+
+                    CurrentFurthestMap := CurrentFurthestMap[Numeral]
+                    if CurrentFurthestMap.Has("Value") {
+                        PhsyicalValue := CurrentFurthestMap["Value"]
+
+                        if not SetValue {
+                            Value := CurrentFurthestMap["Value"]
+                        }
+                    }
             }
         }
+
+        ; Remove the extra space on the end :)
+        ItemName := SubStr(ItemName, "1", StrLen(ItemName) - 1)
 
         if Value > 0 or PhsyicalValue > 0{
             break
@@ -378,21 +419,26 @@ ItemCheck(ItemNum) {
         }
     }
 
+    ; Checking if we capped the value
     lastValue := Value
     Value := Min(lastValue, ColorsAndStuffMap[LastRarity].CappedValue)
+
     if lastValue != Value {
         CappedValue := true
     }
 
-    return {ItemName:ItemName, Rarity:LastRarity, RarityValue:LastRarityValue, RapValue:Value, ValueCapped:CappedValue, PHYV:PhsyicalValue}
+    return {ItemName:ItemName, Rarity:LastRarity, RarityValue:LastRarityValue, RapValue:Value, ValueCapped:CappedValue, PHYV:PhsyicalValue, SkippedSearch:false}
 }
 
 Itemical() {
     global ItemPickMap
     ItemMap := Map()
-    HighestItem := "Item1"
-    HighestValue := 0
-    HighestItemRarity := "Basic"
+
+    HighestItemObject := {
+        Item:"Item1",
+        R_Value:0,
+        Rarity:""
+    }
 
     loop 3 {
         ItemObject := ItemCheck(A_Index)
@@ -400,27 +446,27 @@ Itemical() {
         ItemMap["Item" A_Index] := ItemObject
         OutputDebug("`nItem" A_Index " Is a " ItemObject.ItemName " which is worth " ItemObject.RapValue " gems and has a rarity of " ItemObject.Rarity " | CappedValue:" ItemObject.ValueCapped)
 
-        if HighestValue < ItemObject.RapValue {
-            HighestItem := "Item" A_Index
-            HighestValue := ItemObject.RapValue
-            HighestItemRarity := ItemObject.Rarity
+        if HighestItemObject.R_Value < ItemObject.RapValue {
+            HighestItemObject.Item := "Item" A_Index
+            HighestItemObject.R_Value := ItemObject.RapValue
+            HighestItemObject.Rarity := ItemObject.Rarity
         }
     }
     Sleep(100)
 
     if ToggleValueMap["RarityDestruction"] {
-        if ColorsAndStuffMap[HighestItemRarity].RarityValue <= 3 {
+        if ColorsAndStuffMap[HighestItemObject.Rarity].RarityValue <= 3 {
             for Item, ItemObject in ItemMap {
-                if ItemObject.RarityValue > 3 and ColorsAndStuffMap[HighestItemRarity].RarityValue < ItemObject.RarityValue {
-                    HighestItem := Item
-                    HighestValue := ItemObject.RapValue
-                    HighestItemRarity := ItemObject.Rarity
+                if ItemObject.RarityValue > 3 and ColorsAndStuffMap[HighestItemObject.Rarity].RarityValue < ItemObject.RarityValue {
+                    HighestItemObject.Item := "Item" A_Index
+                    HighestItemObject.R_Value := ItemObject.RapValue
+                    HighestItemObject.Rarity := ItemObject.Rarity
                 }
             }
         }
     }
 
-    ButtonCoord := PositionMap["IBC_" HighestItem]
+    ButtonCoord := PositionMap["IBC_" HighestItemObject.Item]
 
     BreakTime := A_TickCount
     loop {
@@ -431,15 +477,26 @@ Itemical() {
         }
 
         if not EvilSearch(PixelSearchTables["X"], false)[1] {
-            global TEVal += ItemMap[HighestItem].PHYV
 
-            if ItemPickMap.Has(ItemMap[HighestItem].ItemName) {
-                ItemPickMap[ItemMap[HighestItem].ItemName].Amount += 1
-            } else {
-                ItemPickMap[ItemMap[HighestItem].ItemName] := {
-                    Amount:1,
-                    Rap:ItemMap[HighestItem].PHYV
-                }
+            switch ItemMap[HighestItemObject.Item].SkippedSearch {
+                case true:
+                    SkipText := "Item Skip | Rarity : [" HighestItemObject.Rarity "]"
+                    if ItemSkipMap.Has(SkipText) {
+                        ItemSkipMap[SkipText] += 1
+                    } else {
+                        ItemSkipMap[SkipText] := 1
+                    }
+                default:
+                    global TEVal += ItemMap[HighestItemObject.Item].PHYV
+
+                    if ItemPickMap.Has(ItemMap[HighestItemObject.Item].ItemName) {
+                        ItemPickMap[ItemMap[HighestItemObject.Item].ItemName].Amount += 1
+                    } else {
+                        ItemPickMap[ItemMap[HighestItemObject.Item].ItemName] := {
+                            Amount:1,
+                            Rap:ItemMap[HighestItemObject.Item].PHYV
+                        }
+                    }
             }
 
             break
@@ -447,6 +504,31 @@ Itemical() {
 
         Sleep(10)
     }
+}
+
+Reconnectical() {
+    Arg1 := EvilSearch(PixelSearchTables["DBGLS"], false)[1] 
+    Arg2 := EvilSearch(PixelSearchTables["DBGRS"], false)[1]
+    Arg3 := EvilSearch(PixelSearchTables["ReconnectButton"], false)[1]
+
+    if Arg1 and Arg2 and Arg3 {
+        TickTimeIDK := A_TickCount
+
+        loop {
+            SendEvent "{Click, " PositionMap["ReconnectButton"][1] ", " PositionMap["ReconnectButton"][2] ", 1}"
+
+            if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+                break
+            } else if A_TickCount - TickTimeIDK >= 900000 {
+                break
+            }
+
+            Sleep(10)
+        }
+
+        return true
+    }
+    return false
 }
 
 ObjectOrder := ["Basic", "Rare", "Epic", "Legendary", "Mythical", "Exotic", "Divine", "Superior", "Celestial", "Exclusive", "Unknown"]
@@ -458,7 +540,7 @@ UIOBject := CreateBaseUI(Map(
         {Map:PositionMap, Name:"Positioning Settings", SaveName:"PositionSettings", Type:"Position", IsAdvanced:false},
         {
         Map:ColorsAndStuffMap, Name:"Rarity Settings", SaveName:"RaritySettings", Type:"Object", IsAdvanced:false, 
-        Booleans:Map("ToCapValue", true), ObjectIgnore:Map("Color", true, "RarityValue", true, "Numeral", true), ObjectOrder:ObjectOrder,
+        Booleans:Map("ToCapValue", true, "SkipRarity", true), ObjectIgnore:Map("Color", true, "RarityValue", true, "Numeral", true), ObjectOrder:ObjectOrder,
         ObjectsPerPage:5
         },
         {Map:Routes, Name:"Routes", SaveName:"Routes", Type:"Text", IsAdvanced:true},
@@ -561,6 +643,10 @@ UpdateText() {
 UIOBject.EnableButton.OnEvent("Click", MacroEnabled)
 
 StupidWorldSwtich() {
+    if Reconnectical() {
+        return
+    }
+
     EscapeTime_8 := A_TickCount
     loop {
         SendEvent "{Click, " PositionMap["TPButton"][1] ", " PositionMap["TPButton"][2] ", 1}"
@@ -659,6 +745,9 @@ StupidWorldSwtich() {
         Sleep(100)
     }
     Sleep(1200)
+
+    global WorldResets += 1
+    global KeyResetAmount := 0
 }
 
 F3::{
@@ -666,18 +755,85 @@ F3::{
         return
     }
 
+    global PixelSearchTables := Map(
+        "X", [
+            PositionMap["XTL"][1], PositionMap["XTL"][2],
+            PositionMap["XBR"][1], PositionMap["XBR"][2],
+            0xFF0B4E, 5
+        ],
+        "MiniX", [
+            PositionMap["MiniXTL"][1], PositionMap["MiniXTL"][2],
+            PositionMap["MiniXBR"][1], PositionMap["MiniXBR"][2],
+            0xFF0B4E, 5
+        ],
+        "StupidCat", [
+            PositionMap["StupidCatBR"][1], PositionMap["StupidCatBR"][2],
+            PositionMap["StupidCatTL"][1], PositionMap["StupidCatTL"][2],
+            0x95AACD, 10
+        ],
+        "TpButton", [
+            PositionMap["TPButtonTL"][1], PositionMap["TPButtonTL"][2],
+            PositionMap["TPButtonBR"][1], PositionMap["TPButtonBR"][2],
+            0xEC0D3A, 15
+        ],
+        "YesButton", [
+            PositionMap["YesButtonTL"][1], PositionMap["YesButtonTL"][2],
+            PositionMap["YesButtonBR"][1], PositionMap["YesButtonBR"][2],
+            0x7DF50D, 10
+        ],
+        "OkButtonRightSide", [
+            PositionMap["OkButtonRightSide"][1], PositionMap["OkButtonRightSide"][2],
+            PositionMap["OkButtonRightSide"][1], PositionMap["OkButtonRightSide"][2],
+            0x7DF50D, 10
+        ],
+        "DBGLS", [
+            PositionMap["DisconnectedBackgroundLS"][1], PositionMap["DisconnectedBackgroundLS"][2],
+            PositionMap["DisconnectedBackgroundLS"][1], PositionMap["DisconnectedBackgroundLS"][2],
+            0x393B3D, 3
+        ],
+        "DBGRS", [
+            PositionMap["DisconnectedBackgroundRS"][1], PositionMap["DisconnectedBackgroundRS"][2],
+            PositionMap["DisconnectedBackgroundRS"][1], PositionMap["DisconnectedBackgroundRS"][2],
+            0x393B3D, 3
+        ],
+        "ReconnectButton", [
+            PositionMap["ReconnectButton"][1], PositionMap["ReconnectButton"][2],
+            PositionMap["ReconnectButton"][1], PositionMap["ReconnectButton"][2],
+            0xFFFFFF, 3
+        ],
+    )
+
     global MacroSetup
     global MacroRunTime
     global TotalEstimatedValue
     global TEVal
     global KeysUsed
-    KeyResetAmount := 0
+    global KeyResetAmount := 0
     SetTimer(UpdateText, 1)
 
     MacroRunTime := A_TickCount
     loop {
         SkipOpening := false
         ;-- Route User to the door once they spawn in
+
+        if not EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+            loop 15 {
+                SendEvent "{Click, " PositionMap["HomeButton"][1] ", " PositionMap["HomeButton"][2] ", 1}"
+            }
+
+            EvilWait := A_TickCount
+            loop {
+                if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+                    break
+                } else if A_TickCount - EvilWait >= 250000 {
+                    break
+                }
+            }
+
+            StupidWorldSwtich()
+            continue
+        }
+
         RouteUser(Routes["SpawnToDoor"])
         Sleep(100)
 
@@ -699,7 +855,6 @@ F3::{
 
                 if A_TickCount - EscapeTime_1 >= 5000 {
                     StupidWorldSwtich()
-                    WorldResets += 1
                     Die := true
                     break
                 }
@@ -739,6 +894,8 @@ F3::{
                     }
 
                     if A_TickCount - EscapeTime_2 >= 12000 {
+                        StupidWorldSwtich()
+                        Die := true
                         break
                     }
 
@@ -747,8 +904,17 @@ F3::{
 
                 SendEvent "{W Up}"
             } else {
-                MsgBox("Yea its so over....")
+                if EvilSearch(PixelSearchTables["StupidCat"], false)[1] {
+                    StupidWorldSwtich()
+                    continue
+                } else {
+                    MsgBox("Yea its so over....")
+                }
             }
+
+            if Die {
+                continue
+            }  
         }
 
         ;-- So heres the main loop, we start with the inside part so we can save on code
@@ -764,8 +930,28 @@ F3::{
                 }
 
                 if A_TickCount - EscapeTime_3 >= 12000 {
+                    EVILEscapeTime := A_TickCount
+                    loop {
+                        SendEvent "{Click, " PositionMap["HomeButton"][1] + (Random(-5, 5)) ", " PositionMap["HomeButton"][2] + (Random(-5, 5)) ", 1}"
+        
+                        if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+                            break
+                        }
+        
+                        if A_TickCount - EVILEscapeTime >= 10000 {
+                            break
+                        }
+        
+                        Sleep(10)
+                    }
+
+                    BlowUpAndDie := true
                     break
                 }
+            }
+
+            if BlowUpAndDie {
+                break
             }
 
             ;-- we are in the thingy so pick a item!!!!
@@ -774,14 +960,10 @@ F3::{
             Itemical()
             Sleep(100)
             
-            loop 5 {
-                SendEvent "{Click, " PositionMap["HomeButton"][1] ", " PositionMap["HomeButton"][2] ", 1}"
-                Sleep(20)
-            }
-
-
             EscapeTime_4 := A_TickCount
             loop {
+                SendEvent "{Click, " PositionMap["HomeButton"][1] + (Random(-5, 5)) ", " PositionMap["HomeButton"][2] + (Random(-5, 5)) ", 1}"
+
                 if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
                     break
                 }
@@ -794,7 +976,7 @@ F3::{
             }
 
             if KeyResetAmount >= NumberValueMap["KeyResetAmount"] and ToggleValueMap["DoKeyReset"] {
-                KeyResetAmount := 0
+                global KeyResetAmount := 0
                 break
             }
 
@@ -804,6 +986,21 @@ F3::{
             SendEvent "{S Down}"
             Sleep(800)
             SendEvent "{S Up}"
+
+            if EvilSearch(PixelSearchTables["X"], false)[1] {
+                Sleep (10)
+                loop 3 {
+                    Sleep(10)
+                    SendEvent "{Click, " PositionMap["X"][1] ", " PositionMap["X"][2] ", 1}"
+                }
+            } else if EvilSearch(PixelSearchTables["MiniX"], false)[1] {
+                Sleep (10)
+                loop 3 {
+                    Sleep(10)
+                    SendEvent "{Click, " PositionMap["MiniX"][1] ", " PositionMap["MiniX"][2] ", 1}"
+                }
+            }
+            Sleep(100)
 
             if not EvilSearch(PixelSearchTables["TpButton"], false)[1] {
                 SkipOpening := true
@@ -820,8 +1017,13 @@ F3::{
                     }
         
                     if A_TickCount - EscapeTime_5 >= 5000 {
+                        BlowUpAndDie := true
                         break
                     }
+                }
+
+                if BlowUpAndDie {
+                    break
                 }
     
                 SendEvent "{W Down}"
@@ -866,8 +1068,6 @@ F3::{
                         }
         
                         if A_TickCount - EscapeTime_6 >= 20000 {
-                            StupidWorldSwtich()
-                            KeyResetAmount := 0
                             BlowUpAndDie := true
                             break
                         }
@@ -890,7 +1090,6 @@ F3::{
         ;-- get me the fuck out of here
         Sleep(200)
         StupidWorldSwtich()
-        global WorldResets += 1
     }
 }
 
@@ -904,7 +1103,11 @@ F5::{
         EvilText := EvilText Item " | Amount : " ItemInfo.Amount " | TotalValue : " (ItemInfo.Amount * ItemInfo.Rap) " | Rap Value : " ItemInfo.Rap "`n"
     }
 
-    
+    EvilText := EvilText "`n`n`n-Item Skips-`n"
+    for Skipped, SkipAmount in ItemSkipMap {
+        EvilText := EvilText Skipped " | Amount : " SkipAmount "`n"
+    }
+
     EvilText := EvilText "`nValueCharmDetections: " CharmDetectionAmount
 
     if not DirExist(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug") {
