@@ -1,4 +1,4 @@
-; /[V2.0.03]\ (Used for auto-update)
+; /[V2.0.04]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -25,6 +25,7 @@ global WorldResets := 0
 global ItemPickMap := Map()
 global ItemSkipMap := Map()
 global CharmDetectionAmount := 0
+global PickString := ""
 
 global Routes := Map(
     "SpawnToDoor", "tp:Enchanted Forest|w_nV:TpWaitTime|r:[0%Q10&0%D400&420%W1540&2250%Q10]",
@@ -296,6 +297,7 @@ ItemCheck(ItemNum) {
     CurrentFurthestMap := RapMap
     ItemName := ""
     SkippedSearch := false
+    FoundText := ""
 
     loop 3 {
         OCRResults := OCR.FromRect(
@@ -306,6 +308,7 @@ ItemCheck(ItemNum) {
             ("en-US"), 
             (Scale)
         )
+        FoundText := OCRResults.Text
 
         for _, OCR_Word in OCRResults.Words {
             if RegExMatch(OCR_Word.Text, "i)hug|huge|lum|lumi|axo|axol|axolotl") {
@@ -420,13 +423,16 @@ ItemCheck(ItemNum) {
     }
 
     ; Checking if we capped the value
-    lastValue := Value
-    Value := Min(lastValue, ColorsAndStuffMap[LastRarity].CappedValue)
-
-    if lastValue != Value {
-        CappedValue := true
+    if ColorsAndStuffMap[LastRarity].ToCapValue {
+        lastValue := Value
+        Value := Min(lastValue, ColorsAndStuffMap[LastRarity].CappedValue)
+    
+        if lastValue != Value {
+            CappedValue := true
+        }
     }
 
+    global PickString := PickString "Item" ItemNum " | BaseText: " FoundText " | ItemDetection: " ItemName " | PhysicalValue : " PhsyicalValue " | CappedValue : " CappedValue "`n"
     return {ItemName:ItemName, Rarity:LastRarity, RarityValue:LastRarityValue, RapValue:Value, ValueCapped:CappedValue, PHYV:PhsyicalValue, SkippedSearch:false}
 }
 
@@ -440,6 +446,7 @@ Itemical() {
         Rarity:""
     }
 
+    global PickString := PickString "-- Pick For " KeysUsed " --`n" 
     loop 3 {
         ItemObject := ItemCheck(A_Index)
 
@@ -453,6 +460,7 @@ Itemical() {
         }
     }
     Sleep(100)
+    RarityDestruced := false
 
     if ToggleValueMap["RarityDestruction"] {
         if ColorsAndStuffMap[HighestItemObject.Rarity].RarityValue <= 3 {
@@ -461,10 +469,13 @@ Itemical() {
                     HighestItemObject.Item := "Item" A_Index
                     HighestItemObject.R_Value := ItemObject.RapValue
                     HighestItemObject.Rarity := ItemObject.Rarity
+                    RarityDestruced := true
                 }
             }
         }
     }
+
+    global PickString := PickString "-/ Item Picked -\`n Item : " HighestItemObject.Item " | RapValue : " HighestItemObject.R_Value " | RarityDestruced : " RarityDestruced " | Rarity : " HighestItemObject.Rarity "`n`n`n"
 
     ButtonCoord := PositionMap["IBC_" HighestItemObject.Item]
 
@@ -1097,6 +1108,7 @@ F6::Pause -1
 
 EvilUI := ""
 F5::{
+    global PickString
     EvilText := "TreeHouseMacroV2 Debug`n--Item Picks--`n"
 
     for Item, ItemInfo in ItemPickMap {
@@ -1108,7 +1120,7 @@ F5::{
         EvilText := EvilText Skipped " | Amount : " SkipAmount "`n"
     }
 
-    EvilText := EvilText "`nValueCharmDetections: " CharmDetectionAmount
+    EvilText := EvilText "`nValueCharmDetections: " CharmDetectionAmount "`n`n`n" PickString
 
     if not DirExist(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug") {
         DirCreate(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug")
