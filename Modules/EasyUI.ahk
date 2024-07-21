@@ -18,12 +18,15 @@ global FredokaOneFont := A_MyDocuments "\PS99_Macros\Storage\Fonts\F_One.ttf"
 global TimesNewRomanFont := A_MyDocuments "\PS99_Macros\Storage\Fonts\T_NR.ttf"
 global CB := ""
 
-global VariablisticMap := Map()
-
 ;-- Expects Map("Main", {Title:X, Video:X, Description:X, Version:X, DescY:X, MacroName:X, IncludeFonts:True}, "Settings", [{Map:X,Name:X,Type:X,SaveName:X}], "SettingsFolder:X")
-CreateBaseUI(MapIndex) {
+CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
     UIDigit := __HeldUIs.Count + 1
+
+    if UIDForcing != -1 {
+        UIDigit := UIDForcing
+    }
     __HeldUIs["UID" UIDigit] := []
+    VariablisticMap := Map()
 
     AdvancedSettings := Gui()
     AdvancedSettings.AddTab3("", ["Main"])
@@ -43,23 +46,31 @@ CreateBaseUI(MapIndex) {
     BaseGui := Gui(,MapIndex["Main"].MacroName " | V" MapIndex["Main"].Version)
     BaseGui.Opt("+AlwaysOnTop")
 
-    UITabs := BaseGui.AddTab3("", ["Main", "Settings", "Extras"])
+    Tab3Array := ["Main", "Settings", "Extras"]
+    if MapIndex["Main"].MultiInstancing and not IsForMulti {
+        Tab3Array.InsertAt(3, "Multi-Instancing")
+    }
+
+    UITabs := BaseGui.AddTab3("", Tab3Array)
     BaseGui.AddText("Section w240 h25 x20 y35", MapIndex["Main"].Title).SetFont("s15 w700")
     BaseGui.AddText("w240 h20 x20 yp+25", "Version: " MapIndex["Main"].Version).SetFont("s12 w500")
     BaseGui.AddLink("w240 h20 x20 yp+20", 'Macro Made By <a href="https://www.youtube.com/channel/UCKOkQGvHO71nqQjwTiJX5Ww">A Basement</a> / <a href="https://www.roblox.com/users/128699642/profile">Oliyopi</a>').SetFont("s10 w500")
     BaseGui.AddText("w200 h" MapIndex["Main"].DescY " x20 yp+45 Wrap", MapIndex["Main"].Description).SetFont("s10 w500")
 
-    EMB := BaseGui.AddButton("w100 h30 xs y350", "Enable Macro")
-    YTB := BaseGui.AddButton("w70 h30 xp+100 y350", "YT Video")
-    DB := BaseGui.AddButton("w75 h30 xp+70 y350", "Discord")
+    EMB := ""
+    if not IsForMulti {
+        EMB := BaseGui.AddButton("w100 h30 xs y350", "Enable Macro")
+        YTB := BaseGui.AddButton("w70 h30 xp+100 y350", "YT Video")
+        DB := BaseGui.AddButton("w75 h30 xp+70 y350", "Discord")
+
+        EMB.SetFont("s10")
+        YTB.SetFont("s10")
+        DB.SetFont("s10")
+    
+        DB.OnEvent("Click", DBevent)
+        YTB.OnEvent("Click", YTBevent)
+    }
   
-    EMB.SetFont("s10")
-    YTB.SetFont("s10")
-    DB.SetFont("s10")
-
-    DB.OnEvent("Click", DBevent)
-    YTB.OnEvent("Click", YTBevent)
-
     UITabs.UseTab(2)
     SettingButtonSpacing := 0
     ADVSettingButtonSpacing := 35
@@ -76,12 +87,12 @@ CreateBaseUI(MapIndex) {
                 NewButton := AdvancedSettings.AddButton("w160 h30 xs y" ADVSettingButtonSpacing, SettingObject.Name)
         
                 if SettingObject.type = "Selection" {
-                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings, {Button:NewButton, UID:UIDigit})
+                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings, {Button:NewButton, UID:UIDigit},,VariablisticMap)
                     NewButton.SetFont("s10")
         
                     SettingObject.UIObject := NewUIObject
                 } else {
-                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings)
+                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings, VariablisticMap, IsForMulti)
                     NewButton.SetFont("s10")
                     NewButton.OnEvent("Click", NewUIObject.ShowFunction)
                     __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, NewUIObject.UI)
@@ -93,12 +104,12 @@ CreateBaseUI(MapIndex) {
                 NewButton := BaseGui.AddButton("w160 h30 x" (UIWidth/2 + 75 - BaseGui.MarginX) " y" SettingButtonSpacing, SettingObject.Name)
         
                 if SettingObject.type = "Selection" {
-                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui, {Button:NewButton, UID:UIDigit})
+                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui, {Button:NewButton, UID:UIDigit},,VariablisticMap)
                     NewButton.SetFont("s10")
         
                     SettingObject.UIObject := NewUIObject
                 } else {
-                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui)
+                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui, VariablisticMap, IsForMulti)
                     NewButton.SetFont("s10")
                     NewButton.OnEvent("Click", NewUIObject.ShowFunction)
                     __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, NewUIObject.UI)
@@ -112,7 +123,40 @@ CreateBaseUI(MapIndex) {
         ASB.OnEvent("Click", ShowAdvancedSettings)
     }
 
-    UITabs.UseTab(3)
+    SNum := 3
+    if MapIndex["Main"].MultiInstancing and not IsForMulti {
+        SNum := 4
+
+        RobloxArray := []
+        SearchArray := [WinGetList("ahk_exe RobloxPlayerBeta.exe"), WinGetList("Roblox", "Roblox")]
+        for _, RobloxianSearchArray in SearchArray {
+            for _, InstanceID in RobloxianSearchArray {
+                RobloxArray.InsertAt(RobloxArray.Length + 1, InstanceID)
+            }
+        }
+
+        UITabs.UseTab(3)
+        BaseGui.AddText("w263 h25 y35 x12 Center", "Multi-Instancing").SetFont("s15 w700")
+        BaseGui.AddText("w263 h25 yp+25 x12 Center", "Detected Accounts : " RobloxArray.Length).SetFont("s13 w700")
+        BaseGui.AddText("w263 h15 yp+35 x12 Center", "Roblox Web Accounts : " SearchArray[1].Length).SetFont("s10 w700")
+        BaseGui.AddText("w263 h15 yp+15 x12 Center", "Roblox Microsoft Accounts : " SearchArray[2].Length).SetFont("s10 w700")
+
+        switch {
+            case RobloxArray.Length > 1:
+                BaseGui.AddText("w263 h25 yp+50 x12 Center", "You are able to Multi-Instance").SetFont("s11 w700 cgreen")
+                EMI := BaseGui.AddButton("w160 h30 x" (UIWidth/2 + 75 - BaseGui.MarginX) " y350", "Start Multi-Instancing")
+                EMI.SetFont("s10")
+
+                EMI.OnEvent("Click", (*) => MultiInstancing(MapIndex, RobloxArray, BaseGui, UIDigit, UIObject))
+            default:
+                BaseGui.AddText("w263 h25 yp+50 x12 Center", "You are unable to Multi-Instance").SetFont("s11 w700 cred")
+                BaseGui.AddText("w263 h25 yp+20 x12 Center", "(Requires 2 or more accounts)").SetFont("s9 w700 cred")
+        }
+
+
+    }
+
+    UITabs.UseTab(SNum)
     if MapIndex["Main"].IncludeFonts {
         BaseGui.Add("Button","x15 y30 h30 w200","Set Font To Times New Roman").OnEvent("Click", SetToTimesNewRoman)
         BaseGui.Add("Button","x15 y60 h30 w200","Reset Font to Default").OnEvent("Click", SetToFredokaOne)
@@ -346,7 +390,43 @@ CreateBaseUI(MapIndex) {
     UIObject.BaseUI := BaseGui
     UIObject.EnableButton := EMB
     UIObject.UID := UIDigit
+    UIObject.Instances := {Multi:false}
     return UIObject
+}
+
+SwitchCheck(Value) {
+    switch Type(Value) {
+        case "Map":
+            return CloneMap(Value)
+        case "Array":
+            CleanArray := []
+
+            for _, V in Value {
+                CleanArray.InsertAt(CleanArray.Length + 1, SwitchCheck(V))
+            }
+
+            return CleanArray
+        case "Object":
+            CleanObject := {}
+
+            for Key, Value in Value.OwnProps() {
+                CleanObject.%Key% := SwitchCheck(Value)
+            }
+
+            return CleanObject
+        default:
+            return Value
+    }
+}
+
+CloneMap(MapTrue) {
+    FinalMap := Map()
+
+    for Key, Value in MapTrue {
+        FinalMap[Key] := SwitchCheck(Value)
+    }
+
+    return FinalMap
 }
 
 CreatePosHelper(UI, Name, PosArray, Num, I := "", Objective := false) {
@@ -384,7 +464,7 @@ CreatePosHelper(UI, Name, PosArray, Num, I := "", Objective := false) {
 
 
 ;-- Create Toggle/Number/Text/Positioning UI
-Create_TNTP_UI(_MapOBJ, BaseUI) {
+Create_TNTP_UI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
     global CB
     _Map := _MapOBJ.Map
     SettingsUI := Gui()
@@ -434,18 +514,25 @@ Create_TNTP_UI(_MapOBJ, BaseUI) {
                 SettingsUI.SetFont("s9 q5 w500", "Arial")
             }
         }
+        S_f := "s10"
+
+        if MI {
+            if _MapOBJ.MultiInstanceIgnore.Has(Setting) {
+                S_f := "s10 c900000"
+            }
+        }
 
         switch _MapOBJ.Type {
             case "Toggle":
-                SettingsUI.AddText("w200 h20 xs y" (NumericalSetting * 25 + (40)), Setting ":").SetFont("s10")
+                SettingsUI.AddText("w200 h20 xs y" (NumericalSetting * 25 + (40)), Setting ":").SetFont(S_f)
                 VariablisticMap[_MapOBJ.SaveName][Setting] := SettingsUI.AddCheckbox("w20 h20 v" Setting " yp xp+240 Checked" SettingValue)
                 VariablisticMap[_MapOBJ.SaveName][Setting].SetFont("s9")
             case "Number":
-                SettingsUI.AddText("w150 h20 xs y" (NumericalSetting * 25 + (40)), Setting ":").SetFont("s10")
+                SettingsUI.AddText("w150 h20 xs y" (NumericalSetting * 25 + (40)), Setting ":").SetFont(S_f)
                 VariablisticMap[_MapOBJ.SaveName][Setting] := SettingsUI.AddEdit("w120 h20 yp xp+190")
                 SettingsUI.AddUpDown("v" Setting " range1-10000000" Setting, SettingValue)
             case "Text":
-                SettingsUI.AddText("w150 h20 xs y" (NumericalSetting * 25 + (40)), Setting ":").SetFont("s10")
+                SettingsUI.AddText("w150 h20 xs y" (NumericalSetting * 25 + (40)), Setting ":").SetFont(S_f)
                 VariablisticMap[_MapOBJ.SaveName][Setting] := SettingsUI.AddEdit("w120 h20 yp xp+190 v" Setting, SettingValue)
             case "Position":
                 VariablisticMap[_MapOBJ.SaveName][Setting] := CreatePosHelper(SettingsUI, Setting, SettingValue, NumericalSetting)
@@ -534,7 +621,7 @@ SelectionUI_CreateUIS(MapToEvilize, TypeOfButton, Name) {
 
 ;-- Create Selection Type UI
 ;-- Mainly used for allowing users to add / remove values from Maps
-CreateSelectionUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true) {
+CreateSelectionUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, VariablisticMap := Map()) {
     global __HeldUIs
     TrueObject := PreviousObject
 
@@ -654,7 +741,7 @@ CreateSelectionUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true) {
 }
 
 ;-- yeah this is only here bcause of how i setup thm :(
-CreateObjectUI(_MapOBJ, BaseUI) {
+CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
     _Map := _MapOBJ.Map
     ObjectSettingsUI := Gui()
 
@@ -797,6 +884,213 @@ CreateObjectUI(_MapOBJ, BaseUI) {
     FinalizeButton.SetFont("s10")
 
     return {UI:ObjectSettingsUI,ShowFunction:ShowFunction}
+}
+
+;-- All Multi-Instancing Related
+
+;-- Used for MultiInstance | Setup so the buttons work
+ExtendedFunction(MultiInstanceSetupUI, NSetting, ID) {
+    ActivateButton := MultiInstanceSetupUI.AddButton("y" ((NSetting * 55 + (45))) " w25 h25 x81", "🔍")
+    OptionDropDownList := MultiInstanceSetupUI.AddDropDownList("y" ((NSetting * 55 + (47))) " w100 h25 xp+25 choose3 R3 vOption" ID, ["Macro", "Anti-Afk", "Nothing"])
+
+    ActivateButton.OnEvent("Click", (*) => WinActivate("ahk_id " ID))
+}
+
+;-- Used for MultiInstance | Settings so the buttons work
+AnotherExtendedFunction(MultiInstanceUI, NSetting, AccountID, AccountOBJ) {
+    ActivateButton := MultiInstanceUI.AddButton("y" ((NSetting * 55 + (45))) " w100 h25 x93", "Open Settings")
+    ActivateButton.SetFont("s9")
+
+    ActivateButton.OnEvent("Click", (*) => AccountOBJ.Obj.BaseUI.Show())
+}
+
+CreateAfkUI(ObtainedMap, ID, TSettings, UIDigit) {
+    BaseUI := Gui(,"Anti Afk UI | " ID)
+    UTabs := BaseUI.AddTab3("", ["Main"])
+    BaseUI.AddText("w263 h25 y35 x12 Center", "Anti-Afk Settings").SetFont("s15 w700")
+    BaseUI.AddText("w263 h25 yp+30 x12 Center", "ClickDelay").SetFont("s11 w700")
+    BaseUI.AddEdit("w120 h20 yp+25 x83")
+    BaseUI.AddUpDown("vClickTime range1-10000000", ObtainedMap["Afk Settings"].ClickTime)
+
+    BaseUI.AddText("w263 h25 yp+25 x12 Center", "ClickPosition").SetFont("s11 w700")
+    BaseUI.Add("Button", "w25 h25 x70 yp+25", "S").OnEvent("Click", ButtonClicked)
+
+    Ud1 := BaseUI.Add("Edit","yp+2 w60 xp+25",)
+    BaseUI.AddUpDown("vClickXPos Range1-40000", ObtainedMap["Afk Settings"].ClickPosition[1])
+    ud2 := BaseUI.Add("Edit","yp w60 xp+60",)
+    BaseUI.AddUpDown("vClickYPos Range1-40000", ObtainedMap["Afk Settings"].ClickPosition[2])
+
+    ButtonClicked(*) {
+        global CurrentPostionLabel := [UD1, UD2]
+    }
+
+    BaseUI.GetClientPos(&u, &u, &UIWidth, &UIHeight)
+    EMI := BaseUI.AddButton("w160 h30 x" (UIWidth/2 + 75 - BaseUI.MarginX) " y350", "Set Settings")
+    EMI.SetFont("s10")
+    EMI.OnEvent("Click", (*) => QuickSave())
+
+    QuickSave() {
+        sb := BaseUI.Submit()
+        for _1, _2 in ObtainedMap["Afk Settings"].OwnProps() {
+            if _1 = "ClickDelay" {
+                ObtainedMap["Afk Settings"].%_1% := sb.ClickTime
+            } else {
+                ObtainedMap["Afk Settings"].%_1% := [sb.ClickXPos, sb.ClickYPos]
+            }
+        }
+    }
+    
+    __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, BaseUI)
+
+    return {BaseUI:BaseUI}
+}
+
+MultiInstancing(MapIndex, AccountList, BaseUI, UID, UIObject) {
+    MultiInstanceSetupUI := Gui(,"Multi-Instance | Setup")
+    BaseUI.Hide()
+
+    if __HeldUIs.Has("UID" UID) {
+        for _, UI in __HeldUIs["UID" UID] {
+            try {
+                UI.Hide()
+            }
+        }
+    }
+
+    TabsArray := []
+    loop(Ceil(AccountList.Length / 7)) {
+        TabsArray.InsertAt(TabsArray.Length + 1, "AccountList:[" A_Index "]")
+    }
+
+    NSetting := 0
+    TSettings := 0
+
+    MISTabs := MultiInstanceSetupUI.AddTab3("", TabsArray)
+
+    MultiInstanceSetupUI.AddText("w263 h25 y35 x12 Center", "Multi-Instancing").SetFont("s15 w700")
+    MultiInstanceSetupUI.AddText("w263 h25 yp+25 x12 Center", "Setup").SetFont("s12 w700")
+
+    for Num, AccountID in AccountList {
+        NSetting += 1
+        TSettings += 1
+        ID := AccountID
+
+        MISTabs.UseTab(Ceil(TSettings / 7))
+
+        if NSetting >= 8 {
+            NSetting := 1
+
+            MultiInstanceSetupUI.AddText("w263 h25 y35 x12 Center", "Multi-Instancing").SetFont("s15 w700")
+            MultiInstanceSetupUI.AddText("w263 h25 yp+25 x12 Center", "Setup").SetFont("s12 w700")
+        }
+
+        MultiInstanceSetupUI.AddText("w263 h25 y" (NSetting * 55 + (25)) " x12 Center", "RobloxAccount[" Num "]").SetFont("s10 w500")
+        ExtendedFunction(MultiInstanceSetupUI, NSetting, ID)
+    }
+
+    MISTabs.UseTab(1)
+    FinalizeButton := MultiInstanceSetupUI.AddButton("w140 h30 x74 y" ((Min(7, TSettings)) * 55 + (80)), "Finalize Setup")
+    FinalizeButton.SetFont("s10")
+
+    Step2() {
+        SubmitValues := MultiInstanceSetupUI.Submit()
+
+        InstMap := Map()
+
+        for _, AccountID in AccountList {
+            ToDo := SubmitValues.%"Option" AccountID%
+            if ToDo != "Nothing" {
+                InstMap[AccountID] := ToDo
+            }
+        }
+
+        CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UID, BaseUI)
+    }
+
+    FinalizeButton.OnEvent("Click", (*) => Step2())
+    MultiInstanceSetupUI.OnEvent("Close", (*) => BaseUI.Show())
+
+    MultiInstanceSetupUI.Show
+}
+
+CreateUIsForMulti(ToDo, MapIndex, TSettings, RecMap, ID, UIDigit) {
+    switch ToDo {
+        case "Macro":
+            MIndexClone := CloneMap(MapIndex)
+            MIndexClone["Main"].Title := MIndexClone["Main"].Title " | [" TSettings "]" 
+
+            SelfUIObject := CreateBaseUI(MIndexClone, true, UIDigit)
+            RecMap[ID] := {Obj:SelfUIObject, Clone:MIndexClone, Action:ToDo}
+        default:
+            ObtainedMap := Map("Afk Settings", {ClickTime:(10 * 60 * 1000), ClickPosition:[A_ScreenWidth/2, A_ScreenHeight/2]})
+
+            UI := CreateAfkUI(ObtainedMap, ID, TSettings, UIDigit)
+            RecMap[ID] := {Map:ObtainedMap, Obj:UI, Action:ToDo}
+    }
+}
+
+CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UIDigit, BaseUI) {
+    MultiInstanceUI := Gui(, "Multi-Instance | Settings")
+
+    TabsArray := []
+    loop(Ceil(InstMap.Count / 7)) {
+        TabsArray.InsertAt(TabsArray.Length + 1, "AccountSettings:[" A_Index "]")
+    }
+
+    NSetting := 0
+    TSettings := 0
+
+    MITabs := MultiInstanceUI.AddTab3("", TabsArray)
+
+    MultiInstanceUI.AddText("w263 h25 y35 x12 Center", "Multi-Instancing").SetFont("s15 w700")
+    MultiInstanceUI.AddText("w263 h25 yp+25 x12 Center", "Settings").SetFont("s12 w700")
+
+    RecreationMap := Map()
+
+    for AccountID, ToDo in InstMap {
+        NSetting += 1
+        TSettings += 1
+
+
+        CreateUIsForMulti(ToDo, MapIndex, TSettings, RecreationMap, AccountID, UIDigit)
+
+        MITabs.UseTab(Ceil(TSettings/7))
+
+        if NSetting >= 8 {
+            NSetting := 1
+
+            MultiInstanceUI.AddText("w263 h25 y35 x12 Center", "Multi-Instancing").SetFont("s15 w700")
+            MultiInstanceUI.AddText("w263 h25 yp+25 x12 Center", "Settings").SetFont("s12 w700")
+        }
+
+        MultiInstanceUI.AddText("w263 h25 y" (NSetting * 55 + (25)) " x12 Center", "RobloxAccount[" TSettings "]").SetFont("s10 w500")
+        AnotherExtendedFunction(MultiInstanceUI, NSetting, AccountID, RecreationMap[AccountID])
+    }
+
+    MITabs.UseTab(1)
+    EMB := MultiInstanceUI.AddButton("w140 h30 x74 y" ((Min(7, TSettings)) * 55 + (80)), "Enable Macro")
+    EMB.SetFont("s10")
+
+    UIObject.EMB := EMB
+    MultiInstanceUI.OnEvent("Close", (*) => ReturnFunction())
+
+    ReturnFunction() {
+        for _, PossibleActiveUI in __HeldUIs["UID" UIDigit] {
+            try {
+                PossibleActiveUI.Hide()
+            }
+        }
+
+        BaseUI.Show()
+    }
+    SmallestFunctionEver() {
+        UIObject.Instances.RecMap := RecreationMap
+        UIObject.Instances.Multi := true
+    }
+    EMB.OnEvent("Click", (*) => SmallestFunctionEver())
+
+
+    MultiInstanceUI.Show()
 }
 
 ;-- Not mine, lowkey forgot where i got this from but know that i didnt make this (Did edit it a little tho)
