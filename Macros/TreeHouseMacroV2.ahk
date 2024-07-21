@@ -1,4 +1,4 @@
-; /[V2.0.04]\ (Used for auto-update)
+; /[V2.0.05]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -11,7 +11,7 @@ CoordMode "Mouse", "Screen"
 CoordMode "Pixel", "Screen"
 SetMouseDelay -1
 
-global Version := "2.0.1"
+global Version := "2.0.12"
 global MacroSetup := false
 
 ; For Active UI
@@ -66,6 +66,9 @@ global PositionMap := Map(
     "DisconnectedBackgroundLS", [777, 444],
     "DisconnectedBackgroundRS", [1143, 442],
     "ReconnectButton", [1009, 623],
+    "Mastery_NameGoldenTL", [778, 331],
+    "Mastery_NameGoldenBR", [1123, 376],
+    "MiddleOfScreen", [960, 540]
 )
 
 global OCRMap := Map(
@@ -544,7 +547,7 @@ Reconnectical() {
 
 ObjectOrder := ["Basic", "Rare", "Epic", "Legendary", "Mythical", "Exotic", "Divine", "Superior", "Celestial", "Exclusive", "Unknown"]
 UIOBject := CreateBaseUI(Map(
-    "Main", {Title:"TreeHouseMacro", Video:"https://www.youtube.com/watch?v=9hHHg_fG36Q", Description:Description, Version:Version, DescY:250, MacroName:"Tree House Macro", IncludeFonts:true},
+    "Main", {Title:"TreeHouseMacro", Video:"https://www.youtube.com/watch?v=9hHHg_fG36Q", Description:Description, Version:Version, DescY:250, MacroName:"Tree House Macro", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
         {Map:ToggleValueMap, Name:"Toggle Settings", SaveName:"ToggleSettings", Type:"Toggle", IsAdvanced:false},
         {Map:NumberValueMap, Name:"Number Settings", SaveName:"NumberSettings", Type:"Number", IsAdvanced:false},
@@ -695,7 +698,7 @@ StupidWorldSwtich() {
     EscapeTime_10 := A_TickCount
 
     loop {
-        if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+        if EvilSearch(PixelSearchTables["TpButton"], false)[1] and EvilSearch(PixelSearchTables["TpButtonMetallic"], false)[1] {
             break
         }
 
@@ -745,7 +748,7 @@ StupidWorldSwtich() {
     EscapeTime_13 := A_TickCount
 
     loop {
-        if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+        if EvilSearch(PixelSearchTables["TpButton"], false)[1] and EvilSearch(PixelSearchTables["TpButtonMetallic"], false)[1] {
             break
         }
 
@@ -812,7 +815,18 @@ F3::{
             PositionMap["ReconnectButton"][1], PositionMap["ReconnectButton"][2],
             0xFFFFFF, 3
         ],
+        "GoldenTextSearch", [
+            PositionMap["Mastery_NameGoldenTL"][1], PositionMap["Mastery_NameGoldenTL"][2],
+            PositionMap["Mastery_NameGoldenBR"][1], PositionMap["Mastery_NameGoldenBR"][2],
+            0xFFB626, 3
+        ],
+        "TpButtonMetallic", [
+            PositionMap["TPButtonTL"][1], PositionMap["TPButtonTL"][2],
+            PositionMap["TPButtonBR"][1], PositionMap["TPButtonBR"][2],
+            0x93B5C7, 5
+        ]
     )
+    
 
     global MacroSetup
     global MacroRunTime
@@ -900,8 +914,10 @@ F3::{
                 EscapeTime_2 := A_TickCount
 
                 loop {
-                    if not EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+                    if not EvilSearch(PixelSearchTables["TpButton"], false)[1] and not EvilSearch(PixelSearchTables["GoldenTextSearch"], false)[1] {
                         break
+                    } else if EvilSearch(PixelSearchTables["GoldenTextSearch"], false)[1] {
+                        SendEvent "{Click, " PositionMap["MiddleOfScreen"][1] ", " PositionMap["MiddleOfScreen"][2] ", 1}"
                     }
 
                     if A_TickCount - EscapeTime_2 >= 12000 {
@@ -1052,15 +1068,17 @@ F3::{
                         KeyResetAmount += 1
                     }
                 }
-    
+
                 if UserHasKeys {
                     ;-- Stuff gets a little confusing ehre, but we are going to walk back 1000, if we enter the first time then a-okay
                     Sleep(NumberValueMap["DoorOpenWaitTime"])
                     EscapeTime_6 := A_TickCount
                     SendEvent "{S Down}"
                     loop {
-                        if not EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+                        if not EvilSearch(PixelSearchTables["TpButton"], false)[1] and not EvilSearch(PixelSearchTables["GoldenTextSearch"], false)[1] {
                             break
+                        } else if EvilSearch(PixelSearchTables["GoldenTextSearch"], false)[1] {
+                            SendEvent "{Click, " PositionMap["MiddleOfScreen"][1] ", " PositionMap["MiddleOfScreen"][2] ", 1}"
                         }
         
                         if A_TickCount - EscapeTime_6 >= 1000 {
