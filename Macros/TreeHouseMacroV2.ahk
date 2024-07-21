@@ -1,4 +1,4 @@
-; /[V2.0.05]\ (Used for auto-update)
+; /[V2.0.06]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -11,7 +11,7 @@ CoordMode "Mouse", "Screen"
 CoordMode "Pixel", "Screen"
 SetMouseDelay -1
 
-global Version := "2.0.12"
+global Version := "2.0.13"
 global MacroSetup := false
 
 ; For Active UI
@@ -762,6 +762,9 @@ StupidWorldSwtich() {
 
     global WorldResets += 1
     global KeyResetAmount := 0
+    SendEvent "{Click, " PositionMap["MiddleOfScreen"][1] ", " PositionMap["MiddleOfScreen"][2] ", 1}"
+    Sleep(200)
+    SendEvent "{Tab Down}{Tab Up}"
 }
 
 F3::{
