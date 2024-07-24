@@ -8,7 +8,8 @@ TypeToFunction := Map(
     "Text", Create_TNTP_UI,
     "Position", Create_TNTP_UI,
     "Selection", CreateSelectionUI,
-    "Object", CreateObjectUI
+    "Object", CreateObjectUI,
+    "MM_Empower", CreateEmpoweredUI
 )
 
 global __HeldUIs := Map()
@@ -86,33 +87,34 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
         
                 NewButton := AdvancedSettings.AddButton("w160 h30 xs y" ADVSettingButtonSpacing, SettingObject.Name)
         
-                if SettingObject.type = "Selection" {
-                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings, {Button:NewButton, UID:UIDigit},,VariablisticMap)
-                    NewButton.SetFont("s10")
-        
-                    SettingObject.UIObject := NewUIObject
-                } else {
-                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings, VariablisticMap, IsForMulti)
-                    NewButton.SetFont("s10")
-                    NewButton.OnEvent("Click", NewUIObject.ShowFunction)
-                    __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, NewUIObject.UI)
+                switch SettingObject.type {
+                    case "Selection", "MM_Empower":
+                        NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings, {Button:NewButton, UID:UIDigit},,VariablisticMap)
+                        NewButton.SetFont("s10")
+            
+                        SettingObject.UIObject := NewUIObject
+                    default:
+                        NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings, VariablisticMap, IsForMulti)
+                        NewButton.SetFont("s10")
+                        NewButton.OnEvent("Click", NewUIObject.ShowFunction)
+                        __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, NewUIObject.UI)
                 }
-
             default:
                 SettingButtonSpacing += 35
         
                 NewButton := BaseGui.AddButton("w160 h30 x" (UIWidth/2 + 75 - BaseGui.MarginX) " y" SettingButtonSpacing, SettingObject.Name)
         
-                if SettingObject.type = "Selection" {
-                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui, {Button:NewButton, UID:UIDigit},,VariablisticMap)
-                    NewButton.SetFont("s10")
-        
-                    SettingObject.UIObject := NewUIObject
-                } else {
-                    NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui, VariablisticMap, IsForMulti)
-                    NewButton.SetFont("s10")
-                    NewButton.OnEvent("Click", NewUIObject.ShowFunction)
-                    __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, NewUIObject.UI)
+                switch SettingObject.type {
+                    case "Selection", "MM_Empower":
+                        NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui, {Button:NewButton, UID:UIDigit},,VariablisticMap)
+                        NewButton.SetFont("s10")
+            
+                        SettingObject.UIObject := NewUIObject
+                    default:
+                        NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui, VariablisticMap, IsForMulti)
+                        NewButton.SetFont("s10")
+                        NewButton.OnEvent("Click", NewUIObject.ShowFunction)
+                        __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, NewUIObject.UI)
                 }
         }
     }
@@ -250,7 +252,6 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
         FileName := SaveSettingAsNewGUI.submit().Name
         FileToSaveTo := ""
         
-
         if NewFile {
             IniWrite(FileName ".ini", Path "\BaseSettings.ini", "LLS", "LastLoaded")
             FileToSaveTo := Path "\MacroSettings\" FileName ".ini"
@@ -277,10 +278,25 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                     }
 
                     IniWrite(FormattedText, FileToSaveTo, SettingObject.SaveName, "FormatString")
+                case "MM_Empower":
+                    FormattedText := ""
+
+                    for EnchantName, EnchantArray in SettingObject.Map {
+                        for _, EnchantObject in EnchantArray {
+                            
+                            if FormattedText = "" {
+                                FormattedText := EnchantName "|TierText:" EnchantObject.TierText  "|TierValue:" EnchantObject.TierValue "|Amount:" EnchantObject.Amount  
+                            } else {
+                                FormattedText := FormattedText "!" EnchantName "|TierText:" EnchantObject.TierText  "|TierValue:" EnchantObject.TierValue "|Amount:" EnchantObject.Amount  
+                            }
+                        }
+                    }
+
+                    IniWrite(FormattedText, FileToSaveTo, SettingObject.SaveName, "FormatString")
                 case "Object":
                     for Name, Objective in SettingObject.Map {
                         for I, V in Objective.OwnProps() {
-                            if SettingObject.ObjectIgnore.Has(I) {
+                            if SettingObject.HasOwnProp("ObjectIgnore") and SettingObject.ObjectIgnore.Has(I) {
                                 continue
                             }
 
@@ -349,6 +365,27 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                     }
 
                     SettingObject.UIObject.RefreshFunc()
+                case "MM_Empower":
+                    SettingObject.Map.Clear()
+                    FormattedText := IniRead(LoadFile, SettingObject.SaveName, "FormatString")
+
+                    for _, EnchantToInformation in StrSplit(FormattedText, "!") {
+                        FurtherSplit := StrSplit(EnchantToInformation, "|")
+                        EnchantName := FurtherSplit[1]
+                        EnchantTier := StrSplit(FurtherSplit[2], ":")[2]
+                        EnchantTierValue := StrSplit(FurtherSplit[3], ":")[2]
+                        EnchantAmount := StrSplit(FurtherSplit[4], ":")[2]
+
+                        if not SettingObject.Map.Has(EnchantName) {
+                            SettingObject.Map[EnchantName] := []
+                        }
+
+                        SettingObject.Map[EnchantName].InsertAt(SettingObject.Map[EnchantName].Length + 1, {
+                            TierText:EnchantTier, TierValue:EnchantTierValue, Amount:EnchantAmount
+                        })
+                    }
+
+                    SettingObject.UIObject.RefreshFunc()
                 default:
                     for Key, Value in SettingObject.Map {
                         try {
@@ -359,7 +396,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                                     VariablisticMap[SettingObject.SaveName][Key][2].Value := SettingObject.Map[Key][2]
                                 case "Object":
                                     for I, V in Value.OwnProps() {
-                                        if SettingObject.ObjectIgnore.Has(I) {
+                                        if SettingObject.HasOwnProp("ObjectIgnore") and SettingObject.ObjectIgnore.Has(I) {
                                             continue
                                         }
     
@@ -462,6 +499,38 @@ CreatePosHelper(UI, Name, PosArray, Num, I := "", Objective := false) {
     return [UD1, UD2]
 }
 
+CreateHalfPosHelper(UI, Name, PosNum, Num, I := "", Objective := false) {
+    PushButton := 0
+    if Objective {
+        PushButton += 48
+        UI.Add("Text","Section xs y" Num, Name ":")
+    } else {
+        UI.Add("Text","Section xs y" (Num * 25 + (40)), Name ":")
+    }
+
+    UI.Add("Button", "w25 h25 x" (290 - PushButton) " ys", "S").OnEvent("Click", ButtonClicked)
+    ud := ""
+
+    if Objective {
+        ud := UI.Add("Edit","ys w60 x" (320-PushButton),)
+        UI.AddUpDown("v" Name I "Pos Range1-40000", PosNum)
+    } else {
+        ud := UI.Add("Edit","ys w60 x320",)
+        UI.AddUpDown("v" Name "Pos Range1-40000", PosNum)
+    }
+  
+    Character := "X"
+    if InStr(Name, "_Y") {
+        Character := "Y"
+    }
+
+
+    ButtonClicked(*) {
+        global CurrentPostionLabel := [ud, Character]
+    }
+
+    return ud
+}
 
 ;-- Create Toggle/Number/Text/Positioning UI
 Create_TNTP_UI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
@@ -787,17 +856,19 @@ CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
 
         ; Arrange values to be in order from Array (Position) -> String (Text) -> Integer (Number) -> Boolean (Toggle)
         ObjectiveOrderArray := []
-        SimplifiedObject := {A:[],B:[],C:[],D:[]}
+        SimplifiedObject := {A:[],B:[],C:[],D:[],E:[]}
 
         for I, V in Objective.OwnProps() {
             switch Type(V) {
                 case "String":
-                    SimplifiedObject.B.InsertAt(SimplifiedObject.B.Length + 1, I)
+                    SimplifiedObject.C.InsertAt(SimplifiedObject.C.Length + 1, I)
                 case "Integer":
-                    if _MapOBJ.Booleans.Has(I) {
-                        SimplifiedObject.D.InsertAt(SimplifiedObject.D.Length + 1, I)
+                    if _MapOBJ.HasOwnProp("Booleans") and _MapOBJ.Booleans.Has(I) {
+                        SimplifiedObject.E.InsertAt(SimplifiedObject.E.Length + 1, I)
+                    } else if _MapOBJ.HasOwnProp("HalfPositions") and _MapOBJ.HalfPositions.Has(I) {
+                        SimplifiedObject.B.InsertAt(SimplifiedObject.B.Length + 1, I)
                     } else {
-                        SimplifiedObject.C.InsertAt(SimplifiedObject.C.Length + 1, I)
+                        SimplifiedObject.D.InsertAt(SimplifiedObject.D.Length + 1, I)
                     }
                 case "Array":
                     SimplifiedObject.A.InsertAt(SimplifiedObject.A.Length + 1, I)
@@ -814,7 +885,7 @@ CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
             I := IValue
             V := Objective.%IValue%
 
-            if _MapOBJ.ObjectIgnore.Has(I) {
+            if _MapOBJ.HasOwnProp("ObjectIgnore") and _MapOBJ.ObjectIgnore.Has(I) {
                 continue
             }
 
@@ -824,14 +895,17 @@ CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
                     VariablisticMap[_MapOBJ.SaveName][Name I] := ObjectSettingsUI.AddEdit("w120 h20 yp xp+190 v" I Name, V)
                     
                 case "Integer":
-                    if _MapOBJ.Booleans.Has(I) {
+                    if _MapOBJ.HasOwnProp("Booleans") and _MapOBJ.Booleans.Has(I) {
                         ObjectSettingsUI.AddText("w150 h20 xs y" NextOffset, I ":").SetFont("s10")
                         VariablisticMap[_MapOBJ.SaveName][Name I] := ObjectSettingsUI.AddCheckbox("w20 h20 v" I Name " yp xp+190 Checked" V)
                         VariablisticMap[_MapOBJ.SaveName][Name I].SetFont("s9")
+                    } else if _MapOBJ.HasOwnProp("HalfPositions") and _MapOBJ.HalfPositions.Has(I) {
+                        ObjectSettingsUI.SetFont("s10")
+                        VariablisticMap[_MapOBJ.SaveName][Name I] := CreateHalfPosHelper(ObjectSettingsUI, I, V, NextOffset, Name, true)
                     } else {
                         ObjectSettingsUI.AddText("w150 h20 xs y" NextOffset, I ":").SetFont("s10")
                         VariablisticMap[_MapOBJ.SaveName][Name I] := ObjectSettingsUI.AddEdit("w120 h20 yp xp+190")
-                        ObjectSettingsUI.AddUpDown("v" I Name " range1-2147483647", V)
+                        ObjectSettingsUI.AddUpDown("v" I Name " range0-2147483647", V)
                     }
                 case "Array":
                     ObjectSettingsUI.SetFont("s10")
@@ -864,7 +938,7 @@ CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
 
         for Name, Objective in _Map {
             for I, V in Objective.OwnProps() {
-                if _MapOBJ.ObjectIgnore.Has(I) {
+                if _MapOBJ.HasOwnProp("ObjectIgnore") and _MapOBJ.ObjectIgnore.Has(I) {
                     continue
                 }
 
@@ -873,8 +947,13 @@ CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
                         Objective.%I% := [ReturnedValues[I Name "XPos"], ReturnedValues[I Name "YPos"]]
                         OutputDebug("`n Set Pos Value")
                     default:
-                        Objective.%I% := ReturnedValues[I Name]
-                        OutputDebug("`nSet Value")
+                        if _MapOBJ.HasOwnProp("HalfPositions") and _MapOBJ.HalfPositions.Has(I) {
+                            Objective.%I% := ReturnedValues[I Name "Pos"]
+                            OutputDebug("`nSet HalfPos Value")
+                        } else {
+                            Objective.%I% := ReturnedValues[I Name]
+                            OutputDebug("`nSet Value")
+                        }
                 }
             }
         }
@@ -1122,6 +1201,238 @@ ObjToMap(Obj, Depth:=5, IndentLevel:="") {
   }
 
   return NewMap
+}
+
+;-- SPECIFIC UI TYPES
+;-- Basically very very specific UI needs that can be aranged from previous functions but really have no need to be their own entire thing
+
+;-- Yeah, we're winning.
+EmpowerSelectionUI_CreateUIS(MapToEvilize, Name) {
+    TierArray := ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+    AdditiveUI := Gui()
+    DestructiveUI := Gui()
+
+    DestroyArray := []
+    for Key, KeyArray in MapToEvilize {
+        for _, KeyObject in KeyArray {
+            DestroyArray.InsertAt(DestroyArray.Length + 1, Key "_" KeyObject.TierText)
+        }
+    }
+
+    AdditiveUI.Opt("+AlwaysOnTop")
+    DestructiveUI.Opt("+AlwaysOnTop")
+
+    AdditiveUI.AddText("w380 h20 Section", "Add To Selection | " Name).SetFont("s12 w700")
+    DestructiveUI.AddText("w300 h20 Section", "Remove From Selection | " Name).SetFont("s12 w700")
+
+    AdditiveUI.AddEdit("w150 h20 vNewInstance", "New Selection Here").SetFont("s10")
+    AdditiveUI.AddText("w47 h20 xp+160", "Amount:").SetFont("s10")
+
+    AdditiveUI.AddEdit("w50 h20 yp xp+50")
+    AdditiveUI.AddUpDown("vAmount Range1-10", 1)
+    AdditiveUI.AddText("w27 h20 xp+60", "Tier:").SetFont("s10")
+
+    AdditiveUI.AddDropDownList("w50 h20 r10 Choose yp xp+30 Choose1 vTier", TierArray)
+
+
+    DestructiveUI.AddDropDownList("w150 h20 vDestroyValue Choose1 r6", DestroyArray).SetFont("s9")
+    DestroyButton := DestructiveUI.AddButton("w120 h30 xs", "Destroy Selection")
+    DestroyButton.SetFont("s10")
+    AddButton := AdditiveUI.AddButton("w120 h30 xs", "Add Selection")
+    AddButton.SetFont("s10")
+
+    return {
+        Additive:{
+            AddButton:AddButton,
+            PhysicalUI:AdditiveUI
+        },
+        Destructive:{
+            DestroyButton:DestroyButton,
+            PhsyicalUI:DestructiveUI
+        }
+    }
+}
+
+;-- A Mix of selection UI & Object UI
+;-- BaseCode Taken from SelectionUI
+CreateEmpoweredUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, VariablisticMap := Map()) {
+    global __HeldUIs
+    TrueObject := PreviousObject
+    TierArray := ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+
+    _Map := _MapOBJ.Map
+    ; Map Here is expected to be:
+    ; Map(
+    ;     "EnchantName", [{TierText:"IX", TierValue:9, Amount:1}]
+    ; )
+
+
+    SelectionUI := Gui()
+    SelectionUI.AddText("w200 h20 Section", _MapOBJ.Name " Selection").SetFont("s12 w700")
+    SpacelessTable := Map()
+
+    for Setting, SettingArray in _Map {
+        for _, SettingObject in SettingArray {
+            NewerString := ""
+            for _,Text in StrSplit(Setting, " ") {
+                NewerString := NewerString Text
+            }
+            NewerString := NewerString SettingObject.TierText
+    
+            if SpacelessTable.Has(NewerString) {
+                continue
+            }
+    
+            SpacelessTable[NewerString] := Setting
+    
+            SelectionUI.AddText("w120 h20 xs", Setting " " SettingObject.TierText ":").SetFont("s10")
+            SelectionUI.AddText("w47 h20 xp+125", "Amount:").SetFont("s10")
+
+            SelectionUI.AddEdit("w50 h20 yp xp+50")
+            SelectionUI.AddUpDown("v" NewerString " Range1-10", SettingObject.Amount)
+        }
+    }
+
+    UIObjectTable := EmpowerSelectionUI_CreateUIS(_Map, _MapOBJ.Name)
+    AdditiveUI := UIObjectTable.Additive.PhysicalUI
+    AdditiveButton := UIObjectTable.Additive.AddButton
+    DestructiveUI := UIObjectTable.Destructive.PhsyicalUI
+    DestructiveButton := UIObjectTable.Destructive.DestroyButton
+
+    AddSelectionButton := SelectionUI.AddButton("w95 h30 xs", "Add Selection")
+    RemoveSelectionButton := SelectionUI.AddButton("w125 h30 xs+100 yp", "Remove Selection")
+    FinalizeButton := SelectionUI.AddButton("w95 h30 xs", "Set Values")
+
+    ShowAddSelection(*) {
+        AdditiveUI.Show()
+    }
+    
+    ShowRemoveSelection(*) {
+        DestructiveUI.Show()
+    }
+
+    RefreshUI() {
+        AdditiveUI.Destroy()
+        DestructiveUI.Destroy()
+        SelectionUI.Destroy()
+
+        NewUIObject := CreateEmpoweredUI(_MapOBJ, BaseUI, TrueObject)
+        NewUIObject.UI.Show()
+        TrueObject.Button.OnEvent("Click", ShowFunction, false)
+    }
+
+    LoadRefreshUI(*) {
+        AdditiveUI.Destroy()
+        DestructiveUI.Destroy()
+        SelectionUI.Destroy()
+
+        NewUIObject := CreateEmpoweredUI(_MapOBJ, BaseUI, TrueObject, false)
+        TrueObject.Button.OnEvent("Click", ShowFunction, false)
+    }
+
+    SelectionAdded(*) {
+        Values := AdditiveUI.Submit(false)
+        HitValue := true 
+
+        EnchantName := Values.NewInstance
+        EnchantTier := Values.Tier
+        EnchantAmount := Values.Amount
+
+        if not _Map.Has(EnchantName) {
+            _Map[EnchantName] := []
+        } else {
+            for _, EchObj in _Map[EnchantName] {
+                if EchObj.TierText = EnchantTier {
+                    MsgBox("There is already a Enchant:Tier Combo for [" EnchantName ":" EnchantTier "]", "Error", "0x1032 0x1")
+                    return
+                }
+            }
+        }
+        TempNumber := 1
+
+        for _, Numeral in TierArray {
+            if Numeral = EnchantTier {
+                TempNumber := _
+                break
+            }
+        }
+
+        AdditiveUI.Submit(true)
+        _Map[EnchantName].InsertAt(_Map[EnchantName].Length + 1, {
+            TierText:EnchantTier, TierValue:TempNumber, Amount:EnchantAmount
+        })
+
+        RefreshUI()
+    }
+
+    SelectionRemoved(*) {
+        Values := DestructiveUI.Submit()
+        
+        SplitText := StrSplit(Values.DestroyValue, "_")
+        EnchantName := SplitText[1]
+        EnchantTier := SplitText[2]
+
+        for _, Obj in _Map[EnchantName] {
+            if Obj.TierText = EnchantTier {
+                _Map[EnchantName].RemoveAt(_)
+
+                if _Map[EnchantName].Length = 0 {
+                    _Map.Delete(EnchantName)
+                }
+                
+                break
+            }
+        }
+
+        RefreshUI()
+    }
+
+    SaveSettings(*) {
+        AdditiveUI.Hide()
+        DestructiveUI.Hide()
+        ReturnedValues := ObjToMap(SelectionUI.Submit())
+
+        for EnchantName, EnchantArray in _Map {
+            Stringical := ""
+
+            for Key, Value in SpacelessTable {
+                if Value = EnchantName {
+                    Stringical := Key
+                }
+            }
+
+            for _, EnchantObject in EnchantArray {
+                EnchantObject.Amount := ReturnedValues[Stringical]
+            }
+        }
+    }
+
+    ShowFunction(*) {
+        BaseUI.GetPos(&u, &u2, &u3, &u4)
+        SelectionUI.GetPos(&a, &a2, &a3, &a4)
+        SelectionUI.Show("X" (u - a3) " Y" u2 "")
+        
+        SelectionUI.GetPos(&a, &a2, &a3, &a4)
+        SelectionUI.Show("X" (u - a3) " Y" u2 "")
+    }
+
+    AddSelectionButton.OnEvent("Click", ShowAddSelection)
+    RemoveSelectionButton.OnEvent("Click", ShowRemoveSelection)
+    AdditiveButton.OnEvent("Click", SelectionAdded)
+    DestructiveButton.OnEvent("Click", SelectionRemoved)
+    FinalizeButton.OnEvent("Click", SaveSettings)
+
+    TrueObject.ShowFunction := ShowFunction
+    TrueObject.UI := SelectionUI
+    TrueObject.Button.OnEvent("Click", ShowFunction, true)
+    TrueObject.RefreshFunc := LoadRefreshUI
+
+    UIS := [AdditiveUI, DestructiveUI, SelectionUI]
+    For _, UI in UIS {
+        __HeldUIs["UID" PreviousObject.UID].InsertAt(__HeldUIs["UID" PreviousObject.UID].Length + 1, UI)
+    }
+
+    return TrueObject
 }
 
 ^LButton::{
