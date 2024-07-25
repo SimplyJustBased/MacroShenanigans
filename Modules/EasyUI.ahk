@@ -26,7 +26,10 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
     if UIDForcing != -1 {
         UIDigit := UIDForcing
     }
-    __HeldUIs["UID" UIDigit] := []
+
+    if not __HeldUIs.Has("UID" UIDigit) {
+        __HeldUIs["UID" UIDigit] := []
+    }
     VariablisticMap := Map()
 
     AdvancedSettings := Gui()
@@ -424,6 +427,10 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
         AdvancedSettings.Show()
     }
 
+    if IsForMulti {
+        __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, BaseGui)    
+    }
+
     UIObject.BaseUI := BaseGui
     UIObject.EnableButton := EMB
     UIObject.UID := UIDigit
@@ -586,7 +593,7 @@ Create_TNTP_UI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
         S_f := "s10"
 
         if MI {
-            if _MapOBJ.MultiInstanceIgnore.Has(Setting) {
+            if _MapOBJ.HasOwnProp("MultiInstanceIgnore") and _MapOBJ.MultiInstanceIgnore.Has(Setting) {
                 S_f := "s10 c900000"
             }
         }
@@ -1093,6 +1100,7 @@ MultiInstancing(MapIndex, AccountList, BaseUI, UID, UIObject) {
 }
 
 CreateUIsForMulti(ToDo, MapIndex, TSettings, RecMap, ID, UIDigit) {
+    OutputDebug("`n" UIDigit)
     switch ToDo {
         case "Macro":
             MIndexClone := CloneMap(MapIndex)
@@ -1110,6 +1118,7 @@ CreateUIsForMulti(ToDo, MapIndex, TSettings, RecMap, ID, UIDigit) {
 
 CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UIDigit, BaseUI) {
     MultiInstanceUI := Gui(, "Multi-Instance | Settings")
+    MultiInstanceUI.Opt("+AlwaysOnTop")
 
     TabsArray := []
     loop(Ceil(InstMap.Count / 7)) {
@@ -1150,7 +1159,7 @@ CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UIDigit, BaseUI) {
     EMB := MultiInstanceUI.AddButton("w140 h30 x74 y" ((Min(7, TSettings)) * 55 + (80)), "Enable Macro")
     EMB.SetFont("s10")
 
-    UIObject.EMB := EMB
+    UIObject.EnableButton := EMB
     MultiInstanceUI.OnEvent("Close", (*) => ReturnFunction())
 
     ReturnFunction() {
@@ -1162,12 +1171,14 @@ CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UIDigit, BaseUI) {
 
         BaseUI.Show()
     }
+
     SmallestFunctionEver() {
         UIObject.Instances.RecMap := RecreationMap
         UIObject.Instances.Multi := true
     }
-    EMB.OnEvent("Click", (*) => SmallestFunctionEver())
 
+    EMB.OnEvent("Click", (*) => SmallestFunctionEver())
+    __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, MultiInstanceUI)
 
     MultiInstanceUI.Show()
 }
