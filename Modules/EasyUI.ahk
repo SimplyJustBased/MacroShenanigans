@@ -358,37 +358,42 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
         for _, SettingObject in MapIndex["Settings"] {
             switch SettingObject.Type {
                 case "Selection":
-                    SettingObject.Map.Clear()
-                    FormattedText := IniRead(LoadFile, SettingObject.SaveName, "FormatString")
+                    try {
+                        FormattedText := IniRead(LoadFile, SettingObject.SaveName, "FormatString")
+                        SettingObject.Map.Clear()
 
-                    for _, SelectionToStatus in StrSplit(FormattedText, "|") {
-                        SecondSplit := StrSplit(SelectionToStatus, ":")
 
-                        SettingObject.Map[SecondSplit[1]] := SecondSplit[2]
-                    }
+                        for _, SelectionToStatus in StrSplit(FormattedText, "|") {
+                            SecondSplit := StrSplit(SelectionToStatus, ":")
 
-                    SettingObject.UIObject.RefreshFunc()
-                case "MM_Empower":
-                    SettingObject.Map.Clear()
-                    FormattedText := IniRead(LoadFile, SettingObject.SaveName, "FormatString")
-
-                    for _, EnchantToInformation in StrSplit(FormattedText, "!") {
-                        FurtherSplit := StrSplit(EnchantToInformation, "|")
-                        EnchantName := FurtherSplit[1]
-                        EnchantTier := StrSplit(FurtherSplit[2], ":")[2]
-                        EnchantTierValue := StrSplit(FurtherSplit[3], ":")[2]
-                        EnchantAmount := StrSplit(FurtherSplit[4], ":")[2]
-
-                        if not SettingObject.Map.Has(EnchantName) {
-                            SettingObject.Map[EnchantName] := []
+                            SettingObject.Map[SecondSplit[1]] := SecondSplit[2]
                         }
 
-                        SettingObject.Map[EnchantName].InsertAt(SettingObject.Map[EnchantName].Length + 1, {
-                            TierText:EnchantTier, TierValue:EnchantTierValue, Amount:EnchantAmount
-                        })
+                        SettingObject.UIObject.RefreshFunc()
                     }
+                case "MM_Empower":
+                    try {
+                        FormattedText := IniRead(LoadFile, SettingObject.SaveName, "FormatString")
+                        SettingObject.Map.Clear()
 
-                    SettingObject.UIObject.RefreshFunc()
+                        for _, EnchantToInformation in StrSplit(FormattedText, "!") {
+                            FurtherSplit := StrSplit(EnchantToInformation, "|")
+                            EnchantName := FurtherSplit[1]
+                            EnchantTier := StrSplit(FurtherSplit[2], ":")[2]
+                            EnchantTierValue := StrSplit(FurtherSplit[3], ":")[2]
+                            EnchantAmount := StrSplit(FurtherSplit[4], ":")[2]
+
+                            if not SettingObject.Map.Has(EnchantName) {
+                                SettingObject.Map[EnchantName] := []
+                            }
+
+                            SettingObject.Map[EnchantName].InsertAt(SettingObject.Map[EnchantName].Length + 1, {
+                                TierText:EnchantTier, TierValue:EnchantTierValue, Amount:EnchantAmount
+                            })
+                        }
+
+                        SettingObject.UIObject.RefreshFunc()
+                    }
                 default:
                     for Key, Value in SettingObject.Map {
                         try {
@@ -657,7 +662,7 @@ Create_TNTP_UI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
 }
 
 ;-- Used In SelectionUI_CreateUIS
-SelectionUI_CreateUIS(MapToEvilize, TypeOfButton, Name) {
+SelectionUI_CreateUIS(MapToEvilize, Name, TypeOfButton := "toggle") {
     AdditiveUI := Gui()
     DestructiveUI := Gui()
 
@@ -673,8 +678,15 @@ SelectionUI_CreateUIS(MapToEvilize, TypeOfButton, Name) {
     DestructiveUI.AddText("w300 h20 Section", "Remove From Selection | " Name).SetFont("s12 w700")
 
     AdditiveUI.AddEdit("w150 h20 vNewInstance", "New Selection Here").SetFont("s10")
-    if TypeOfButton = "toggle" {
-        AdditiveUI.AddDropDownList("w80 h20 vBaseValue Choose1 r2 yp xp+160", ["true", "false"]).SetFont("s9")
+    switch TypeOfButton {
+        case "toggle":
+            AdditiveUI.AddDropDownList("w80 h20 vBaseValue Choose1 r2 yp xp+160", ["true", "false"]).SetFont("s9")
+        case "number":
+            OutputDebug("A")
+            AdditiveUI.AddEdit("w80 h20 yp xp+160")
+            AdditiveUI.AddUpDown("vBaseValue range0-2147483647", 0)
+        default:
+            OutputDebug(TypeOfButton)
     }
 
     DestructiveUI.AddDropDownList("w150 h20 vDestroyValue Choose1 r6", DestroyArray).SetFont("s9")
@@ -706,6 +718,11 @@ CreateSelectionUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variabl
     SelectionUI.AddText("w200 h20 Section", _MapOBJ.Name " Selection").SetFont("s12 w700")
     SpacelessTable := Map()
 
+    TypeOfSelection := "toggle"
+    if _MapOBJ.HasOwnProp("SelectionType") and _MapOBJ.SelectionType != TypeOfSelection {
+        TypeOfSelection := _MapOBJ.SelectionType
+    }
+
     for Setting, SettingValue in _Map {
         NewerString := ""
         for _,Text in StrSplit(Setting, " ") {
@@ -719,10 +736,17 @@ CreateSelectionUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variabl
         SpacelessTable[NewerString] := Setting
 
         SelectionUI.AddText("w150 h20 xs", Setting ":").SetFont("s10")
-        SelectionUI.AddCheckbox("w20 h20 v" NewerString " yp xp+210 Checked" SettingValue).SetFont("s9")
+        switch TypeOfSelection {
+            case "number":
+                SelectionUI.AddEdit("w80 h20 yp xp+150").SetFont("s9")
+                SelectionUI.AddUpDown("range0-2147483647 v" NewerString, SettingValue)
+            default:
+                SelectionUI.AddCheckbox("w20 h20 v" NewerString " yp xp+210 Checked" SettingValue).SetFont("s9")
+        }
     }
 
-    UIObjectTable := SelectionUI_CreateUIS(_Map, "toggle", _MapOBJ.Name)
+
+    UIObjectTable := SelectionUI_CreateUIS(_Map, _MapOBJ.Name, TypeOfSelection)
     AdditiveUI := UIObjectTable.Additive.PhysicalUI
     AdditiveButton := UIObjectTable.Additive.AddButton
     DestructiveUI := UIObjectTable.Destructive.PhsyicalUI
@@ -761,13 +785,18 @@ CreateSelectionUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variabl
 
     SelectionAdded(*) {
         Values := AdditiveUI.Submit()
-        HitValue := true 
-        if Values.BaseValue = "false" {
-            HitValue := false
+        switch TypeOfSelection {
+            case "number":
+                _Map[Values.NewInstance] :=  Values.BaseValue
+            default:
+                HitValue := true 
+
+                if Values.BaseValue = "false" {
+                    HitValue := false
+                }
+
+                _Map[Values.NewInstance] := HitValue
         }
-
-        _Map[Values.NewInstance] := HitValue
-
         RefreshUI()
     }
 
@@ -784,7 +813,7 @@ CreateSelectionUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variabl
         ReturnedValues := ObjToMap(SelectionUI.Submit())
 
         for Key, Value in ReturnedValues {
-            _Map[Key] := Value
+            _Map[SpacelessTable[Key]] := Value
         }
     }
 
