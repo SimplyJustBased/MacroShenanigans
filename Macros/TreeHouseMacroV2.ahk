@@ -1,4 +1,4 @@
-; /[V2.0.06]\ (Used for auto-update)
+; /[V2.0.07]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
@@ -11,7 +11,7 @@ CoordMode "Mouse", "Screen"
 CoordMode "Pixel", "Screen"
 SetMouseDelay -1
 
-global Version := "2.0.13"
+global Version := "2.0.12"
 global MacroSetup := false
 
 ; For Active UI
@@ -564,6 +564,7 @@ UIOBject := CreateBaseUI(Map(
 ))
 
 UIOBject.BaseUI.Show()
+UIOBject.BaseUI.OnEvent("Close", (*) => ExitApp())
 
 MacroEnabled(*) {
     global MacroSetup := true
