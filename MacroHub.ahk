@@ -1,4 +1,4 @@
-; /[V1.0.0]\
+; /[V1.0.01]\
 
 #Requires AutoHotkey v2.0
 
@@ -35,7 +35,7 @@ FontsDownload := Map(
 
 Macros := Map(
     "TreeHouseMacroV2", {
-        Status:"Stable | Maintained | New",
+        Status:"Stable | Maintained",
         StatusColor:"Green",
         RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/TreeHouseMacroV2.ahk",
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/TreeHouseMacroV2.ahk&page=1&per_page=1",
