@@ -1013,10 +1013,12 @@ ExtendedFunction(MultiInstanceSetupUI, NSetting, ID) {
 
 ;-- Used for MultiInstance | Settings so the buttons work
 AnotherExtendedFunction(MultiInstanceUI, NSetting, AccountID, AccountOBJ) {
-    ActivateButton := MultiInstanceUI.AddButton("y" ((NSetting * 55 + (45))) " w100 h25 x93", "Open Settings")
-    ActivateButton.SetFont("s9")
+    SettingButton := MultiInstanceUI.AddButton("y" ((NSetting * 55 + (45))) " w100 h25 x83", "Open Settings")
+    ActivateButton := MultiInstanceUI.AddButton("y" ((NSetting * 55 + (45))) " w25 h25 xp+100", "🔍")
 
-    ActivateButton.OnEvent("Click", (*) => AccountOBJ.Obj.BaseUI.Show())
+    SettingButton.SetFont("s9")
+    ActivateButton.OnEvent("Click", (*) => WinActivate("ahk_id " AccountID))
+    SettingButton.OnEvent("Click", (*) => AccountOBJ.Obj.BaseUI.Show())
 }
 
 CreateAfkUI(ObtainedMap, ID, TSettings, UIDigit) {
@@ -1119,7 +1121,7 @@ MultiInstancing(MapIndex, AccountList, BaseUI, UID, UIObject) {
             }
         }
 
-        CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UID, BaseUI)
+        CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UID, BaseUI, AccountList)
     }
 
     FinalizeButton.OnEvent("Click", (*) => Step2())
@@ -1145,7 +1147,7 @@ CreateUIsForMulti(ToDo, MapIndex, TSettings, RecMap, ID, UIDigit) {
     }
 }
 
-CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UIDigit, BaseUI) {
+CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UIDigit, BaseUI, AccountOrder) {
     MultiInstanceUI := Gui(, "Multi-Instance | Settings")
     MultiInstanceUI.Opt("+AlwaysOnTop")
 
@@ -1164,7 +1166,13 @@ CreateMultiInstanceUI(MapIndex, InstMap, UIObject, UIDigit, BaseUI) {
 
     RecreationMap := Map()
 
-    for AccountID, ToDo in InstMap {
+    for _, AccountID in AccountOrder {
+        if not InstMap.has(AccountID) {
+            continue
+        }
+
+        ToDo := InstMap[AccountID]
+
         NSetting += 1
         TSettings += 1
 
