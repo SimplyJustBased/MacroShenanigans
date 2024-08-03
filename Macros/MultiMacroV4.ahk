@@ -1,4 +1,4 @@
-; /[V4.0.0]\ (Used for auto-update)
+; /[V4.0.01]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "4.0.0"
@@ -1986,7 +1986,7 @@ F3::{
         SendEvent "{Q Down}{Q Up}"
 
         if MultiInstancingEnabled {
-        SaveToDebug("Saving Current information to CleanMap Of ID:" ID)
+        SaveToDebug("Saving Current information to CleanMap Of ID:" CurrentID)
 
             CleanMap := InstanceMap[CurrentID]
             CleanMap["CurrentZone"] := CurrentZone
