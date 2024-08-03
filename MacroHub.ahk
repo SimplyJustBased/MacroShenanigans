@@ -1,4 +1,4 @@
-; /[V1.0.01]\
+; /[V1.0.02]\
 
 #Requires AutoHotkey v2.0
 
@@ -43,12 +43,12 @@ Macros := Map(
         Existant:true
     },
     "MultiMacroV4", {
-        Status:"Coming Soon | Testing Soon",
-        StatusColor:"0x484848",
+        Status:"Stable | New | Maintained",
+        StatusColor:"Green",
         RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/MultiMacroV4.ahk",
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/MultiMacroV4.ahk&page=1&per_page=1",
         MacroFile:"MultiMacroV4.ahk",
-        Existant:false
+        Existant:true
     },
 )
 
