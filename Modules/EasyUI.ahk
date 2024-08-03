@@ -1049,7 +1049,7 @@ CreateAfkUI(ObtainedMap, ID, TSettings, UIDigit) {
     QuickSave() {
         sb := BaseUI.Submit()
         for _1, _2 in ObtainedMap["Afk Settings"].OwnProps() {
-            if _1 = "ClickDelay" {
+            if _1 = "ClickTime" {
                 ObtainedMap["Afk Settings"].%_1% := sb.ClickTime
             } else {
                 ObtainedMap["Afk Settings"].%_1% := [sb.ClickXPos, sb.ClickYPos]
