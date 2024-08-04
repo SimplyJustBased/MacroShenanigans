@@ -1,4 +1,4 @@
-; /[V4.0.02]\ (Used for auto-update)
+; /[V4.0.03]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "4.0.0"
@@ -1547,6 +1547,7 @@ M_Fn5() {
     global TotalLoopAmount
     global AutofarmZone
     global EmpowerCD
+    global PixelSearchTables
 
     if MacroTogglesMap["FarmZone"] or MacroTogglesMap["HatchEggs"] {
         if not CurrentZone = ZoneInformation.FinalZone.Zone_Number {
@@ -1574,7 +1575,7 @@ M_Fn5() {
             loop {
                 SendEvent "{Click, " PositionMap["MiddleOfScreen"][1] ", " PositionMap["MiddleOfScreen"][2] ", 1}"
 
-                if EvilSearch(PixelSearchTables["TPButton"], false)[1] {
+                if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
                     TpDetections += 1
                 } else {
                     TpDetections := 0
