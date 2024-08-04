@@ -1,4 +1,4 @@
-; /[V4.0.01]\ (Used for auto-update)
+; /[V4.0.02]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "4.0.0"
@@ -1514,7 +1514,7 @@ M_Fn2() {
             case (MacroTogglesMap["AutoEmpower"] and not MacroTogglesMap["AutoDaycare"]):
                 SaveToDebug("NO DAYCARE BUT VERY MUCH EMPOWER")
 
-                EmpowerMyEnchant
+                EmpowerMyEnchant()
             default:
                 SaveToDebug("if you got here shits fucked up")
                 OutputDebug("`nNeither or something idk somethings probably fucked")
@@ -1574,7 +1574,7 @@ M_Fn5() {
             loop {
                 SendEvent "{Click, " PositionMap["MiddleOfScreen"][1] ", " PositionMap["MiddleOfScreen"][2] ", 1}"
 
-                if EvilSearch(PixelSearchTables["TPButton"][1], false)[1] {
+                if EvilSearch(PixelSearchTables["TPButton"], false)[1] {
                     TpDetections += 1
                 } else {
                     TpDetections := 0
