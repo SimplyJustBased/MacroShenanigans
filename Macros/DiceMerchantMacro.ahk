@@ -1,4 +1,4 @@
-; /[V1.0.04]\ (Used for auto-update)
+; /[V1.0.05]\ (Used for auto-update)
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -23,7 +23,7 @@ SetMouseDelay -1
 
 InstancesMap := Map()
 InstancesArray := []
-SortThrough := [[WinGetList("ahk_exe RobloxPlayerBeta.exe"), WinGetList("Roblox", "Roblox")]]
+SortThrough := [WinGetList("ahk_exe RobloxPlayerBeta.exe"), WinGetList("Roblox", "Roblox")]
 
 for _, InAry in SortThrough {
     for _, Id in InAry {
@@ -127,6 +127,7 @@ F3::{
                 Sleep(200)
             }
 
+            SetPixelSearchLoop("X", 15000, 1,,,100)
             if ArrayCheck(LbPositions) {
                 Send "{Tab Down}{Tab Up}"
                 Sleep(200)
