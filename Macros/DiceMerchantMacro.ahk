@@ -1,4 +1,5 @@
-; /[V1.0.01]\ (Used for auto-update)
+; /[V1.0.02]\ (Used for auto-update)
+
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -83,6 +84,10 @@ McEnabled() {
     global MacroEnabled := true
 }
 
+F6::{
+    OutputDebug(EvilSearch(PixelSearchTables["TpButton"], false)[1])
+}
+
 F3::{
     if not MacroEnabled {
         return
@@ -91,14 +96,19 @@ F3::{
     loop {
         for _, Inst_ID in InstancesArray {
             WinActivate("ahk_id " Inst_ID)
+            WinMove(,,200,200,"ahk_id " Inst_ID)
             Sleep(100)
 
             if DcCheck() {
-                SetPixelSearchLoop("TpButton", 120000, 1, DisconnectPositions[3],,100)
+                SetPixelSearchLoop("TpButton", 120000,, DisconnectPositions[3],,100)
+                Sleep(100)
+                Send "{Tab Down}{Tab Up}"
                 Sleep(100)
                 RouteUser(Routes["SpawnToMinigame"])
                 Sleep(4000)
                 RouteUser(Routes["MinigameToMerchant"])
+                Sleep(100)
+                SendEvent "{Click, 300, 81, 1}"
                 Sleep(100)
                 SendEvent "{W Down}"
                 SetPixelSearchLoop("X", 40000, 1,,,100)
