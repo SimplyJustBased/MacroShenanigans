@@ -1,8 +1,8 @@
-; /[V1.0.02]\
+; /[V1.0.03]\
 
 #Requires AutoHotkey v2.0
 
-global Version := "1.0.0"
+global Version := "1.0.1"
 global InfoUI := Gui()
 InfoUI.Opt("-SysMenu -Caption +AlwaysOnTop")
 InfoUI.SetFont("s15")
@@ -24,8 +24,10 @@ FoldersToCheck := [
 ModulesToDownload := Map(
     "EasyUI.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/EasyUI.ahk",
     "_JXON.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/_JXON.ahk",
-    "Router.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/Router.ahk",
-    "UWBOCRLib.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/UWBOCRLib.ahk"
+    ; "Router.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/Router.ahk", (No longer needed, UsefulFunctions Has router)
+    "UWBOCRLib.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/UWBOCRLib.ahk",
+    "UsefulFunctions.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/UsefulFunctions.ahk",
+    "BasePositions.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/BasePositions.ahk"
 )
 
 FontsDownload := Map(
@@ -34,6 +36,14 @@ FontsDownload := Map(
 )
 
 Macros := Map(
+    "DiceMerchantMacro", {
+        Status:"New | Event | Stable?",
+        StatusColor:"d500d5",
+        RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/DiceMerchantMacro.ahk",
+        APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/DiceMerchantMacro.ahk&page=1&per_page=1",
+        MacroFile:"DiceMerchantMacro.ahk",
+        Existant:true
+    },
     "TreeHouseMacroV2", {
         Status:"Stable | Maintained",
         StatusColor:"Green",
@@ -43,7 +53,7 @@ Macros := Map(
         Existant:true
     },
     "MultiMacroV4", {
-        Status:"Stable | New | Maintained",
+        Status:"Stable | Maintained",
         StatusColor:"Green",
         RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/MultiMacroV4.ahk",
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/MultiMacroV4.ahk&page=1&per_page=1",
@@ -52,7 +62,7 @@ Macros := Map(
     },
 )
 
-MacroOrder := ["MultiMacroV4", "TreeHouseMacroV2"]
+MacroOrder := ["DiceMerchantMacro", "MultiMacroV4", "TreeHouseMacroV2"]
 
 Xs := [40, 270, 500]
 Ys := [60, 250, 440]
