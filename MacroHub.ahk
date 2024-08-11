@@ -1,4 +1,4 @@
-; /[V1.0.03]\
+; /[V1.0.04]\
 
 #Requires AutoHotkey v2.0
 
@@ -24,7 +24,7 @@ FoldersToCheck := [
 ModulesToDownload := Map(
     "EasyUI.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/EasyUI.ahk",
     "_JXON.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/_JXON.ahk",
-    ; "Router.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/Router.ahk", (No longer needed, UsefulFunctions Has router)
+    "Router.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/Router.ahk", ;(No longer needed, UsefulFunctions Has router) [It was still very needed.]
     "UWBOCRLib.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/UWBOCRLib.ahk",
     "UsefulFunctions.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/UsefulFunctions.ahk",
     "BasePositions.ahk", "https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Modules/BasePositions.ahk"
