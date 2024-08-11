@@ -1,4 +1,4 @@
-; /[V1.0.02]\ (Used for auto-update)
+; /[V1.0.03]\ (Used for auto-update)
 
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
@@ -61,7 +61,7 @@ DcCheck() {
 }
 
 global UI := CreateBaseUI(Map(
-    "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"", Version:"V1.0.0", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
+    "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"Auto-Buys Merchant, Start macro with account(s) on merchant circle w/ it open`nF3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:"V1.0.0", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
     "Settings", [{Map:NumberValueMap, Type:"Number", Name:"Number Settings", SaveName:"NVs", IsAdvanced:false}, {Map:Routes, Type:"Text", Name:"Route Settings", SaveName:"NVs", IsAdvanced:true}],
     "SettingsFolder", {Folder:A_MyDocuments "\PS99_Macros\SavedSettings\", FolderName:"DiceMerchantMacro"}
 ))
@@ -82,10 +82,6 @@ McEnabled() {
     }
 
     global MacroEnabled := true
-}
-
-F6::{
-    OutputDebug(EvilSearch(PixelSearchTables["TpButton"], false)[1])
 }
 
 F3::{
@@ -135,3 +131,4 @@ F3::{
 }
 
 F8::ExitApp
+F6::Pause -1
