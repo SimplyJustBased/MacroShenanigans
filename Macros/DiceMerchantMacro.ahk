@@ -1,4 +1,4 @@
-; /[V1.0.05]\ (Used for auto-update)
+; /[V1.0.06]\ (Used for auto-update)
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -127,7 +127,6 @@ F3::{
                 Sleep(200)
             }
 
-            SetPixelSearchLoop("X", 15000, 1,,,100)
             if ArrayCheck(LbPositions) {
                 Send "{Tab Down}{Tab Up}"
                 Sleep(200)
