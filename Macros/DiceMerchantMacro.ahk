@@ -1,5 +1,4 @@
-; /[V1.0.03]\ (Used for auto-update)
-
+; /[V1.0.04]\ (Used for auto-update)
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -24,7 +23,7 @@ SetMouseDelay -1
 
 InstancesMap := Map()
 InstancesArray := []
-SortThrough := [WinGetList("ahk_exe RobloxPlayerBeta.exe"), WinGetList("Roblox", "Roblox")]
+SortThrough := [[WinGetList("ahk_exe RobloxPlayerBeta.exe"), WinGetList("Roblox", "Roblox")]]
 
 for _, InAry in SortThrough {
     for _, Id in InAry {
@@ -45,20 +44,36 @@ DisconnectPositions := [
     [214, 324, 0x393B3D], [599, 327, 0x393B3D], [500, 427, 0xFFFFFF]
 ]
 
-DcCheck() {
+LbPositions := [
+    [598, 73, 618, 88, 0xCB8C37],
+    [653, 74, 674, 89, 0x4B8FB3], 
+    [737, 75, 751, 88, 0xC04B5D]
+]
+
+ArrayCheck(ArrayToCheck := []) {
+    NumWanted := ArrayToCheck.Length
     Num := 0
-    for _, Check in DisconnectPositions {
-        if PixelSearch(&u,&u2, Check[1], Check[2], Check[1], Check[2], Check[3], 5) {
-            Num++
+
+    for _, Check in ArrayToCheck {
+
+        if Check.Length = 3 {
+            if PixelSearch(&u,&u2, Check[1], Check[2], Check[1], Check[2], Check[3], 5) {
+                Num++
+            }
+        } else if Check.Length = 5 {
+            if PixelSearch(&u,&u2, Check[1], Check[2], Check[3], Check[4], Check[5], 25) {
+                Num++
+            }
         }
     }
 
-    if Num >= 3 {
+    if Num >= NumWanted {
         return true
     }
 
     return false
 }
+
 
 global UI := CreateBaseUI(Map(
     "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"Auto-Buys Merchant, Start macro with account(s) on merchant circle w/ it open`nF3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:"V1.0.0", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
@@ -95,7 +110,7 @@ F3::{
             WinMove(,,200,200,"ahk_id " Inst_ID)
             Sleep(100)
 
-            if DcCheck() {
+            if ArrayCheck(DisconnectPositions) {
                 SetPixelSearchLoop("TpButton", 120000,, DisconnectPositions[3],,100)
                 Sleep(100)
                 Send "{Tab Down}{Tab Up}"
@@ -110,6 +125,19 @@ F3::{
                 SetPixelSearchLoop("X", 40000, 1,,,100)
                 SendEvent "{W Up}"
                 Sleep(200)
+            }
+
+            if ArrayCheck(LbPositions) {
+                Send "{Tab Down}{Tab Up}"
+                Sleep(200)
+                PM_ClickPos("X")
+                SendEvent "{D Down}"
+                Sleep(500)
+                SendEvent "{D Up}"
+                Sleep(100)
+                SendEvent "{A Down}"
+                SetPixelSearchLoop("X", 40000, 1,,,100)
+                SendEvent "{A Up}"
             }
 
             for _, Pos in ClickPositions {
