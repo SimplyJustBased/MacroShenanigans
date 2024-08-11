@@ -15,7 +15,7 @@ ____ADVTextToFunctionMap := Map(
 
 ____PSCreationMap := [
     ["TpButtonCheck", 0xEC0D3A, 15],
-    ["TpButton", 0xEC0D3A, 15],
+    ["TpButton", 0xEC0D3A, 5],
     ["SearchField", 0x1E1E1E, 3],
     ["StupidCat", 0x95AACD, 10],
     ["MiniX", 0xFF0B4E, 5],
@@ -116,11 +116,11 @@ SetPixelSearchLoop(
     StartTime := A_TickCount
     if (not EvilSearch(PixelSearchTables[Key], false)[1] and Type = 1) or (EvilSearch(PixelSearchTables[Key], false)[1] and Type = 2) {
         loop {
-            if ClickPositions.Length = 2 {
+            if ClickPositions.Length >= 2 {
                 SendEvent "{Click, " ClickPositions[1] ", " ClickPositions[2] ", 1}"
             }
 
-            if (A_TickCount - StartTime) <= (5*1000) {
+            if (A_TickCount - StartTime) >= (BreakTime) {
                 return false
             }
 
@@ -138,6 +138,7 @@ SetPixelSearchLoop(
             Sleep(SleepTime)
         }
     }
+
 }
 
 /**
