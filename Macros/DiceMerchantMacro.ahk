@@ -1,3 +1,6 @@
+; /[V1.0.0]\ (Used for auto-update)
+
+
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
