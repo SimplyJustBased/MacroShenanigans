@@ -278,7 +278,7 @@ ____TP(Value) {
     }
 }
 
-____TP_1() {
+____TP_1(*) {
     Clean_UI()
     PM_ClickPos("TpButton")
 }
