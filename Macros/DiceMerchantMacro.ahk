@@ -1,4 +1,4 @@
-; /[V1.0.07]\ (Used for auto-update)
+; /[V1.0.08]\ (Used for auto-update)
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -10,10 +10,11 @@ global NumberValueMap := Map(
     "ClickNumber", 4,
     "ClickDelay", 250,
     "LoopDownTime", 0,
+    "ColorBuyMaxTime", 5000,
 )
 
 global TogglesMap := Map(
-    "BuyBasedOnColor", true,
+    ; "BuyBasedOnColor", true,
     "UseAlternateAccounts", true
 )
 
@@ -144,29 +145,34 @@ Mainical() {
         SendEvent "{A Up}"
     }
 
-    if TogglesMap["BuyBasedOnColor"] {
-        loop 6 {
-            Pos := ClickPositions[A_Index]
-            ColorCheck := ColorPositions[A_Index]
+    ; if TogglesMap["BuyBasedOnColor"] {
+    ;     loop 6 {
+    ;         Pos := ClickPositions[A_Index]
+    ;         ColorCheck := ColorPositions[A_Index]
 
-            loop {                
-                Offset1 := Random(-20,20)
-                Offset2 := Random(-2,2)
+    ;         StartTime := A_TickCount
+    ;         loop {                
+    ;             Offset1 := Random(-20,20)
+    ;             Offset2 := Random(-2,2)
 
-                MouseMove((Pos[1] + Offset1), (Pos[2] + Offset2))
-                SendEvent "{Click, " (Pos[1] + Offset1) ", " (Pos[2] + Offset2) ", 1}"
-                ExternalTime := A_TickCount
+    ;             MouseMove((Pos[1] + Offset1), (Pos[2] + Offset2))
+    ;             SendEvent "{Click, " (Pos[1] + Offset1) ", " (Pos[2] + Offset2) ", 1}"
+    ;             ExternalTime := A_TickCount
 
-                if PixelSearch(&u,&u,ColorCheck[1], ColorCheck[2], ColorCheck[1], ColorCheck[2], 0x535353, 1) {
-                    break
-                }
+    ;             if PixelSearch(&u,&u,ColorCheck[1], ColorCheck[2], ColorCheck[1], ColorCheck[2], 0x535353, 1) {
+    ;                 break
+    ;             }
 
-                Sleep(NumberValueMap["ClickDelay"] - (A_TickCount - ExternalTime))
-            }
-        }
+    ;             if A_TickCount - StartTime >= NumberValueMap["ColorBuyMaxTime"] {
+    ;                 break
+    ;             }
 
-        return
-    }
+    ;             Sleep(NumberValueMap["ClickDelay"] - (A_TickCount - ExternalTime))
+    ;         }
+    ;     }
+
+    ;     return
+    ; }
 
     for _, Pos in ClickPositions {
         loop NumberValueMap["ClickNumber"] {
