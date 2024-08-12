@@ -1,4 +1,4 @@
-; /[V1.0.06]\ (Used for auto-update)
+; /[V1.0.07]\ (Used for auto-update)
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -10,6 +10,11 @@ global NumberValueMap := Map(
     "ClickNumber", 4,
     "ClickDelay", 250,
     "LoopDownTime", 0,
+)
+
+global TogglesMap := Map(
+    "BuyBasedOnColor", true,
+    "UseAlternateAccounts", true
 )
 
 global Routes := Map(
@@ -38,6 +43,12 @@ ClickPositions := [
     [183, 266], [411, 263],
     [652, 271], [177, 430],
     [419, 425], [649, 430]
+]
+
+ColorPositions := [
+    [131, 271], [360, 267],
+    [593, 268], [127, 425],
+    [359, 427], [591, 428]
 ]
 
 DisconnectPositions := [
@@ -76,8 +87,11 @@ ArrayCheck(ArrayToCheck := []) {
 
 
 global UI := CreateBaseUI(Map(
-    "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"Auto-Buys Merchant, Start macro with account(s) on merchant circle w/ it open`nF3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:"V1.0.0", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
-    "Settings", [{Map:NumberValueMap, Type:"Number", Name:"Number Settings", SaveName:"NVs", IsAdvanced:false}, {Map:Routes, Type:"Text", Name:"Route Settings", SaveName:"NVs", IsAdvanced:true}],
+    "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"Auto-Buys Merchant, Start macro with account(s) on merchant circle w/ it open`nF3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:"V1.0.1", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
+    "Settings", [
+        {Map:NumberValueMap, Type:"Number", Name:"Number Settings", SaveName:"NVs", IsAdvanced:false}, {Map:Routes, Type:"Text", Name:"Route Settings", SaveName:"NVs", IsAdvanced:true},
+        {Map:TogglesMap, Type:"Toggle", Name:"Toggle Settings", SaveName:"TSs", IsAdvanced:false},
+    ],
     "SettingsFolder", {Folder:A_MyDocuments "\PS99_Macros\SavedSettings\", FolderName:"DiceMerchantMacro"}
 ))
 
@@ -99,62 +113,98 @@ McEnabled() {
     global MacroEnabled := true
 }
 
+Mainical() {
+    if ArrayCheck(DisconnectPositions) {
+        SetPixelSearchLoop("TpButton", 120000,, DisconnectPositions[3],,100)
+        Sleep(100)
+        Send "{Tab Down}{Tab Up}"
+        Sleep(100)
+        RouteUser(Routes["SpawnToMinigame"])
+        Sleep(4000)
+        RouteUser(Routes["MinigameToMerchant"])
+        Sleep(100)
+        SendEvent "{Click, 300, 81, 1}"
+        Sleep(100)
+        SendEvent "{W Down}"
+        SetPixelSearchLoop("X", 40000, 1,,,100)
+        SendEvent "{W Up}"
+        Sleep(200)
+    }
+
+    if ArrayCheck(LbPositions) {
+        Send "{Tab Down}{Tab Up}"
+        Sleep(200)
+        PM_ClickPos("X")
+        SendEvent "{D Down}"
+        Sleep(500)
+        SendEvent "{D Up}"
+        Sleep(100)
+        SendEvent "{A Down}"
+        SetPixelSearchLoop("X", 40000, 1,,,100)
+        SendEvent "{A Up}"
+    }
+
+    if TogglesMap["BuyBasedOnColor"] {
+        loop 6 {
+            Pos := ClickPositions[A_Index]
+            ColorCheck := ColorPositions[A_Index]
+
+            loop {                
+                Offset1 := Random(-20,20)
+                Offset2 := Random(-2,2)
+
+                MouseMove((Pos[1] + Offset1), (Pos[2] + Offset2))
+                SendEvent "{Click, " (Pos[1] + Offset1) ", " (Pos[2] + Offset2) ", 1}"
+                ExternalTime := A_TickCount
+
+                if PixelSearch(&u,&u,ColorCheck[1], ColorCheck[2], ColorCheck[1], ColorCheck[2], 0x535353, 1) {
+                    break
+                }
+
+                Sleep(NumberValueMap["ClickDelay"] - (A_TickCount - ExternalTime))
+            }
+        }
+
+        return
+    }
+
+    for _, Pos in ClickPositions {
+        loop NumberValueMap["ClickNumber"] {
+            Offset1 := Random(-20,20)
+            Offset2 := Random(-2,2)
+
+            MouseMove((Pos[1] + Offset1), (Pos[2] + Offset2))
+            SendEvent "{Click, " (Pos[1] + Offset1) ", " (Pos[2] + Offset2) ", 1}"
+            Sleep(NumberValueMap["ClickDelay"])
+        }
+    }
+}
+
 F3::{
     if not MacroEnabled {
         return
     }
 
     loop {
-        for _, Inst_ID in InstancesArray {
-            WinActivate("ahk_id " Inst_ID)
-            WinMove(,,200,200,"ahk_id " Inst_ID)
-            Sleep(100)
+        switch TogglesMap["UseAlternateAccounts"] {
+            case true:
+                for _, Inst_ID in InstancesArray {
+                    WinActivate("ahk_id " Inst_ID)
+                    WinMove(,,816,638,"ahk_id " Inst_ID)
+                    Sleep(100)
 
-            if ArrayCheck(DisconnectPositions) {
-                SetPixelSearchLoop("TpButton", 120000,, DisconnectPositions[3],,100)
-                Sleep(100)
-                Send "{Tab Down}{Tab Up}"
-                Sleep(100)
-                RouteUser(Routes["SpawnToMinigame"])
-                Sleep(4000)
-                RouteUser(Routes["MinigameToMerchant"])
-                Sleep(100)
-                SendEvent "{Click, 300, 81, 1}"
-                Sleep(100)
-                SendEvent "{W Down}"
-                SetPixelSearchLoop("X", 40000, 1,,,100)
-                SendEvent "{W Up}"
-                Sleep(200)
-            }
+                    Mainical()
 
-            if ArrayCheck(LbPositions) {
-                Send "{Tab Down}{Tab Up}"
-                Sleep(200)
-                PM_ClickPos("X")
-                SendEvent "{D Down}"
-                Sleep(500)
-                SendEvent "{D Up}"
-                Sleep(100)
-                SendEvent "{A Down}"
-                SetPixelSearchLoop("X", 40000, 1,,,100)
-                SendEvent "{A Up}"
-            }
-
-            for _, Pos in ClickPositions {
-                loop NumberValueMap["ClickNumber"] {
-                    Offset1 := Random(-20,20)
-                    Offset2 := Random(-2,2)
-
-                    MouseMove((Pos[1] + Offset1), (Pos[2] + Offset2))
-                    SendEvent "{Click, " (Pos[1] + Offset1) ", " (Pos[2] + Offset2) ", 1}"
-                    Sleep(NumberValueMap["ClickDelay"])
+                    Sleep(100)
                 }
-            }
-
-            Sleep(100)
+            case false:
+                Mainical()
+            default:
+                MsgBox("How")
         }
 
         Sleep(NumberValueMap["LoopDownTime"])
+
     }
 }
 
