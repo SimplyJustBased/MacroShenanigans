@@ -9,8 +9,9 @@ global PixelSearchTables := Map()
 ____ADVTextToFunctionMap := Map(
     "Tp:", ____TP,
     "w_nV:", ____W_nV,
-    "wt:", ____W,
+    "wt:", ____Wt,
     "r:", ____R,
+    "w:", ____W,
 )
 
 ____PSCreationMap := [
@@ -116,16 +117,16 @@ SetPixelSearchLoop(
     StartTime := A_TickCount
     if (not EvilSearch(PixelSearchTables[Key], false)[1] and Type = 1) or (EvilSearch(PixelSearchTables[Key], false)[1] and Type = 2) {
         loop {
-            if ClickPositions.Length >= 2 {
-                SendEvent "{Click, " ClickPositions[1] ", " ClickPositions[2] ", 1}"
-            }
-
             if (A_TickCount - StartTime) >= (BreakTime) {
                 return false
             }
 
             if (EvilSearch(PixelSearchTables[Key], false)[1] and Type = 1) or (not EvilSearch(PixelSearchTables[Key], false)[1] and Type = 2) {
                 return true
+            }
+
+            if ClickPositions.Length >= 2 {
+                SendEvent "{Click, " ClickPositions[1] ", " ClickPositions[2] ", 1}"
             }
 
             for _, FuncOBJ in ExtendedFunctionObject {
@@ -283,13 +284,30 @@ ____TP_1(*) {
     PM_ClickPos("TpButton")
 }
 
+____W(Value) {
+    Sleep(400)
+    PM_ClickPos("TpButton")
+    Sleep(400)
+
+    SetPixelSearchLoop("X", 20000, 1,,,150,[{Func:____TP_1, Time:6000}])
+
+    ButtonOrder := ["SpawnButton", "TechButton", "VoidButton"]
+    PositionToUse := ButtonOrder[Value]
+
+    Sleep(200)
+    PM_ClickPos(PositionToUse)
+    Sleep(400)
+
+    SetPixelSearchLoop("MiniX", 15000, 2, PM_GetPos("YesButton"))
+}
+
 ; Used for RouteUser
 ____W_nV(Value) {
     Sleep(NumberValueMap[Value])
 }
 
 ; Used for RouteUser
-____W(Value) {
+____Wt(Value) {
     Sleep(Value)
 }
 
