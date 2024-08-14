@@ -1,4 +1,4 @@
-; /[V1.0.08]\ (Used for auto-update)
+; /[V1.0.09]\ (Used for auto-update)
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -14,12 +14,14 @@ global NumberValueMap := Map(
 )
 
 global TogglesMap := Map(
-    ; "BuyBasedOnColor", true,
+    "BuyBasedOnColor", true,
     "UseAlternateAccounts", true
 )
 
 global Routes := Map(
     "SpawnToMinigame", "Tp:Colorful Forest|w_nV:TpWaitTime|Tp:Spawn|w_nV:TpWaitTime|r:[0%Q10&20%W250&190%D900]",
+    "TechSpawnToMinigame", "Tp:Mushroom Lab|w_nV:TpWaitTime|Tp:Tech Spawn|w_nV:TpWaitTime|r:[0%Q10&10%D2000]",
+    "VoidSpawnToMinigame", "Tp:Prison Tower|w_nV:TpWaitTime|w:3|w_nV:TpWaitTime|r:[0%Q10&20%A700&790%S1200]",
     "MinigameToMerchant", "r:[0%W1000&1030%A1500]"
 )
 
@@ -88,7 +90,7 @@ ArrayCheck(ArrayToCheck := []) {
 
 
 global UI := CreateBaseUI(Map(
-    "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"Auto-Buys Merchant, Start macro with account(s) on merchant circle w/ it open`nF3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:"V1.0.1", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
+    "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"Auto-Buys Merchant, Start macro with account(s) on merchant circle w/ it open`nF3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:"V1.0.2", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
     "Settings", [
         {Map:NumberValueMap, Type:"Number", Name:"Number Settings", SaveName:"NVs", IsAdvanced:false}, {Map:Routes, Type:"Text", Name:"Route Settings", SaveName:"NVs", IsAdvanced:true},
         {Map:TogglesMap, Type:"Toggle", Name:"Toggle Settings", SaveName:"TSs", IsAdvanced:false},
@@ -114,13 +116,36 @@ McEnabled() {
     global MacroEnabled := true
 }
 
+WorldsArray := ["Farm", "Mushroom Lab", "Prison Tower"]
+Secondary := ["", "Tech", "Void"]
 Mainical() {
     if ArrayCheck(DisconnectPositions) {
         SetPixelSearchLoop("TpButton", 120000,, DisconnectPositions[3],,100)
         Sleep(100)
         Send "{Tab Down}{Tab Up}"
         Sleep(100)
-        RouteUser(Routes["SpawnToMinigame"])
+
+        SetPixelSearchLoop("X", 20000,, PM_GetPos("TpButton"),,1000)
+
+        For _, Word in WorldsArray {
+            Sleep(200)
+            PM_ClickPos("SearchField")
+            Sleep(200)
+            SendText Word
+            Sleep(200)
+    
+            if PixelSearch(&u, &u, 403, 271, 403, 271, 0x64F003, 5) {
+    
+                Clean_UI()
+                RouteUser(Routes[Secondary[_] "SpawnToMinigame"])
+                
+                break
+            }
+    
+            Sleep(200)
+            SendEvent "{Click, 705, 46, 1}"
+        }
+    
         Sleep(4000)
         RouteUser(Routes["MinigameToMerchant"])
         Sleep(100)
@@ -145,35 +170,48 @@ Mainical() {
         SendEvent "{A Up}"
     }
 
-    ; if TogglesMap["BuyBasedOnColor"] {
-    ;     loop 6 {
-    ;         Pos := ClickPositions[A_Index]
-    ;         ColorCheck := ColorPositions[A_Index]
+    if TogglesMap["BuyBasedOnColor"] {
+        loop 6 {
+            Pos := ClickPositions[A_Index]
+            ColorCheck := ColorPositions[A_Index]
 
-    ;         StartTime := A_TickCount
-    ;         loop {                
-    ;             Offset1 := Random(-20,20)
-    ;             Offset2 := Random(-2,2)
+            StartTime := A_TickCount
+            loop {                
+                ExternalTime := A_TickCount
 
-    ;             MouseMove((Pos[1] + Offset1), (Pos[2] + Offset2))
-    ;             SendEvent "{Click, " (Pos[1] + Offset1) ", " (Pos[2] + Offset2) ", 1}"
-    ;             ExternalTime := A_TickCount
 
-    ;             if PixelSearch(&u,&u,ColorCheck[1], ColorCheck[2], ColorCheck[1], ColorCheck[2], 0x535353, 1) {
-    ;                 break
-    ;             }
+                if PixelSearch(&u,&u,ColorCheck[1], ColorCheck[2], ColorCheck[1], ColorCheck[2], 0x535353, 1) {
+                    Sleep(100)
+                    break
+                }
 
-    ;             if A_TickCount - StartTime >= NumberValueMap["ColorBuyMaxTime"] {
-    ;                 break
-    ;             }
+                if A_TickCount - StartTime >= NumberValueMap["ColorBuyMaxTime"] {
 
-    ;             Sleep(NumberValueMap["ClickDelay"] - (A_TickCount - ExternalTime))
-    ;         }
-    ;     }
+                    if StupidCatCheck() {
+                        SendEvent "{Click, " 404 ", " 457 ", 1}"
+                        Sleep(100)
+                    }
 
-    ;     return
-    ; }
+                    Sleep(100)
+                    break
+                }
 
+                Sleep(NumberValueMap["ClickDelay"] - (A_TickCount - ExternalTime))
+
+
+                Offset1 := Random(-20,20)
+                Offset2 := Random(-2,2)
+
+                MouseMove((Pos[1] + Offset1), (Pos[2] + Offset2))
+                Sleep(30)
+                SendEvent "{Click, " (Pos[1] + Offset1) ", " (Pos[2] + Offset2) ", 1}"
+            }
+        }
+
+        return
+    }
+
+    OutputDebug("AAAAA")
     for _, Pos in ClickPositions {
         loop NumberValueMap["ClickNumber"] {
             Offset1 := Random(-20,20)
