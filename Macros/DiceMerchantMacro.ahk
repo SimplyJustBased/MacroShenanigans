@@ -1,4 +1,4 @@
-; /[V1.0.09]\ (Used for auto-update)
+; /[V1.0.10]\ (Used for auto-update)
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -15,7 +15,8 @@ global NumberValueMap := Map(
 
 global TogglesMap := Map(
     "BuyBasedOnColor", true,
-    "UseAlternateAccounts", true
+    "UseAlternateAccounts", true,
+    "Dc2", false
 )
 
 global Routes := Map(
@@ -116,9 +117,7 @@ McEnabled() {
     global MacroEnabled := true
 }
 
-WorldsArray := ["Farm", "Mushroom Lab", "Prison Tower"]
-Secondary := ["", "Tech", "Void"]
-Mainical() {
+DcFunc() {
     if ArrayCheck(DisconnectPositions) {
         SetPixelSearchLoop("TpButton", 120000,, DisconnectPositions[3],,100)
         Sleep(100)
@@ -156,6 +155,14 @@ Mainical() {
         SendEvent "{W Up}"
         Sleep(200)
     }
+}
+
+WorldsArray := ["Farm", "Mushroom Lab", "Prison Tower"]
+Secondary := ["", "Tech", "Void"]
+Mainical() {
+    if not TogglesMap["Dc2"] {
+        DcFunc()
+    }
 
     if ArrayCheck(LbPositions) {
         Send "{Tab Down}{Tab Up}"
@@ -179,6 +186,9 @@ Mainical() {
             loop {                
                 ExternalTime := A_TickCount
 
+                if TogglesMap["Dc2"] {
+                    DcFunc()
+                }
 
                 if PixelSearch(&u,&u,ColorCheck[1], ColorCheck[2], ColorCheck[1], ColorCheck[2], 0x535353, 1) {
                     Sleep(100)
@@ -214,6 +224,10 @@ Mainical() {
     OutputDebug("AAAAA")
     for _, Pos in ClickPositions {
         loop NumberValueMap["ClickNumber"] {
+                if TogglesMap["Dc2"] {
+                    DcFunc()
+                }
+
             Offset1 := Random(-20,20)
             Offset2 := Random(-2,2)
 
