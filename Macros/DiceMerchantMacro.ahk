@@ -1,4 +1,4 @@
-; /[V1.0.10]\ (Used for auto-update)
+; /[V1.0.11]\ (Used for auto-update)
 
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
@@ -16,7 +16,9 @@ global NumberValueMap := Map(
 global TogglesMap := Map(
     "BuyBasedOnColor", true,
     "UseAlternateAccounts", true,
-    "Dc2", false
+    "Dc2", false,
+    "ExtendedVersions", false,
+    "MerchantFix", true,
 )
 
 global Routes := Map(
@@ -30,18 +32,9 @@ CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
 SetMouseDelay -1
 
-InstancesMap := Map()
-InstancesArray := []
-SortThrough := [WinGetList("ahk_exe RobloxPlayerBeta.exe"), WinGetList("Roblox", "Roblox")]
+global InstancesMap := Map()
+global InstancesArray := []
 
-for _, InAry in SortThrough {
-    for _, Id in InAry {
-        if not InstancesMap.Has(Id) {
-            InstancesMap[Id] := true
-            InstancesArray.Push(Id)
-        }
-    }
-}
 
 ClickPositions := [
     [183, 266], [411, 263],
@@ -91,7 +84,7 @@ ArrayCheck(ArrayToCheck := []) {
 
 
 global UI := CreateBaseUI(Map(
-    "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"Auto-Buys Merchant, Start macro with account(s) on merchant circle w/ it open`nF3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:"V1.0.2", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
+    "Main", {Title:"DiceMerchantMacro", Video:"https://www.roblox.com/users/2052029634/profile", Description:"Auto-Buys Merchant, Start macro with account(s) on merchant circle w/ it open`nF3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:"V1.0.3", DescY:250, MacroName:"DiceMerchantMacro", IncludeFonts:false, MultiInstancing:false},
     "Settings", [
         {Map:NumberValueMap, Type:"Number", Name:"Number Settings", SaveName:"NVs", IsAdvanced:false}, {Map:Routes, Type:"Text", Name:"Route Settings", SaveName:"NVs", IsAdvanced:true},
         {Map:TogglesMap, Type:"Toggle", Name:"Toggle Settings", SaveName:"TSs", IsAdvanced:false},
@@ -168,13 +161,21 @@ Mainical() {
         Send "{Tab Down}{Tab Up}"
         Sleep(200)
         PM_ClickPos("X")
-        SendEvent "{D Down}"
+        SendEvent "{S Down}"
         Sleep(500)
-        SendEvent "{D Up}"
+        SendEvent "{S Up}"
         Sleep(100)
-        SendEvent "{A Down}"
+        SendEvent "{W Down}"
         SetPixelSearchLoop("X", 40000, 1,,,100)
-        SendEvent "{A Up}"
+        SendEvent "{W Up}"
+    } else if not EvilSearch(PixelSearchTables["X"])[1] and TogglesMap["MerchantFix"] {
+        SendEvent "{S Down}"
+        Sleep(500)
+        SendEvent "{S Up}"
+        Sleep(100)
+        SendEvent "{W Down}"
+        SetPixelSearchLoop("X", 40000, 1,,,100)
+        SendEvent "{W Up}"
     }
 
     if TogglesMap["BuyBasedOnColor"] {
@@ -241,6 +242,24 @@ Mainical() {
 F3::{
     if not MacroEnabled {
         return
+    }
+
+    global InstancesMap
+    global InstancesArray
+
+    SortThrough := [WinGetList("ahk_exe RobloxPlayerBeta.exe")]
+
+    if TogglesMap["ExtendedVersions"] {
+        SortThrough.Push(WinGetList("Roblox", "Roblox"))
+    }
+
+    for _, InAry in SortThrough {
+        for _, Id in InAry {
+            if not InstancesMap.Has(Id) {
+                InstancesMap[Id] := true
+                InstancesArray.Push(Id)
+            }
+        }
     }
 
     loop {
