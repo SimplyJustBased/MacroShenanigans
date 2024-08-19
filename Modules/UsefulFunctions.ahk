@@ -50,6 +50,8 @@ PM_ClickPos(Name := "") {
     if PositionMap.Has(Name) {
         Pos := PM_GetPos(Name)
 
+        SendEvent "{Click, " Pos[1] ", " Pos[2] ", 0}"
+        Sleep(15)
         SendEvent "{Click, " Pos[1] ", " Pos[2] ", 1}"
     } else {
         OutputDebug("Failure to click position")
