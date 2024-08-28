@@ -1,4 +1,4 @@
-; /[V1.0.04]\
+; /[V1.0.05]\
 
 #Requires AutoHotkey v2.0
 
@@ -37,12 +37,15 @@ FontsDownload := Map(
 
 Macros := Map(
     "DiceMerchantMacro", {
-        Status:"New | Event | Stable?",
-        StatusColor:"d500d5",
+        Status:"Event | Discontinued",
+        StatusColor:"430043",
         RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/DiceMerchantMacro.ahk",
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/DiceMerchantMacro.ahk&page=1&per_page=1",
         MacroFile:"DiceMerchantMacro.ahk",
-        Existant:true
+        Existant:true,
+        Placar:2,
+        RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "UsefulFunctions.ahk"],
+        DiscontinueReason:"RNG Event is over."
     },
     "TreeHouseMacroV2", {
         Status:"Stable | Maintained",
@@ -50,7 +53,9 @@ Macros := Map(
         RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/TreeHouseMacroV2.ahk",
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/TreeHouseMacroV2.ahk&page=1&per_page=1",
         MacroFile:"TreeHouseMacroV2.ahk",
-        Existant:true
+        Existant:true,
+        Placar:1,
+        RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "_JXON.ahk", "Router.ahk"]
     },
     "MultiMacroV4", {
         Status:"Stable | Maintained",
@@ -58,7 +63,9 @@ Macros := Map(
         RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/MultiMacroV4.ahk",
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/MultiMacroV4.ahk&page=1&per_page=1",
         MacroFile:"MultiMacroV4.ahk",
-        Existant:true
+        Existant:true,
+        Placar:1,
+        RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "UsefulFunctions.ahk"]
     },
 )
 
@@ -120,21 +127,6 @@ GoodTimeDiff(IsoTime) {
     return {Time:"A Couple", Word:"seconds"}
 }
 
-InfoText.Text := "Checking Modules... | If this gets stuck, Hit F8"
-
-for ModuleName, ModuleLink in ModulesToDownload {
-    whr := ComObject("WinHttp.WinHttpRequest.5.1")
-    whr.Open("GET", ModuleLink, true)
-    whr.Send()
-    whr.WaitForResponse()
-
-    if FileExist(A_MyDocuments "\PS99_Macros\Modules\" ModuleName) {
-        FileDelete(A_MyDocuments "\PS99_Macros\Modules\" ModuleName)
-    }
-
-    FileAppend(whr.ResponseText, A_MyDocuments "\PS99_Macros\Modules\" ModuleName, "UTF-8-RAW")
-}
-
 InfoText.Text := "Checking Macros... | If this gets stuck, Hit F8"
 
 
@@ -151,22 +143,56 @@ VersionCheck(FileMain, ResponseText) {
     }
 }
 
-MacrosLoaded := 0
-MacrosOnLine := 0
-MacrosOnColoumn := 1
+TabMacroList := [
+    {MacrosLoaded:0, MacrosOnColoumn:1, MacrosOnLine:0},
+    {MacrosLoaded:0, MacrosOnColoumn:1, MacrosOnLine:0}
+]
 
 MacroHubUI := Gui(,"Macro Hub | Version: " Version)
 MacroHubUI.Opt("+AlwaysOnTop")
-MHTabs := MacroHubUI.AddTab3("", ["Main"])
+MHTabs := MacroHubUI.AddTab3("", ["Main", "Discontinued"])
+MacroHubUI.AddText("Section w700 h30 Center", "Macro Hub | V" Version).SetFont("s15 w700")
+MHTabs.UseTab(2)
 MacroHubUI.AddText("Section w700 h30 Center", "Macro Hub | V" Version).SetFont("s15 w700")
 
-CreateMacroBox(MacroObject) {
+RunMacro(MacroObject) {
+    MacroHubUI.Hide()
+    InfoText.Text := "Checking Modules... | If this gets stuck, Hit F8"
+    InfoUI.Show()
+
+    for _, RequiredModule in MacroObject.RequiredModules {
+        whr := ComObject("WinHttp.WinHttpRequest.5.1")
+        whr.Open("GET", ModulesToDownload[RequiredModule], true)
+        whr.Send()
+        whr.WaitForResponse()
+
+        if FileExist(A_MyDocuments "\PS99_Macros\Modules\" RequiredModule) {
+            FileDelete(A_MyDocuments "\PS99_Macros\Modules\" RequiredModule)
+        }
+
+        FileAppend(whr.ResponseText, A_MyDocuments "\PS99_Macros\Modules\" RequiredModule, "UTF-8-RAW")
+    }
+
+    Run(A_MyDocuments "\PS99_Macros\MacroFiles\" MacroObject.MacroFile)
+    ExitApp()
+}
+
+CreateMacroBox(MacroObject, MacrosLoaded, MacrosOnColoumn, MacrosOnLine) {
     MacroHubUI.AddGroupBox("x" Xs[MacrosOnLine] " y" Ys[MacrosOnColoumn] " w200 h180 Section","").SetFont("s11")
     MacroHubUI.AddText("xs+5 ys+15 h30 w190 Center", MacroName).SetFont("s12 w600")
     MacroHubUI.AddText("xs+5 ys+40 h30 w190 Center", "Status").SetFont("s11 w600 underline")
     MacroHubUI.AddText("xs+5 ys+60 h30 w190 Center", MacroObject.Status).SetFont("s11 c" MacroObject.StatusColor)
-    MacroHubUI.AddText("xs+5 ys+90 h30 w190 Center", "Last Updated").SetFont("s11 w600 underline")
-    MacroHubUI.AddText("xs+5 ys+110 h30 w190 Center", LastUpdateTimeObj.Time " " LastUpdateTimeObj.Word " Ago").SetFont("s11")
+
+    switch MacroObject.Placar {
+        case 1:
+            MacroHubUI.AddText("xs+5 ys+90 h30 w190 Center", "Last Updated").SetFont("s11 w600 underline")
+            MacroHubUI.AddText("xs+5 ys+110 h30 w190 Center", LastUpdateTimeObj.Time " " LastUpdateTimeObj.Word " Ago").SetFont("s11")
+        case 2:
+            MacroHubUI.AddText("xs+5 ys+90 h30 w190 Center", "Reason").SetFont("s11 w600 underline")
+            MacroHubUI.AddText("xs+5 ys+110 h30 w190 Center", MacroObject.DiscontinueReason).SetFont("s11")
+    }
+
+
 
     if MacroObject.Existant {
         RunMacroButton := MacroHubUI.AddButton("xs+5 ys+140 h30 w190 Center", "Run Macro")
@@ -195,17 +221,14 @@ CreateMacroBox(MacroObject) {
                     
                     Result2 := MsgBox("Macro has been updated, would you like to run it?", "Macro Update", "0x1040 0x4")
                     if Result2 = "Yes" {
-                        Run(A_MyDocuments "\PS99_Macros\MacroFiles\" MacroObject.MacroFile)
-                        ExitApp()
+                        RunMacro(MacroObject)
                     }
 
                 } else if Result = "No" {
-                    Run(A_MyDocuments "\PS99_Macros\MacroFiles\" MacroObject.MacroFile)
-                    ExitApp()
+                    RunMacro(MacroObject)
                 }
             } else {
-                Run(A_MyDocuments "\PS99_Macros\MacroFiles\" MacroObject.MacroFile)
-                ExitApp()
+                RunMacro(MacroObject)
             }
         } else {
             Result := MsgBox("It seems you currently don't have this macro installed, would you like to install it?", "Macro Installation", "0x1032 0x4")
@@ -215,8 +238,7 @@ CreateMacroBox(MacroObject) {
 
                 Result2 := MsgBox("Macro has been installed, would you like to run it?", "Macro Installation", "0x1040 0x4")
                 if Result2 = "Yes" {
-                    Run(A_MyDocuments "\PS99_Macros\MacroFiles\" MacroObject.MacroFile)
-                    ExitApp()
+                    RunMacro(MacroObject)
                 }
             }
         }
@@ -225,24 +247,29 @@ CreateMacroBox(MacroObject) {
 
 for _, MacroName in MacroOrder {
     MacroObject := Macros[MacroName]
+    TabData := TabMacroList[MacroObject.Placar]
 
-    MacrosLoaded += 1
-    MacrosOnLine += 1
+    MHTabs.UseTab(MacroObject.Placar)
+
+    TabData.MacrosLoaded += 1
+    TabData.MacrosOnLine += 1
     
-    if MacrosOnLine > 3 {
-        MacrosOnLine := 1
-        MacrosOnColoumn += 1
+    if TabData.MacrosOnLine > 3 {
+        TabData.MacrosOnLine := 1
+        TabData.MacrosOnColoumn += 1
     }
 
-    whr := ComObject("WinHttp.WinHttpRequest.5.1")
-    whr.Open("GET", MacroObject.APILink, true)
-    whr.Send()
-    whr.WaitForResponse()
-    APIString := whr.ResponseText
+    if MacroObject.Placar = 1 {
+        whr := ComObject("WinHttp.WinHttpRequest.5.1")
+        whr.Open("GET", MacroObject.APILink, true)
+        whr.Send()
+        whr.WaitForResponse()
+        APIString := whr.ResponseText
+    
+        LastUpdateTimeObj := GoodTimeDiff(Jxon_Load(&APIString)[1]["commit"]["author"]["date"])
+    }
 
-    LastUpdateTimeObj := GoodTimeDiff(Jxon_Load(&APIString)[1]["commit"]["author"]["date"])
-
-    CreateMacroBox(MacroObject)
+    CreateMacroBox(MacroObject, TabData.MacrosLoaded, TabData.MacrosOnColoumn, TabData.MacrosOnLine)
 }
 
 InfoUI.Hide()
@@ -250,17 +277,20 @@ InfoUI.Hide()
 DonateUI := Gui(,"Donations")
 DonateUI.Opt("+AlwaysOnTop")
 
-DiscordButton := MacroHubUI.AddButton("w120 h30 x40 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Discord Server")
-YoutubeButton := MacroHubUI.AddButton("w140 h30 x165 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Youtube Channel")
-DonateButton := MacroHubUI.AddButton("w90 h30 x310 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Donate")
+loop 2 {
+    MHTabs.UseTab(A_Index)
+    DiscordButton := MacroHubUI.AddButton("w120 h30 x40 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Discord Server")
+    YoutubeButton := MacroHubUI.AddButton("w140 h30 x165 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Youtube Channel")
+    DonateButton := MacroHubUI.AddButton("w90 h30 x310 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Donate")
 
-DiscordButton.SetFont("s10")
-YoutubeButton.SetFont("s10")
-DonateButton.SetFont("s10")
+    DiscordButton.SetFont("s10")
+    YoutubeButton.SetFont("s10")
+    DonateButton.SetFont("s10")
 
-DiscordButton.OnEvent("Click", (*) => run("https://discord.com/invite/JrwB6jVxkR"))
-YoutubeButton.OnEvent("Click", (*) => run("https://www.youtube.com/channel/UCKOkQGvHO71nqQjwTiJX5Ww"))
-DonateButton.OnEvent("Click", (*) => DonateUI.Show())
+    DiscordButton.OnEvent("Click", (*) => run("https://discord.com/invite/JrwB6jVxkR"))
+    YoutubeButton.OnEvent("Click", (*) => run("https://www.youtube.com/channel/UCKOkQGvHO71nqQjwTiJX5Ww"))
+    DonateButton.OnEvent("Click", (*) => DonateUI.Show())
+}
 
 DonateUI.Add("Text", "Section w400 Center h30", "Donation Section").SetFont("s15 q5 w700")
 DonateUI.Add("Text", "xs yp+50 Wrap w400 h200", "(Please note that you dont have to donate, but it is very much appreciated)`n`nIf you wish to donate, you can send me items via mailbox, my user is oliyopi!`n`nOr if you wish to donate money, you can send some via paypal with the button below`n(If you donate via paypal make sure to input your discord username so i can give you a role ❤️)").SetFont("s11 w700")
