@@ -1,4 +1,4 @@
-; V1
+; V1.01
 
 global PositionMap := Map(
     "TpButton", {Macros:["All"], Position:[118, 223], Version:"BF_V1.0.0"},
@@ -9,7 +9,7 @@ global PositionMap := Map(
     "SearchField", {Macros:["All"], Position:[621, 136], Version:"BF_V1.0.0"},
     "SearchFieldTL", {Macros:["All"], Position:[596, 125], Version:"BF_V1.0.0"},
     "SearchFieldBR", {Macros:["All"], Position:[696, 146], Version:"BF_V1.0.0"},
-    "TpMiddle", {Macros:["All"], Position:[396, 244], Version:"BF_V1.0.0"},
+    "TpMiddle", {Macros:["All"], Position:[231, 229], Version:"BF_V1.0.0"},
     "StupidCatTL", {Macros:["All"], Position:[357, 308], Version:"BF_V1.0.0"},
     "StupidCatBR", {Macros:["All"], Position:[435, 384], Version:"BF_V1.0.0"},
     "MiniX", {Macros:["All"], Position:[632, 144], Version:"BF_V1.0.0"},
@@ -18,6 +18,7 @@ global PositionMap := Map(
     "X", {Macros:["All"], Position:[757, 144], Version:"BF_V1.0.0"},
     "XTL", {Macros:["All"], Position:[730, 114], Version:"BF_V1.0.0"},
     "XBR", {Macros:["All"], Position:[784, 168], Version:"BF_V1.0.0"},
+    "OkayButton", {Macros:["All"], Position:[408, 459], Version:"BF_V1.0.0"},
     "InventoryBackpackButton", {Macros:["MultiMacro", "RankQuestMacro"], Position:[36, 232], Version:"MM_V4.0.0"},
     "TopOfGame", {Macros:["MultiMacro", "RankQuestMacro"], Position:[404, 38], Version:"MM_V4.0.0"},
     "ItemMiddle", {Macros:["MultiMacro", "RankQuestMacro"], Position:[127, 268], Version:"MM_V4.0.0"},
@@ -35,6 +36,7 @@ global PositionMap := Map(
     "AutoHatch", {Macros:["MultiMacro", "RankQuestMacro"], Position:[112, 280], Version:"MM_V4.0.0"},
     "AutoHatchTL", {Macros:["MultiMacro", "RankQuestMacro"], Position:[119, 256], Version:"MM_V4.0.0"},
     "AutoHatchBR", {Macros:["MultiMacro", "RankQuestMacro"], Position:[137, 268], Version:"MM_V4.0.0"},
+    "AutoHatch_InternalCheck", {Macros:["MultiMacro", "RankQuestMacro"], Position:[462, 224], Version:"MM_V4.0.0"},
     "AutoHatch_Enable", {Macros:["MultiMacro", "RankQuestMacro"], Position:[517, 222], Version:"MM_V4.0.0"},
     "AutoHatch_Charged", {Macros:["MultiMacro", "RankQuestMacro"], Position:[516, 326], Version:"MM_V4.0.0"},
     "AutoHatch_Golden", {Macros:["MultiMacro", "RankQuestMacro"], Position:[519, 432], Version:"MM_V4.0.0"},
@@ -42,6 +44,8 @@ global PositionMap := Map(
     "AutoFarmTL", {Macros:["MultiMacro", "RankQuestMacro"], Position:[60, 321], Version:"MM_V4.0.0"},
     "AutoFarmBR", {Macros:["MultiMacro", "RankQuestMacro"], Position:[70, 330], Version:"MM_V4.0.0"},
     "EggMaxBuy", {Macros:["MultiMacro", "RankQuestMacro"], Position:[555, 464], Version:"MM_V4.0.0"},
+    "SuperComputer_EmpowerEnchantButton", {Macros:["MultiMacro", "RankQuestMacro"], Position:[267, 207], Version:"MM_V4.0.0"},
+    "SuperComputer_DaycareButton", {Macros:["MultiMacro", "RankQuestMacro"], Position:[549, 437], Version:"MM_V4.0.0"},
     "InventoryEnchantsButton", {Macros:["MultiMacro"], Position:[31, 318], Version:"MM_V4.0.0"},
     "EnchantEquipSlot1", {Macros:["MultiMacro"], Position:[368, 212], Version:"MM_V4.0.0"},
     "Empower_EnchantSelectionTL", {Macros:["MultiMacro"], Position:[311, 191], Version:"MM_V4.0.0"},
@@ -53,9 +57,32 @@ global PositionMap := Map(
     "Daycare_OkayButton", {Macros:["MultiMacro"], Position:[210, 468], Version:"MM_V4.0.0"},
     "Daycare_OkayButtonTL", {Macros:["MultiMacro"], Position:[132, 441], Version:"MM_V4.0.0"},
     "Daycare_OkayButtonBR", {Macros:["MultiMacro"], Position:[291, 490], Version:"MM_V4.0.0"},
+    "Daycare_EnrollButtonTL", {Macros:["MultiMacro"], Position:[59, 399], Version:"MM_V4.0.0"},
+    "Daycare_EnrollButtonBR", {Macros:["MultiMacro"], Position:[753, 450], Version:"MM_V4.0.0"},
+    "DaycareGP_EnrollButtonTL", {Macros:["MultiMacro"], Position:[59, 381], Version:"MM_V4.0.0"},
+    "DaycareGP_EnrollButtonBR", {Macros:["MultiMacro"], Position:[753, 455], Version:"MM_V4.0.0"},
     "FreeGiftsButton", {Macros:["MultiMacro"], Position:[49, 220], Version:"MM_V4.0.0"},
+    "DisconnectBG_LS", {Macros:["MultiMacro"], Position:[212, 337], Version:"MM_V4.0.0"},
+    "DisconnectBG_RS", {Macros:["MultiMacro"], Position:[599, 337], Version:"MM_V4.0.0"},
+    "ReconnectButton", {Macros:["MultiMacro"], Position:[546, 420], Version:"MM_V4.0.0"},
+)
 
+global X_PositionMap := Map(
+    "GiftX1", 241,
+    "GiftX2", 350,
+    "GiftX3", 465,
+    "GiftX4", 580,
+    "Empower_EnchantX1", 375,
+    "Empower_EnchantX2", 476,
+    "Empower_EnchantX3", 577,
+    "Empower_EnchantX4", 676,
+)
 
-    
-    
+global Y_PositionMap := Map(
+    "GiftY1", 195,
+    "GiftY2", 290,
+    "GiftY3", 390,
+    "Empower_EnchantY1", 215,
+    "Empower_EnchantY2", 310,
+    "Empower_EnchantY3", 410,
 )
