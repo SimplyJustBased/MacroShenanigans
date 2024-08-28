@@ -1,7 +1,7 @@
-; /[V4.1.0]\ (Used for auto-update)
+; /[V4.0.05]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
-global Version := "4.0.0"
+global Version := "4.1.0"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
