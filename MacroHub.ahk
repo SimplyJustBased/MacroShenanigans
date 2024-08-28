@@ -2,7 +2,7 @@
 
 #Requires AutoHotkey v2.0
 
-global Version := "1.0.1"
+global Version := "1.0.2"
 global InfoUI := Gui()
 InfoUI.Opt("-SysMenu -Caption +AlwaysOnTop")
 InfoUI.SetFont("s15")
