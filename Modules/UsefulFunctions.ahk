@@ -14,13 +14,31 @@ ____ADVTextToFunctionMap := Map(
     "w:", ____W,
 )
 
+/**
+ * @param TableInfo [NameFromPosMap, Color, Variation, ID, Re-Name]
+ * 
+ * ID | 1 = Has TL/BR values | 2 = No TL\BR Values
+ */
 ____PSCreationMap := [
-    ["TpButtonCheck", 0xEC0D3A, 15],
-    ["TpButton", 0xEC0D3A, 5],
-    ["SearchField", 0x1E1E1E, 3],
-    ["StupidCat", 0x95AACD, 10],
-    ["MiniX", 0xFF0B4E, 5],
-    ["X", 0xEC0D3A, 10],
+    ["TpButtonCheck", 0xEC0D3A, 15, 1],
+    ["TpButton", 0xEC0D3A, 5, 1],
+    ["SearchField", 0x1E1E1E, 3, 1],
+    ["StupidCat", 0x95AACD, 10, 1],
+    ["MiniX", 0xFF0B4E, 5, 1],
+    ["X", 0xEC0D3A, 10, 1],
+    ["Empower_EnchantSelection", 0x000000, 2, 1],
+    ["AutoFarm", 0xFF1055, 20, 1],
+    ["AutoHatch", 0xFF1055, 20, 1],
+    ["Daycare_OkayButton", 0x7FF60E, 5, 1],
+    ["Empower_OkayButton", 0x7EF50D, 3, 1],
+    ["Empower_OkayButton", 0xACAFC5, 3, 1, "Evil_Empower_OkayButton"],
+    ["Daycare_EnrollButton", 0x61E0FE, 5, 1],
+    ["DaycareGP_EnrollButton", 0x61E0FE, 5, 1],
+
+    ["DisconnectBG_LS", 0x393B3D, 3, 2],
+    ["DisconnectBG_RS", 0x393B3D, 3, 2],
+    ["ReconnectButton", 0xFFFFFF, 3, 2],
+    ["AutoHatch_InternalCheck", 0xFF145C, 5, 2]
 ]
 
 ;-- Functions
@@ -46,15 +64,15 @@ PM_GetPos(Name := "") {
  * 
  * Added : V1 | Modified : V1
  */
-PM_ClickPos(Name := "") {
+PM_ClickPos(Name := "", Amount := 1) {
     if PositionMap.Has(Name) {
         Pos := PM_GetPos(Name)
 
         SendEvent "{Click, " Pos[1] ", " Pos[2] ", 0}"
         Sleep(15)
-        SendEvent "{Click, " Pos[1] ", " Pos[2] ", 1}"
+        SendEvent "{Click, " Pos[1] ", " Pos[2] ", " Amount "}"
     } else {
-        OutputDebug("Failure to click position")
+        OutputDebug("Failure to click position : " Name)
     }
 }
 
@@ -83,7 +101,8 @@ EvilSearch(SetupTable, ToReturnPositions := false) {
  * Added : V1 | Modified : V1
  */
 Clean_UI() {
-
+    SetPixelSearchLoop("X", 10000, 2, PM_GetPos("X"),,,10,)
+    SetPixelSearchLoop("MiniX", 10000, 2, PM_GetPos("MiniX"),,,10,)
 }
 
 /**
@@ -92,6 +111,7 @@ Clean_UI() {
  * @param BreakTime How long till the loop breaks if requirement isnt met
  * @param Type 1 = Loop Till Found | 2 = Loop Till Not Found
  * @param ClickPostions A position array to click during the loop
+ * @param KeysToPress [{Key:D, Time:800, DownTime:10}] | Key = Key to press | Time = Delay Between Presses | DownTime = how long to hold down
  * @param ReturnResult If it should return the result if the pixel was found (true) or if it had to break of off time (false)
  * @param SleepTime How long to sleep inbetween loops
  * @param ExtendedFunctionObject [{Func:X, Time:X}] | Basically other function(s) to call inbetween the loop incase of special conditions
@@ -103,6 +123,7 @@ SetPixelSearchLoop(
     BreakTime := 10000,
     Type := 1,
     ClickPositions := [],
+    KeysToPress := [],
     ReturnResult := true,
     SleepTime := 100,
     ExtendedFunctionObject := []
@@ -112,8 +133,10 @@ SetPixelSearchLoop(
         return false
     }
 
-    for _, FuncOBJ in ExtendedFunctionObject {
-        FuncOBJ.StartTime := A_TickCount
+    for _, CoolArray in [ExtendedFunctionObject, KeysToPress] {
+        for _, ArrayObj in CoolArray {
+            ArrayObj.StartTime := A_TickCount
+        }
     }
 
     StartTime := A_TickCount
@@ -131,10 +154,20 @@ SetPixelSearchLoop(
                 SendEvent "{Click, " ClickPositions[1] ", " ClickPositions[2] ", 1}"
             }
 
-            for _, FuncOBJ in ExtendedFunctionObject {
-                if (A_TickCount - FuncOBJ.StartTime) >= FuncOBJ.Time {
-                    FuncOBJ.Func()
-                    FuncOBJ.StartTime := A_TickCount
+            for _, CoolArray in [ExtendedFunctionObject, KeysToPress] {
+                for _2, ArrayObj in CoolArray {
+                    if (A_TickCount - ArrayObj.StartTime) >= ArrayObj.Time {
+                        switch _ {
+                            case 1:
+                                ArrayObj.Func()
+                            case 2:
+                                SendEvent "{" ArrayObj.Key " Down}"
+                                Sleep(ArrayObj.Downtime)
+                                SendEvent "{" ArrayObj.Key " Up}"
+                        }
+
+                        ArrayObj.StartTime := A_TickCount
+                    }
                 }
             }
 
@@ -247,14 +280,37 @@ CircularNonsense(r := 200, degInc := 5, speed := 0, Dist := 36) {
 }
 
 ;-- Not Main Functions
-____CreatePSInstance(Name, Color, Variation) {
+____CreatePSInstance(InstArray) {
     global PixelSearchTables
-    Pos_TL := PM_GetPos(Name "TL")
-    Pos_BR := PM_GetPos(Name "BR")
+    Name := InstArray[1]
+    Color := InstArray[2]
+    Variation := InstArray[3]
+    ID := InstArray[4]
 
-    PixelSearchTables[Name] := [
-        Pos_TL[1], Pos_TL[2], Pos_BR[1], Pos_BR[2], Color, Variation
-    ]
+    SetupTable := []
+    switch ID {
+        case 1:
+            P_TL := PM_GetPos(Name "TL")
+            P_BR := PM_GetPos(Name "BR")
+
+            SetupTable := [
+                P_TL[1], P_TL[2], P_BR[1], P_BR[2], Color, Variation
+            ]
+        case 2:
+            P := PM_GetPos(Name)
+
+            SetupTable := [
+                P[1], P[2], P[1], P[2], Color, Variation
+            ]
+    }
+
+    if InstArray.Length >= 5 {
+        PixelSearchTables[InstArray[5]] := SetupTable
+        return
+    }
+
+    OutputDebug(SetupTable.Length " : " Name "`n")
+    PixelSearchTables[Name] := SetupTable
 }
 
 ; Used for RouteUser
@@ -263,13 +319,12 @@ ____TP(Value) {
     PM_ClickPos("TpButton")
     Sleep(400)
 
-    SetPixelSearchLoop("X", 20000, 1,,,150,[{Func:____TP_1, Time:6000}])
+    SetPixelSearchLoop("X", 20000, 1,,,150,,[{Func:____TP_1, Time:6000}])
     PM_ClickPos("SearchField")
     Sleep(200)
     SendText Value
 
     SetPixelSearchLoop("SearchField", 5000,1,,,,)
-    OutputDebug("A")
     loop 3 {
         Sleep(250)
         PM_ClickPos("TpMiddle")
@@ -291,7 +346,7 @@ ____W(Value) {
     PM_ClickPos("TpButton")
     Sleep(400)
 
-    SetPixelSearchLoop("X", 20000, 1,,,150,[{Func:____TP_1, Time:6000}])
+    SetPixelSearchLoop("X", 20000, 1,,,150,,[{Func:____TP_1, Time:6000}])
 
     ButtonOrder := ["SpawnButton", "TechButton", "VoidButton"]
     PositionToUse := ButtonOrder[Value]
@@ -380,6 +435,6 @@ ____R(Value) {
 
 ;-- Main
 for _, CreationArray in ____PSCreationMap {
-    ____CreatePSInstance(CreationArray[1], CreationArray[2], CreationArray[3])
+    ____CreatePSInstance(CreationArray)
 }
 
