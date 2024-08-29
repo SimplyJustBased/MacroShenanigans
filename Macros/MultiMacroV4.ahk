@@ -1,7 +1,7 @@
-; /[V4.0.05]\ (Used for auto-update)
+; /[V4.0.06]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
-global Version := "4.1.0"
+global Version := "4.0.0"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
@@ -69,7 +69,7 @@ Routes := Map(
     "BasicTP", "tp:Prison Tower|w_nV:TpWaitTime",
     "VoidToComputer", "r:[0%Q10&10%D700]",
     "VoidToFinal", "tp:" ZoneInformation.FinalZone.Zone_Name "|w_nV:TpWaitTime|r:[0%Q10&10%D720]",
-    "FinalToEgg", "r:[0%W700]",
+    "FinalToEgg", "r:[0%W800&950%Q10]",
     "EggToFinal", "r:[0%S700]",
     "EggToAway", "r:[0%A700]",
     "EggToAntiAway", "r:[0%D700]"
@@ -471,12 +471,10 @@ ItemUseicalFunction(ItemArray, UseSecondary := false) {
             } else {
                 ToRs := 0
 
-                ; loop 5 {
-                ;     PM_ClickPos("ItemMiddle")
-                ;     Sleep(50)
-                ; }
-    
-                PM_ClickPos("ItemMiddle")
+                loop 2 {
+                    SendEvent "{Click, " IM[1] ", " IM[2] ", 1}"
+                    Sleep(25)
+                }
 
                 Sleep(100)
                 if EvilSearch(PixelSearchTables["StupidCat"], false)[1] {
@@ -1023,8 +1021,8 @@ M_Fn1() {
     if MacroTogglesMap["HatchEggs"] and TotalLoopAmount > 0 {
         SaveToDebug("Having character escape utter defeat")
 
-        SendEvent "{S Down}"
-        Sleep(900)
+        SendEvent "{Q Down}{Q Up}{S Down}"
+        Sleep(750)
         SendEvent "{S Up}"
 
         UBT1 := A_TickCount
@@ -1040,12 +1038,15 @@ M_Fn1() {
 
             if A_TickCount - UBT1 >= 15000 {
                 break
-            } else if TpDetections >= 10 {
+            } else if TpDetections >= 40 {
                 break
             }
 
+            OutputDebug("CHECKING")
             Sleep(20)
         }
+
+        SubPosition := "FinalArea"
     }
 }
 
@@ -1484,7 +1485,6 @@ F3::{
 
 
         TotalLoopAmount += 1
-        SendEvent "{Q Down}{Q Up}"
 
         if MultiInstancingEnabled {
         SaveToDebug("Saving Current information to CleanMap Of ID:" CurrentID)
@@ -1554,7 +1554,4 @@ SaveToDebug(Text, IncludeTime := true, IncludeRunTime := true) {
 }
 
 F8::ExitApp
-; F6::Pause -1
-F6::{
-    EnableAutoHatch()
-}
+F6::Pause -1
