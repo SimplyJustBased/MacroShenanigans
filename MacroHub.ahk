@@ -1,4 +1,4 @@
-; /[V1.0.05]\
+; /[V1.0.06]\
 
 #Requires AutoHotkey v2.0
 
@@ -55,7 +55,7 @@ Macros := Map(
         MacroFile:"TreeHouseMacroV2.ahk",
         Existant:true,
         Placar:1,
-        RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "_JXON.ahk", "Router.ahk"]
+        RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "_JXON.ahk", "Router.ahk", "UWBOCRLib.ahk"]
     },
     "MultiMacroV4", {
         Status:"Stable | Maintained",
