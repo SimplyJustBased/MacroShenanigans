@@ -1,7 +1,7 @@
-; /[V4.0.06]\ (Used for auto-update)
+; /[V4.0.07]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
-global Version := "4.0.0"
+global Version := "4.1.0"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
@@ -412,6 +412,7 @@ ItemUseicalFunction(ItemArray, UseSecondary := false) {
         ToRs := 0
         loop 100 {
             if not EvilSearch(PixelSearchTables["X"], false)[1] {
+                Sleep(200)
 
                 if EvilSearch(PixelSearchTables["StupidCat"], false)[1] {
                     Clean_UI()
@@ -471,10 +472,7 @@ ItemUseicalFunction(ItemArray, UseSecondary := false) {
             } else {
                 ToRs := 0
 
-                loop 2 {
-                    SendEvent "{Click, " IM[1] ", " IM[2] ", 1}"
-                    Sleep(25)
-                }
+                SendEvent "{Click, " IM[1] ", " IM[2] ", 1}"
 
                 Sleep(100)
                 if EvilSearch(PixelSearchTables["StupidCat"], false)[1] {
