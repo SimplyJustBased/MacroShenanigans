@@ -1,4 +1,4 @@
-; /[V1.0.07]\
+; /[V1.0.08]\
 
 #Requires AutoHotkey v2.0
 
@@ -268,7 +268,7 @@ for _, MacroName in MacroOrder {
         TabData.MacrosOnColoumn += 1
     }
 
-    if MacroObject.Placar = 1 {
+    if MacroObject.Placar != 3 {
         whr := ComObject("WinHttp.WinHttpRequest.5.1")
         whr.Open("GET", MacroObject.APILink, true)
         whr.Send()
