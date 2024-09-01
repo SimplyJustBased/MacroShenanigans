@@ -1,7 +1,7 @@
-; /[V4.0.08]\ (Used for auto-update)
+; /[V4.0.09]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
-global Version := "Event[4.1.0]"
+global Version := "Event[4.1.1]"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
@@ -650,7 +650,11 @@ DaycareOfDestruction() {
     
                 SetPixelSearchLoop("MiniX", 25000, 1)
                 PM_ClickPos("MiniX")
-                SetPixelSearchLoop("X", 15000, 1,,[{Key:"Space", Time:200, DownTime:10}])
+                if not BooleanValueMap["UserIsPastRebirth9"] {
+                    SetPixelSearchLoop("X", 15000, 1,,[{Key:"Space", Time:200, DownTime:10}])
+                } else {
+                    YeahCheck()
+                }
             default:
                 break
         }
@@ -1188,11 +1192,11 @@ M_Fn5() {
             StupendousArray.InsertAt(StupendousArray.Length + 1, TextValueMap["FlagToUse"])
         }
 
-        if MacroTogglesMap["AutoSprinkler"] {
-            SaveToDebug("AutoSprinkicals")
+        ; if MacroTogglesMap["AutoSprinkler"] {
+        ;     SaveToDebug("AutoSprinkicals")
 
-            StupendousArray.InsertAt(StupendousArray.Length + 1, "Sprinkler")
-        }
+        ;     StupendousArray.InsertAt(StupendousArray.Length + 1, "Sprinkler")
+        ; }
 
         if StupendousArray.Length > 0 {
             SaveToDebug("Mr. SouthWest approves this line")
@@ -1406,6 +1410,9 @@ F3::{
                 Sleep(100)
             }
         }
+
+        
+        WinMove(,,800,600,"A")
 
         ; Main Functions here!!!!
         global SubPosition
