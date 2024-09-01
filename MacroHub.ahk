@@ -1,8 +1,8 @@
-; /[V1.0.06]\
+; /[V1.0.07]\
 
 #Requires AutoHotkey v2.0
 
-global Version := "1.0.2"
+global Version := "1.0.3"
 global InfoUI := Gui()
 InfoUI.Opt("-SysMenu -Caption +AlwaysOnTop")
 InfoUI.SetFont("s15")
@@ -43,7 +43,7 @@ Macros := Map(
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/DiceMerchantMacro.ahk&page=1&per_page=1",
         MacroFile:"DiceMerchantMacro.ahk",
         Existant:true,
-        Placar:2,
+        Placar:3,
         RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "UsefulFunctions.ahk"],
         DiscontinueReason:"RNG Event is over."
     },
@@ -67,9 +67,19 @@ Macros := Map(
         Placar:1,
         RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "UsefulFunctions.ahk"]
     },
+    "EventMultiMacroV4", {
+        Status:"Experimental | Event",
+        StatusColor:"005ac8",
+        RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/EventMultiMacroV4.ahk",
+        APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/EventMultiMacroV4.ahk&page=1&per_page=1",
+        MacroFile:"EventMultiMacroV4.ahk",
+        Existant:true,
+        Placar:2,
+        RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "UsefulFunctions.ahk"]
+    },
 )
 
-MacroOrder := ["DiceMerchantMacro", "MultiMacroV4", "TreeHouseMacroV2"]
+MacroOrder := ["DiceMerchantMacro", "MultiMacroV4", "TreeHouseMacroV2", "EventMultiMacroV4"]
 
 Xs := [40, 270, 500]
 Ys := [60, 250, 440]
@@ -143,17 +153,18 @@ VersionCheck(FileMain, ResponseText) {
     }
 }
 
-TabMacroList := [
-    {MacrosLoaded:0, MacrosOnColoumn:1, MacrosOnLine:0},
-    {MacrosLoaded:0, MacrosOnColoumn:1, MacrosOnLine:0}
-]
+TabMacroList := []
 
 MacroHubUI := Gui(,"Macro Hub | Version: " Version)
 MacroHubUI.Opt("+AlwaysOnTop")
-MHTabs := MacroHubUI.AddTab3("", ["Main", "Discontinued"])
-MacroHubUI.AddText("Section w700 h30 Center", "Macro Hub | V" Version).SetFont("s15 w700")
-MHTabs.UseTab(2)
-MacroHubUI.AddText("Section w700 h30 Center", "Macro Hub | V" Version).SetFont("s15 w700")
+MHTabs := MacroHubUI.AddTab3("", ["Main", "Experimental", "Discontinued"])
+
+loop 3 {
+    MHTabs.UseTab(A_Index)
+    MacroHubUI.AddText("Section w700 h30 Center", "Macro Hub | V" Version).SetFont("s15 w700")
+    TabMacroList.Push({MacrosLoaded:0, MacrosOnColoumn:1, MacrosOnLine:0})
+}
+
 
 RunMacro(MacroObject) {
     MacroHubUI.Hide()
@@ -184,15 +195,13 @@ CreateMacroBox(MacroObject, MacrosLoaded, MacrosOnColoumn, MacrosOnLine) {
     MacroHubUI.AddText("xs+5 ys+60 h30 w190 Center", MacroObject.Status).SetFont("s11 c" MacroObject.StatusColor)
 
     switch MacroObject.Placar {
-        case 1:
+        case 1, 2:
             MacroHubUI.AddText("xs+5 ys+90 h30 w190 Center", "Last Updated").SetFont("s11 w600 underline")
             MacroHubUI.AddText("xs+5 ys+110 h30 w190 Center", LastUpdateTimeObj.Time " " LastUpdateTimeObj.Word " Ago").SetFont("s11")
         case 2:
             MacroHubUI.AddText("xs+5 ys+90 h30 w190 Center", "Reason").SetFont("s11 w600 underline")
             MacroHubUI.AddText("xs+5 ys+110 h30 w190 Center", MacroObject.DiscontinueReason).SetFont("s11")
     }
-
-
 
     if MacroObject.Existant {
         RunMacroButton := MacroHubUI.AddButton("xs+5 ys+140 h30 w190 Center", "Run Macro")
@@ -277,11 +286,12 @@ InfoUI.Hide()
 DonateUI := Gui(,"Donations")
 DonateUI.Opt("+AlwaysOnTop")
 
-loop 2 {
+loop 3 {
+    TabData := TabMacroList[MacroObject.Placar]
     MHTabs.UseTab(A_Index)
-    DiscordButton := MacroHubUI.AddButton("w120 h30 x40 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Discord Server")
-    YoutubeButton := MacroHubUI.AddButton("w140 h30 x165 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Youtube Channel")
-    DonateButton := MacroHubUI.AddButton("w90 h30 x310 y" (60 + (190 * (Ceil(MacroOrder.Length/3)))), "Donate")
+    DiscordButton := MacroHubUI.AddButton("w120 h30 x40 y" (60 + (190 * (Ceil(TabData.MacrosLoaded/3)))), "Discord Server")
+    YoutubeButton := MacroHubUI.AddButton("w140 h30 x165 y" (60 + (190 * (Ceil(TabData.MacrosLoaded/3)))), "Youtube Channel")
+    DonateButton := MacroHubUI.AddButton("w90 h30 x310 y" (60 + (190 * (Ceil(TabData.MacrosLoaded/3)))), "Donate")
 
     DiscordButton.SetFont("s10")
     YoutubeButton.SetFont("s10")
