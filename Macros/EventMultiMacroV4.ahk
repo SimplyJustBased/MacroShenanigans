@@ -1,4 +1,4 @@
-﻿; /[V4.0.07]\ (Used for auto-update)
+; /[V4.0.08]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.0]"
@@ -845,7 +845,7 @@ CleanUpMulti(IDMAP) {
         "Number Settings", "NumberValueMap",
         "Enchant-Empowering", "EnchantEmpowering",
         "Routes", "Routes",
-        "Auto-Item Settings", "AutoItemSelection"
+        ; "Auto-Item Settings", "AutoItemSelection"
     )
     FinalizedMap := Map()
 
@@ -893,7 +893,7 @@ MapChange(CleanMap) {
     global EnchantEmpowering := CleanMap["EnchantEmpowering"]
     global CurrentZone := CleanMap["CurrentZone"]
     global Routes := CleanMap["Routes"]
-    global AutoItemSelection := CleanMap["AutoItemSelection"]
+    ; global AutoItemSelection := CleanMap["AutoItemSelection"]
 
     ; Setting extras
     global CurrentZone := CleanMap["CurrentZone"]
