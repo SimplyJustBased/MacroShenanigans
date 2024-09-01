@@ -12,6 +12,9 @@ ____ADVTextToFunctionMap := Map(
     "wt:", ____Wt,
     "r:", ____R,
     "w:", ____W,
+    "Sc:", ____SC,
+    "Spl:", ____SPL,
+    "ASpl:", ____ASPL,
 )
 
 /**
@@ -38,7 +41,9 @@ ____PSCreationMap := [
     ["DisconnectBG_LS", 0x393B3D, 3, 2],
     ["DisconnectBG_RS", 0x393B3D, 3, 2],
     ["ReconnectButton", 0xFFFFFF, 3, 2],
-    ["AutoHatch_InternalCheck", 0xFF145C, 5, 2]
+    ["AutoHatch_InternalCheck", 0xFF145C, 5, 2],
+    ["LB_Star", 0xCE9440, 10, 2],
+    ["LB_Diamond", 0x4C93B7, 10, 2],
 ]
 
 ;-- Functions
@@ -214,6 +219,10 @@ RouteUser(RouteText) {
     }
 }
 
+LeaderBoardThingy() {
+
+}
+
 /**
  * Creates an array of positions based on a XCoord Array and a YCoord array
  * @param XArray [XPos1, XPos2, XPos3...]
@@ -309,12 +318,14 @@ ____CreatePSInstance(InstArray) {
         return
     }
 
-    OutputDebug(SetupTable.Length " : " Name "`n")
     PixelSearchTables[Name] := SetupTable
 }
 
 ; Used for RouteUser
 ____TP(Value) {
+    SetPixelSearchLoop("TpButton", 20000, 1)
+
+
     Sleep(400)
     PM_ClickPos("TpButton")
     Sleep(400)
@@ -342,6 +353,8 @@ ____TP_1(*) {
 }
 
 ____W(Value) {
+    SetPixelSearchLoop("TpButton", 20000, 1)
+
     Sleep(400)
     PM_ClickPos("TpButton")
     Sleep(400)
@@ -431,6 +444,29 @@ ____R(Value) {
             Sleep(Downtime)
             SendEvent "{" Key " Up}"
     }
+}
+
+
+; Used for RouteUser
+____SC(Value) {
+    StringOfEvil := StrSplit(SubStr(Value, 2, StrLen(Value) - 2), ",")
+
+    XPos := StringOfEvil[1]
+    YPos := StringOfEvil[2]
+
+    SendEvent "{Click, " XPos ", " YPos ", 0}"
+    Sleep(15)
+    SendEvent "{Click, " XPos ", " YPos ", 1}"
+}
+
+; Used for RouteUser
+____SPL(Value) {
+    SetPixelSearchLoop(Value, 30000)
+}
+
+; Used for RouteUser
+____ASPL(Value) {
+    SetPixelSearchLoop(Value, 30000, 2)
 }
 
 ;-- Main
