@@ -68,7 +68,8 @@ global PositionMap := Map(
     "DisconnectBG_RS", {Macros:["MultiMacro"], Position:[599, 337], Version:"MM_V4.0.0"},
     "ReconnectButton", {Macros:["MultiMacro"], Position:[546, 420], Version:"MM_V4.0.0"},
     "LB_Star", {Macros:["MultiMacro"], Position:[676, 83], Version:"MM_V4.0.0"},
-    "LB_Diamond", {Macros:["MultiMacro"], Position:[728, 81], Version:"MM_V4.0.0"}
+    "LB_Diamond", {Macros:["MultiMacro"], Position:[728, 81], Version:"MM_V4.0.0"},
+    "UpperMiddle", {Macros:["MultiMacro"], Position:[502, 41], Version:"MM_V4.0.0"},
 )
 
 global X_PositionMap := Map(
