@@ -1,7 +1,7 @@
 ; /[V4.0.10]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
-global Version := "Event[4.1.0]"
+global Version := "Event[4.1.2]"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
