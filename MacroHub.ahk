@@ -1,4 +1,4 @@
-; /[V1.0.08]\
+; /[V1.0.09]\
 
 #Requires AutoHotkey v2.0
 
@@ -68,18 +68,18 @@ Macros := Map(
         RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "UsefulFunctions.ahk"]
     },
     "EventMultiMacroV4", {
-        Status:"Experimental | Event",
-        StatusColor:"005ac8",
+        Status:"MMV4 Port | Event",
+        StatusColor:"cbf01bf",
         RawLink:"https://raw.githubusercontent.com/SimplyJustBased/MacroShenanigans/main/Macros/EventMultiMacroV4.ahk",
         APILink:"https://api.github.com/repos/SimplyJustBased/MacroShenanigans/commits?path=Macros/EventMultiMacroV4.ahk&page=1&per_page=1",
         MacroFile:"EventMultiMacroV4.ahk",
         Existant:true,
-        Placar:2,
+        Placar:1,
         RequiredModules:["EasyUI.ahk", "BasePositions.ahk", "UsefulFunctions.ahk"]
     },
 )
 
-MacroOrder := ["DiceMerchantMacro", "MultiMacroV4", "TreeHouseMacroV2", "EventMultiMacroV4"]
+MacroOrder := ["EventMultiMacroV4", "DiceMerchantMacro", "MultiMacroV4", "TreeHouseMacroV2"]
 
 Xs := [40, 270, 500]
 Ys := [60, 250, 440]
