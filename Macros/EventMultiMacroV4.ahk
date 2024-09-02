@@ -1,7 +1,7 @@
-; /[V4.0.09]\ (Used for auto-update)
+; /[V4.0.10]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
-global Version := "Event[4.1.1]"
+global Version := "Event[4.1.0]"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
@@ -47,6 +47,7 @@ BooleanValueMap := Map(
     "EnableAutoHatch_Charged", false,
     "ShinyFruitToggle", false,
     "UserIsPastRebirth9", true,
+    "DoubleHatch", true,
 )
 
 MacroTogglesMap := Map(
@@ -711,29 +712,29 @@ ReturnToVoid() {
 EnableAutoHatch() {
     Clean_UI()
 
-    if not EvilSearch(PixelSearchTables["AutoHatch"], false)[1] {
+    if not EvilSearch(PixelSearchTables["AutoHatch"], false)[1] and not BooleanValueMap["DoubleHatch"] {
         return
     }
 
     SetPixelSearchLoop("MiniX",12000,1,PM_GetPos("AutoHatch"))
 
     NameToPos := Map(
-        "EnableAutoHatch", PM_GetPos("AutoHatch_Enable"),
-        "EnableAutoHatch_Golden", PM_GetPos("AutoHatch_Golden"),
-        "EnableAutoHatch_Charged", PM_GetPos("AutoHatch_Charged")
+        "EnableAutoHatch", [PM_GetPos("AutoHatch_Enable"), PixelSearchTables["AutoHatch_InternalCheck"]],
+        "EnableAutoHatch_Golden", [PM_GetPos("AutoHatch_Golden"), PixelSearchTables["AutoHatch_InternalGoldenCheck"]],
+        "EnableAutoHatch_Charged", [PM_GetPos("AutoHatch_Charged"), PixelSearchTables["AutoHatch_InternalChargedCheck"]]
     )
 
     for N, P in NameToPos {
         if BooleanValueMap[N] {
-            if N = "EnableAutoHatch" {
-                if not EvilSearch(PixelSearchTables["AutoHatch_InternalCheck"])[1] {
-                    SendEvent "{Click, " P[1] ", " P[2] ", 1}"
-                    Sleep(200)
-                }
+            if not EvilSearch(P[2])[1] and N = "EnableAutoHatch" {
+                SendEvent "{Click, " P[1][1] ", " P[1][2] ", 1}"
+                Sleep(200)
             }
 
-            SendEvent "{Click, " P[1] ", " P[2] ", 1}"
-            Sleep(200)
+            if EvilSearch(P[2])[1] and not (BooleanValueMap["DoubleHatch"] and N = "EnableAutoHatch") {
+                SendEvent "{Click, " P[1][1] ", " P[1][2] ", 1}"
+                Sleep(200)
+            } 
         }
     }
 
@@ -1047,6 +1048,7 @@ M_Fn1() {
             Sleep(20)
         }
 
+        LeaderBoardThingy()
         SubPosition := "FinalArea"
     }
 }
@@ -1246,21 +1248,57 @@ M_Fn5() {
                 } else {
                     SubPosition := "Egg_S"
                 }
-    
-                UBT1 := A_TickCount
-                PM_ClickPos("EggMaxBuy")
-                Sleep(300)
-    
+
                 if not MultiInstancingEnabled {
                     BreakTime := A_TickCount
-                    loop {
-                        PM_ClickPos("MiddleOfScreen")
-    
-                        if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
-                            break
+                    if BooleanValueMap["DoubleHatch"] {
+                        UpwardPosition := PM_GetPos("MiddleOfScreen")
+
+                        loop {
+                            BreakTimeOfLoop := A_TickCount
+                            loop {
+                                SendEvent "{Click, " UpwardPosition[1] ", " UpwardPosition[2] ", 1}"
+                                SendEvent "{E Down}{E Up}"
+
+                                if EvilSearch(PixelSearchTables["MiniX"]) or A_TickCount - BreakTimeOfLoop >= 90000 {
+                                    break
+                                }
+
+                                LeaderBoardThingy()
+                            }
+
+                            if StupidCatCheck() {
+                                PM_ClickPos("OkayButton")
+                            }
+                            SmallBreakTime := A_TickCount
+                            loop {
+                                SendEvent "{E Down}{E Up}"
+                                Sleep(10)
+                                PM_ClickPos("EggMaxBuy")
+
+                                if A_TickCount - SmallBreakTime >= 1200 {
+                                    break
+                                }
+                            }
+
+                                    
+                            if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
+                                break
+                            }
                         }
-    
-                        Sleep(10)
+                    } else {
+                        PM_ClickPos("EggMaxBuy")
+                        Sleep(300)
+
+                        loop {
+                            PM_ClickPos("MiddleOfScreen")
+        
+                            if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
+                                break
+                            }
+        
+                            Sleep(10)
+                        }
                     }
                 }
             case MacroTogglesMap["FarmZone"] and MacroTogglesMap["HatchEggs"]:
@@ -1289,20 +1327,56 @@ M_Fn5() {
                         SubPosition := "Egg"
                     }
     
-                    UBT1 := A_TickCount
-    
-                    PM_ClickPos("EggMaxBuy")
-                    Sleep(300)
-    
-                    BreakTime += 600
-                    loop {
-                        PM_ClickPos("MiddleOfScreen")
-    
-                        if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
-                            break
+                    if BooleanValueMap["DoubleHatch"] {
+                        UpwardPosition := PM_GetPos("MiddleOfScreen")
+
+                        loop {
+                            BreakTimeOfLoop := A_TickCount
+                            loop {
+                                SendEvent "{Click, " UpwardPosition[1] ", " UpwardPosition[2] ", 1}"
+                                SendEvent "{E Down}{E Up}"
+
+                                if EvilSearch(PixelSearchTables["MiniX"]) or A_TickCount - BreakTimeOfLoop >= 90000 {
+                                    break
+                                }
+
+                                LeaderBoardThingy()
+                            }
+
+                            if StupidCatCheck() {
+                                PM_ClickPos("OkayButton")
+                            }
+
+                            SmallBreakTime := A_TickCount
+                            loop {
+                                SendEvent "{E Down}{E Up}"
+                                Sleep(10)
+                                PM_ClickPos("EggMaxBuy")
+
+                                if A_TickCount - SmallBreakTime >= 1200 {
+                                    break
+                                }
+                            }
+
+                                    
+                            if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
+                                break
+                            }
                         }
-    
-                        Sleep(10)
+                    } else {
+                        PM_ClickPos("EggMaxBuy")
+                        Sleep(300)
+        
+                        BreakTime += 600
+                        loop {
+                            PM_ClickPos("MiddleOfScreen")
+        
+                            if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
+                                break
+                            }
+        
+                            Sleep(10)
+                        }
                     }
                 } else {
                     if not ZoneInformation.FinalZone.IsEggInZone {
@@ -1315,10 +1389,10 @@ M_Fn5() {
                         SubPosition := "Egg_S"
                     }
     
-                    UBT1 := A_TickCount
-    
-                    PM_ClickPos("EggMaxBuy")
-                    Sleep(300)
+                    if not BooleanValueMap["DoubleHatch"] {
+                        PM_ClickPos("EggMaxBuy")
+                        Sleep(300)
+                    }
                 }
         }
     }
@@ -1379,17 +1453,59 @@ F3::{
             FollowThroughWithLoop := false
 
             for ID, CleanMap in InstanceMap {
-                if CleanMap["Action"] = "Macro" and (A_TickCount - CleanMap["PreviousRunTime"]) >= (CleanMap["NumberValueMap"]["LoopDelayTime"] * 1000) {
-                SaveToDebug("- Staring loop for ID:" ID " -")
+                MapChange(CleanMap)
 
-                    MapChange(CleanMap)
+
+                if CleanMap["Action"] = "Macro" and (A_TickCount - CleanMap["PreviousRunTime"]) >= (CleanMap["NumberValueMap"]["LoopDelayTime"] * 1000) {
+                    SaveToDebug("- Staring loop for ID:" ID " -")
+
                     FollowThroughWithLoop := true
                     CurrentID := ID
                     break
                 }
 
-                Sleep(200)
-                AntiAfkCheck_Multi(InstanceMap, CurrentID)
+                if BooleanValueMap["DoubleHatch"] {
+                    UpwardPosition := PM_GetPos("MiddleOfScreen")
+
+                    Found := false
+                    BreakTimeOfLoop := A_TickCount
+                    loop {
+                        SendEvent "{Click, " UpwardPosition[1] ", " UpwardPosition[2] ", 1}"
+                        SendEvent "{E Down}{E Up}"
+
+                        if EvilSearch(PixelSearchTables["MiniX"]) {
+                            Found := true
+                            break
+                        } else if A_TickCount - BreakTimeOfLoop >= 700{
+                            break
+                        }
+
+                        LeaderBoardThingy()
+                    }
+                
+                    if not Found {
+                        continue
+                    }
+                    
+                    if StupidCatCheck() {
+                        PM_ClickPos("OkayButton")
+                    }
+            
+                    SmallBreakTime := A_TickCount
+                    loop {
+                        SendEvent "{E Down}{E Up}"
+                        Sleep(10)
+                        PM_ClickPos("EggMaxBuy")
+            
+                        if A_TickCount - SmallBreakTime >= 850 {
+                            break
+                        }
+                    }
+                    
+                } else {
+                    Sleep(200)
+                    AntiAfkCheck_Multi(InstanceMap, CurrentID)
+                }
             }
 
             if not FollowThroughWithLoop {
@@ -1426,6 +1542,7 @@ F3::{
         for _, Function in [M_Fn1, M_Fn2, M_Fn3, M_Fn4, M_Fn5] {
             OutputDebug(_)
             SaveToDebug("Starting Function in list : " _)
+            LeaderBoardThingy()
             Function()
             SaveToDebug("Finished Funciton in list : " _)
             
@@ -1531,6 +1648,7 @@ SaveToDebug(Text, IncludeTime := true, IncludeRunTime := true) {
 F8::ExitApp
 F6::Pause -1
 ; F6::{
-;     ; RouteUser("tp:Prison Tower|wt:2000|w:3|w_nV:TpWaitTime|r:[0%Q10&20%A700&790%S1200]|wt:2000|spl:TpButton|sc:[115,223]|spl:X|sc:[667,395]|w_nV:TpWaitTime|r:[0%Q10&50%W700]")
-;     ; RouteUser("r:[0%A800&950%Q10]")
+;     RouteUser("tp:Prison Tower|wt:2000|w:3|w_nV:TpWaitTime|r:[0%Q10&20%A700&790%S1200]|wt:2000|spl:TpButton|sc:[115,223]|spl:X|sc:[667,395]|w_nV:TpWaitTime|r:[0%Q10&50%W700]")
+;     RouteUser("r:[0%A800&950%Q10]")
+;     ; EnableAutoHatch()
 ; }
