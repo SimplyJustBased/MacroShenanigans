@@ -1,4 +1,4 @@
-; /[V4.0.12]\ (Used for auto-update)
+; /[V4.0.13]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.3]"
@@ -1215,29 +1215,6 @@ M_Fn5() {
 
         SaveToDebug("Here we kinda do alot and im not setting up debug lines for allat")
         switch {
-            case MacroTogglesMap["FarmZone"] and not MacroTogglesMap["HatchEggs"]:
-                if Not MultiInstancingEnabled {
-                    BreakTime := A_TickCount
-                    loop {
-                        if MacroTogglesMap["AutoUseItem"] {
-                            ItemUseicalFunctionSingular(AutoItemSelection)
-                        }
-    
-                        if MacroTogglesMap["AutoUseUltimate"] {
-                            Clean_UI()
-                            SendEvent "{R Down}{R Up}"
-                        }
-    
-                        if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
-                            break
-                        }
-                    }
-                } else {
-                    if MacroTogglesMap["AutoUseUltimate"] {
-                        Clean_UI()
-                        SendEvent "{R Down}{R Up}"
-                    }
-                }
             case MacroTogglesMap["HatchEggs"] and not MacroTogglesMap["FarmZone"]:
                 if not ZoneInformation.FinalZone.IsEggInZone {
                     SendEvent "{A Down}"
@@ -1256,6 +1233,8 @@ M_Fn5() {
 
                         loop {
                             BreakTimeOfLoop := A_TickCount
+                            AboveLoopNum := 0
+                            
                             loop {
                                 SendEvent "{Click, " UpwardPosition[1] ", " UpwardPosition[2] ", 1}"
                                 SendEvent "{E Down}{E Up}"
@@ -1278,6 +1257,13 @@ M_Fn5() {
 
                                 if A_TickCount - SmallBreakTime >= 1200 {
                                     break
+                                }
+
+                                AboveLoopNum++
+                                LeaderBoardThingy()
+                                if AboveLoopNum > 10 {
+                                    PM_ClickPos("MiniX")
+                                    AboveLoopNum := 0
                                 }
                             }
 
@@ -1304,99 +1290,6 @@ M_Fn5() {
 
                 PM_ClickPos("EggMaxBuy")
                 Sleep(300)
-            case MacroTogglesMap["FarmZone"] and MacroTogglesMap["HatchEggs"]:
-                if not MultiInstancingEnabled {
-                    BreakTime := A_TickCount
-                    loop {
-                        if MacroTogglesMap["AutoUseItem"] {
-                            ItemUseicalFunctionSingular(AutoItemSelection)
-                        }
-    
-                        if MacroTogglesMap["AutoUseUltimate"] {
-                            Clean_UI()
-                            SendEvent "{R Down}{R Up}"
-                        }
-    
-                        if A_TickCount - BreakTime >= (NumberValueMap["Egg&FarmSplitTime"] * 1000) + 1000 {
-                            break
-                        }
-                    }
-    
-                    if not ZoneInformation.FinalZone.IsEggInZone {
-                        SendEvent "{A Down}"
-                        SetPixelSearchLoop("MiniX", 50000, 1,, [{Key:"E", Time:1, DownTime:10}],,10)
-                        SendEvent "{A Up}"
-
-                        SubPosition := "Egg"
-                    }
-    
-                    if BooleanValueMap["DoubleHatch"] {
-                        UpwardPosition := PM_GetPos("UpperMiddle")
-
-                        loop {
-                            BreakTimeOfLoop := A_TickCount
-                            loop {
-                                SendEvent "{Click, " UpwardPosition[1] ", " UpwardPosition[2] ", 1}"
-                                SendEvent "{E Down}{E Up}"
-
-                                if EvilSearch(PixelSearchTables["MiniX"]) or A_TickCount - BreakTimeOfLoop >= 90000 {
-                                    break
-                                }
-
-                                LeaderBoardThingy()
-                            }
-
-                            if StupidCatCheck() {
-                                PM_ClickPos("OkayButton")
-                            }
-
-                            SmallBreakTime := A_TickCount
-                            loop {
-                                SendEvent "{E Down}{E Up}"
-                                Sleep(10)
-                                PM_ClickPos("EggMaxBuy")
-
-                                if A_TickCount - SmallBreakTime >= 1200 {
-                                    break
-                                }
-                            }
-
-                                    
-                            if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
-                                break
-                            }
-                        }
-                    } else {
-                        PM_ClickPos("EggMaxBuy")
-                        Sleep(300)
-        
-                        BreakTime += 600
-                        loop {
-                            PM_ClickPos("MiddleOfScreen")
-        
-                            if A_TickCount - BreakTime >= (NumberValueMap["LoopDelayTime"] * 1000) + 1000 {
-                                break
-                            }
-        
-                            Sleep(10)
-                        }
-                    }
-                } else {
-                    if not ZoneInformation.FinalZone.IsEggInZone {
-                        SendEvent "{A Down}"
-                        SetPixelSearchLoop("MiniX", 50000, 1,, [{Key:"E", Time:1, DownTime:10}],,10)
-                        SendEvent "{A Up}"
-
-                        SubPosition := "Egg"
-                    } else {
-                        SubPosition := "Egg_S"
-                    }
-    
-                    if not BooleanValueMap["DoubleHatch"] {
-                        PM_ClickPos("EggMaxBuy")
-                        Sleep(300)
-                    }
-                }
         }
     }
 
@@ -1410,10 +1303,6 @@ F3::{
     if not MacroEnabled {
         return
     }
-
-    MacroTogglesMap["AutoUseItem"] := false
-    MacroTogglesMap["AutoSprinkler"] := false
-    MacroTogglesMap["FarmZone"] := false
 
     if not DirExist(A_MyDocuments "\PS99_Macros\Storage\MultiMacroV4Debug") {
         DirCreate(A_MyDocuments "\PS99_Macros\Storage\MultiMacroV4Debug")
@@ -1503,6 +1392,10 @@ F3::{
 
         ForceNextLoop := false
         for _, Function in [M_Fn1, M_Fn2, M_Fn3, M_Fn4, M_Fn5] {
+            MacroTogglesMap["AutoUseItem"] := false
+            MacroTogglesMap["AutoSprinkler"] := false
+            MacroTogglesMap["FarmZone"] := false
+
             OutputDebug(_)
             SaveToDebug("Starting Function in list : " _)
             LeaderBoardThingy()
