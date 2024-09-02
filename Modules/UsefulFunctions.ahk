@@ -42,8 +42,10 @@ ____PSCreationMap := [
     ["DisconnectBG_RS", 0x393B3D, 3, 2],
     ["ReconnectButton", 0xFFFFFF, 3, 2],
     ["AutoHatch_InternalCheck", 0xFF145C, 5, 2],
-    ["LB_Star", 0xCE9440, 10, 2],
-    ["LB_Diamond", 0x4C93B7, 10, 2],
+    ["AutoHatch_InternalChargedCheck", 0xFF145C, 5, 2],
+    ["AutoHatch_InternalGoldenCheck", 0xFF145C, 5, 2],
+    ["LB_Star", 0xCE9440, 35, 2],
+    ["LB_Diamond", 0x4C93B7, 35, 2],
 ]
 
 ;-- Functions
@@ -220,7 +222,14 @@ RouteUser(RouteText) {
 }
 
 LeaderBoardThingy() {
+    Arg1 := EvilSearch(PixelSearchTables["LB_Star"])
+    Arg2 := EvilSearch(PixelSearchTables["LB_Diamond"])
 
+    OutputDebug(Arg1[1] " : " Arg2[1] "`n")
+
+    if Arg1[1] and Arg2[1] {
+        SendEvent "{Tab Down}{Tab Up}"
+    }
 }
 
 /**
