@@ -1,4 +1,4 @@
-; /[V4.0.11]\ (Used for auto-update)
+; /[V4.0.12]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.3]"
@@ -52,8 +52,8 @@ BooleanValueMap := Map(
 
 MacroTogglesMap := Map(
     "AutoEmpower", false,
-    "FarmZone", true,
-    "HatchEggs", false,
+    ; "FarmZone", true,
+    "HatchEggs", true,
     "Anti-Afk", true,
     "AutoFruits", true,
     "AutoGiftClaim", true,
@@ -1252,7 +1252,7 @@ M_Fn5() {
                 if not MultiInstancingEnabled {
                     BreakTime := A_TickCount
                     if BooleanValueMap["DoubleHatch"] {
-                        UpwardPosition := PM_GetPos("MiddleOfScreen")
+                        UpwardPosition := PM_GetPos("UpperMiddle")
 
                         loop {
                             BreakTimeOfLoop := A_TickCount
@@ -1301,6 +1301,9 @@ M_Fn5() {
                         }
                     }
                 }
+
+                PM_ClickPos("EggMaxBuy")
+                Sleep(300)
             case MacroTogglesMap["FarmZone"] and MacroTogglesMap["HatchEggs"]:
                 if not MultiInstancingEnabled {
                     BreakTime := A_TickCount
@@ -1328,7 +1331,7 @@ M_Fn5() {
                     }
     
                     if BooleanValueMap["DoubleHatch"] {
-                        UpwardPosition := PM_GetPos("MiddleOfScreen")
+                        UpwardPosition := PM_GetPos("UpperMiddle")
 
                         loop {
                             BreakTimeOfLoop := A_TickCount
@@ -1410,6 +1413,7 @@ F3::{
 
     MacroTogglesMap["AutoUseItem"] := false
     MacroTogglesMap["AutoSprinkler"] := false
+    MacroTogglesMap["FarmZone"] := false
 
     if not DirExist(A_MyDocuments "\PS99_Macros\Storage\MultiMacroV4Debug") {
         DirCreate(A_MyDocuments "\PS99_Macros\Storage\MultiMacroV4Debug")
@@ -1454,53 +1458,12 @@ F3::{
 
             for ID, CleanMap in InstanceMap {
                 if CleanMap["Action"] = "Macro" {
-                    MapChange(CleanMap)
-
                     if (A_TickCount - CleanMap["PreviousRunTime"]) >= (CleanMap["NumberValueMap"]["LoopDelayTime"] * 1000) {
                         SaveToDebug("- Staring loop for ID:" ID " -")
 
                         FollowThroughWithLoop := true
                         CurrentID := ID
                         break
-                    }
-
-                    if BooleanValueMap["DoubleHatch"] {
-                        UpwardPosition := PM_GetPos("MiddleOfScreen")
-    
-                        Found := false
-                        BreakTimeOfLoop := A_TickCount
-                        loop {
-                            SendEvent "{Click, " UpwardPosition[1] ", " UpwardPosition[2] ", 1}"
-                            SendEvent "{E Down}{E Up}"
-    
-                            if EvilSearch(PixelSearchTables["MiniX"]) {
-                                Found := true
-                                break
-                            } else if A_TickCount - BreakTimeOfLoop >= 700{
-                                break
-                            }
-    
-                            LeaderBoardThingy()
-                        }
-                    
-                        if not Found {
-                            continue
-                        }
-                        
-                        if StupidCatCheck() {
-                            PM_ClickPos("OkayButton")
-                        }
-                
-                        SmallBreakTime := A_TickCount
-                        loop {
-                            SendEvent "{E Down}{E Up}"
-                            Sleep(10)
-                            PM_ClickPos("EggMaxBuy")
-                
-                            if A_TickCount - SmallBreakTime >= 850 {
-                                break
-                            }
-                        }
                     }
                 }
 
