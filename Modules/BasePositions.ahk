@@ -37,6 +37,8 @@ global PositionMap := Map(
     "AutoHatchTL", {Macros:["MultiMacro", "RankQuestMacro"], Position:[119, 256], Version:"MM_V4.0.0"},
     "AutoHatchBR", {Macros:["MultiMacro", "RankQuestMacro"], Position:[137, 268], Version:"MM_V4.0.0"},
     "AutoHatch_InternalCheck", {Macros:["MultiMacro", "RankQuestMacro"], Position:[462, 224], Version:"MM_V4.0.0"},
+    "AutoHatch_InternalChargedCheck", {Macros:["MultiMacro", "RankQuestMacro"], Position:[462, 326], Version:"MM_V4.0.0"},
+    "AutoHatch_InternalGoldenCheck", {Macros:["MultiMacro", "RankQuestMacro"], Position:[462, 432], Version:"MM_V4.0.0"},
     "AutoHatch_Enable", {Macros:["MultiMacro", "RankQuestMacro"], Position:[517, 222], Version:"MM_V4.0.0"},
     "AutoHatch_Charged", {Macros:["MultiMacro", "RankQuestMacro"], Position:[516, 326], Version:"MM_V4.0.0"},
     "AutoHatch_Golden", {Macros:["MultiMacro", "RankQuestMacro"], Position:[519, 432], Version:"MM_V4.0.0"},
@@ -60,11 +62,13 @@ global PositionMap := Map(
     "Daycare_EnrollButtonTL", {Macros:["MultiMacro"], Position:[59, 399], Version:"MM_V4.0.0"},
     "Daycare_EnrollButtonBR", {Macros:["MultiMacro"], Position:[753, 480], Version:"MM_V4.0.0"},
     "DaycareGP_EnrollButtonTL", {Macros:["MultiMacro"], Position:[59, 381], Version:"MM_V4.0.0"},
-    "DaycareGP_EnrollButtonBR", {Macros:["MultiMacro"], Position:[753, 485], Version:"MM_V4.0.0"},
+    "DaycareGP_EnrollButtonBR", {Macros:["MultiMacro"], Position:[753, 455], Version:"MM_V4.0.0"},
     "FreeGiftsButton", {Macros:["MultiMacro"], Position:[49, 220], Version:"MM_V4.0.0"},
     "DisconnectBG_LS", {Macros:["MultiMacro"], Position:[212, 337], Version:"MM_V4.0.0"},
     "DisconnectBG_RS", {Macros:["MultiMacro"], Position:[599, 337], Version:"MM_V4.0.0"},
     "ReconnectButton", {Macros:["MultiMacro"], Position:[546, 420], Version:"MM_V4.0.0"},
+    "LB_Star", {Macros:["MultiMacro"], Position:[676, 83], Version:"MM_V4.0.0"},
+    "LB_Diamond", {Macros:["MultiMacro"], Position:[728, 81], Version:"MM_V4.0.0"}
 )
 
 global X_PositionMap := Map(
