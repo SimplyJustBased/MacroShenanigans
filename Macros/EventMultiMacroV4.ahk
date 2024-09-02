@@ -1,7 +1,7 @@
-; /[V4.0.10]\ (Used for auto-update)
+; /[V4.0.11]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
-global Version := "Event[4.1.2]"
+global Version := "Event[4.1.3]"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
@@ -1453,59 +1453,59 @@ F3::{
             FollowThroughWithLoop := false
 
             for ID, CleanMap in InstanceMap {
-                MapChange(CleanMap)
+                if CleanMap["Action"] = "Macro" {
+                    MapChange(CleanMap)
 
+                    if (A_TickCount - CleanMap["PreviousRunTime"]) >= (CleanMap["NumberValueMap"]["LoopDelayTime"] * 1000) {
+                        SaveToDebug("- Staring loop for ID:" ID " -")
 
-                if CleanMap["Action"] = "Macro" and (A_TickCount - CleanMap["PreviousRunTime"]) >= (CleanMap["NumberValueMap"]["LoopDelayTime"] * 1000) {
-                    SaveToDebug("- Staring loop for ID:" ID " -")
-
-                    FollowThroughWithLoop := true
-                    CurrentID := ID
-                    break
-                }
-
-                if BooleanValueMap["DoubleHatch"] {
-                    UpwardPosition := PM_GetPos("MiddleOfScreen")
-
-                    Found := false
-                    BreakTimeOfLoop := A_TickCount
-                    loop {
-                        SendEvent "{Click, " UpwardPosition[1] ", " UpwardPosition[2] ", 1}"
-                        SendEvent "{E Down}{E Up}"
-
-                        if EvilSearch(PixelSearchTables["MiniX"]) {
-                            Found := true
-                            break
-                        } else if A_TickCount - BreakTimeOfLoop >= 700{
-                            break
-                        }
-
-                        LeaderBoardThingy()
+                        FollowThroughWithLoop := true
+                        CurrentID := ID
+                        break
                     }
+
+                    if BooleanValueMap["DoubleHatch"] {
+                        UpwardPosition := PM_GetPos("MiddleOfScreen")
+    
+                        Found := false
+                        BreakTimeOfLoop := A_TickCount
+                        loop {
+                            SendEvent "{Click, " UpwardPosition[1] ", " UpwardPosition[2] ", 1}"
+                            SendEvent "{E Down}{E Up}"
+    
+                            if EvilSearch(PixelSearchTables["MiniX"]) {
+                                Found := true
+                                break
+                            } else if A_TickCount - BreakTimeOfLoop >= 700{
+                                break
+                            }
+    
+                            LeaderBoardThingy()
+                        }
+                    
+                        if not Found {
+                            continue
+                        }
+                        
+                        if StupidCatCheck() {
+                            PM_ClickPos("OkayButton")
+                        }
                 
-                    if not Found {
-                        continue
-                    }
-                    
-                    if StupidCatCheck() {
-                        PM_ClickPos("OkayButton")
-                    }
-            
-                    SmallBreakTime := A_TickCount
-                    loop {
-                        SendEvent "{E Down}{E Up}"
-                        Sleep(10)
-                        PM_ClickPos("EggMaxBuy")
-            
-                        if A_TickCount - SmallBreakTime >= 850 {
-                            break
+                        SmallBreakTime := A_TickCount
+                        loop {
+                            SendEvent "{E Down}{E Up}"
+                            Sleep(10)
+                            PM_ClickPos("EggMaxBuy")
+                
+                            if A_TickCount - SmallBreakTime >= 850 {
+                                break
+                            }
                         }
                     }
-                    
-                } else {
-                    Sleep(200)
-                    AntiAfkCheck_Multi(InstanceMap, CurrentID)
                 }
+
+                Sleep(200)
+                AntiAfkCheck_Multi(InstanceMap, CurrentID)
             }
 
             if not FollowThroughWithLoop {
