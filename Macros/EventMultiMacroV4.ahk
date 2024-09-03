@@ -1,4 +1,4 @@
-; /[V4.0.14]\ (Used for auto-update)
+; /[V4.0.15]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.3]"
@@ -1350,6 +1350,7 @@ F3::{
                     if (A_TickCount - CleanMap["PreviousRunTime"]) >= (CleanMap["NumberValueMap"]["LoopDelayTime"] * 1000) {
                         SaveToDebug("- Staring loop for ID:" ID " -")
 
+                        MapChange(CleanMap)
                         FollowThroughWithLoop := true
                         CurrentID := ID
                         break
