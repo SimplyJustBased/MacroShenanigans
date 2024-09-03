@@ -1,4 +1,4 @@
-; /[V4.0.13]\ (Used for auto-update)
+; /[V4.0.14]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.3]"
@@ -47,7 +47,7 @@ BooleanValueMap := Map(
     "EnableAutoHatch_Charged", false,
     "ShinyFruitToggle", false,
     "UserIsPastRebirth9", true,
-    "DoubleHatch", true,
+    "DoubleHatch", false,
 )
 
 MacroTogglesMap := Map(
