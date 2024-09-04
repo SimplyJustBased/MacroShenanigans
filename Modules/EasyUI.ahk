@@ -1,6 +1,6 @@
 #Requires AutoHotkey v2.0 
 
-CoordMode "Mouse", "Screen"
+CoordMode "Mouse", "Window"
 
 TypeToFunction := Map(
     "Toggle", Create_TNTP_UI,
@@ -1140,7 +1140,7 @@ CreateUIsForMulti(ToDo, MapIndex, TSettings, RecMap, ID, UIDigit) {
             SelfUIObject := CreateBaseUI(MIndexClone, true, UIDigit)
             RecMap[ID] := {Obj:SelfUIObject, Clone:MIndexClone, Action:ToDo}
         default:
-            ObtainedMap := Map("Afk Settings", {ClickTime:(10 * 60 * 1000), ClickPosition:[A_ScreenWidth/2, A_ScreenHeight/2]})
+            ObtainedMap := Map("Afk Settings", {ClickTime:(10 * 60 * 1000), ClickPosition:[410,320]})
 
             UI := CreateAfkUI(ObtainedMap, ID, TSettings, UIDigit)
             RecMap[ID] := {Map:ObtainedMap, Obj:UI, Action:ToDo}
