@@ -1,4 +1,4 @@
-; /[V4.0.15]\ (Used for auto-update)
+; /[V4.0.16]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.3]"
@@ -69,7 +69,7 @@ MacroTogglesMap := Map(
 Routes := Map(
     "BasicTP", "tp:Prison Tower|w_nV:TpWaitTime",
     "VoidToComputer", "r:[0%Q10&10%D700]",
-    "VoidToFinal", "tp:Prison Tower|wt:2000|w:3|w_nV:TpWaitTime|r:[0%Q10&20%A700&790%S1200]|wt:2000|spl:TpButton|sc:[115,223]|spl:X|sc:[667,395]|w_nV:TpWaitTime|r:[0%Q10&50%W730]|wt:2000|r:[0%Q10]",
+    "VoidToFinal", "tp:Prison Tower|wt:2000|w:3|w_nV:TpWaitTime|r:[0%Q10&20%A700&790%S1200]|wt:2000|spl:TpButton|sc:[115,223]|spl:X|sc:[143,396]|w_nV:TpWaitTime|r:[0%Q10&50%W730]|wt:2000|r:[0%Q10]",
     "FinalToEgg", "r:[0%A560&1200%Q10]",
     "EggToFinal", "r:[0%D2000]",
     ; "EggToAway", "r:[0%A700]",
