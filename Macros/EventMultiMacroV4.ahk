@@ -1,4 +1,4 @@
-; /[V4.0.16]\ (Used for auto-update)
+; /[V4.0.17]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.3]"
@@ -1217,9 +1217,9 @@ M_Fn5() {
         switch {
             case MacroTogglesMap["HatchEggs"] and not MacroTogglesMap["FarmZone"]:
                 if not ZoneInformation.FinalZone.IsEggInZone {
-                    SendEvent "{A Down}"
+                    SendEvent "{A Down}{Space Down}"
                     SetPixelSearchLoop("MiniX", 50000, 1,, [{Key:"E", Time:1, DownTime:10}],,10)
-                    SendEvent "{A Up}"
+                    SendEvent "{A Up}{Space Up}"
 
                     SubPosition := "Egg"
                 } else {
