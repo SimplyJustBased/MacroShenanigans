@@ -1,10 +1,10 @@
-; /[V2.0.07]\ (Used for auto-update)
+; /[V2.0.06]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
-#Include "%A_MyDocuments%\PS99_Macros\Modules\UWBOCRLib.ahk"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\_JXON.ahk"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\Router.ahk"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\_JXON.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\Router.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 
 #SingleInstance Force
 CoordMode "Mouse", "Screen"
@@ -560,7 +560,7 @@ UIOBject := CreateBaseUI(Map(
         {Map:Routes, Name:"Routes", SaveName:"Routes", Type:"Text", IsAdvanced:true},
         {Map:OCRMap, Name:"Ocr Settings", SaveName:"OcrSettings", Type:"Number", IsAdvanced:true},
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\PS99_Macros\SavedSettings\", FolderName:"TreeHouseMacroV2"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"TreeHouseMacroV2"}
 ))
 
 UIOBject.BaseUI.Show()
@@ -1144,15 +1144,15 @@ F5::{
 
     EvilText := EvilText "`nValueCharmDetections: " CharmDetectionAmount "`n`n`n" PickString
 
-    if not DirExist(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug") {
-        DirCreate(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug")
+    if not DirExist(A_MyDocuments "\MacroHubFiles\Storage\Debug\TreeHouseMacroV2Debug") {
+        DirCreate(A_MyDocuments "\MacroHubFiles\Storage\Debug\TreeHouseMacroV2Debug")
     }
 
-    if FileExist(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug\Output.txt") {
-        FileDelete(A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug\Output.txt")
+    if FileExist(A_MyDocuments "\MacroHubFiles\Storage\Debug\TreeHouseMacroV2Debug\Output.txt") {
+        FileDelete(A_MyDocuments "\MacroHubFiles\Storage\Debug\TreeHouseMacroV2Debug\Output.txt")
     }
 
-    FileAppend(EvilText, A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug\Output.txt")
-    Run A_MyDocuments "\PS99_Macros\Storage\TreeHouseMacroV2Debug\Output.txt"
+    FileAppend(EvilText, A_MyDocuments "\MacroHubFiles\Storage\Debug\TreeHouseMacroV2Debug\Output.txt")
+    Run A_MyDocuments "\MacroHubFiles\Storage\Debug\TreeHouseMacroV2Debug\Output.txt"
 }
 F8::ExitApp
