@@ -1,10 +1,10 @@
-; /[V4.0.17]\ (Used for auto-update)
+; /[V4.0.18]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.3]"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositions.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 
 CoordMode "Pixel", "Window"
 CoordMode "Mouse", "Window"
@@ -803,7 +803,7 @@ CreationMap := Map(
         {Map:Routes, Name:"Routes", Type:"Text", SaveName:"Routes", IsAdvanced:true},
 
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\PS99_Macros\SavedSettings\", FolderName:"E_MultiMacroV4"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"E_MultiMacroV4"}
 )
 
 ReturnedUITable := CreateBaseUI(CreationMap)
