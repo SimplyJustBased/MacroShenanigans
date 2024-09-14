@@ -1,9 +1,10 @@
-; /[V4.0.18]\ (Used for auto-update)
+; /[V4.0.19]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "Event[4.1.3]"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositions.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 
 CoordMode "Pixel", "Window"
