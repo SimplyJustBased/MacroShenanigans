@@ -1,4 +1,4 @@
-; /[V2.0.06]\ (Used for auto-update)
+; /[V2.0.07]\ (Used for auto-update)
 
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
