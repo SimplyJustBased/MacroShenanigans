@@ -15,8 +15,8 @@ TypeToFunction := Map(
 global __HeldUIs := Map()
 
 global CurrentPostionLabel := ""
-global FredokaOneFont := A_MyDocuments "\PS99_Macros\Storage\Fonts\F_One.ttf"
-global TimesNewRomanFont := A_MyDocuments "\PS99_Macros\Storage\Fonts\T_NR.ttf"
+global FredokaOneFont := A_MyDocuments "\MacroHubFiles\Storage\Fonts\F_One.ttf"
+global TimesNewRomanFont := A_MyDocuments "\MacroHubFiles\Storage\Fonts\T_NR.ttf"
 global CB := ""
 
 ;-- Expects Map("Main", {Title:X, Video:X, Description:X, Version:X, DescY:X, MacroName:X, IncludeFonts:True}, "Settings", [{Map:X,Name:X,Type:X,SaveName:X}], "SettingsFolder:X")
@@ -224,7 +224,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
     BaseGui.SetFont("s11")
     BaseGui.Add("Button","x15 y270","Save Settings").OnEvent("Click", ButtonSaveSettings)
     BaseGui.Add("Button","x15 y305","Save Settings As New File").OnEvent("Click", SaveNewSettingsShow)
-    BaseGui.Add("Text", "x15 y335", "↓ Load Setting File ↓")
+    BaseGui.Add("Text", "x15 y335", "? Load Setting File ?")
     SettingDD := BaseGui.Add("DropDownList", "w200 x15 y355 vLoadSetting choose" SettingNum, SettingsArray)
     SettingDD.OnEvent("Change", SettingChanged)
 
@@ -1005,7 +1005,7 @@ CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
 
 ;-- Used for MultiInstance | Setup so the buttons work
 ExtendedFunction(MultiInstanceSetupUI, NSetting, ID) {
-    ActivateButton := MultiInstanceSetupUI.AddButton("y" ((NSetting * 55 + (45))) " w25 h25 x81", "🔍")
+    ActivateButton := MultiInstanceSetupUI.AddButton("y" ((NSetting * 55 + (45))) " w25 h25 x81", "??")
     OptionDropDownList := MultiInstanceSetupUI.AddDropDownList("y" ((NSetting * 55 + (47))) " w100 h25 xp+25 choose3 R3 vOption" ID, ["Macro", "Anti-Afk", "Nothing"])
 
     ActivateButton.OnEvent("Click", (*) => WinActivate("ahk_id " ID))
@@ -1014,7 +1014,7 @@ ExtendedFunction(MultiInstanceSetupUI, NSetting, ID) {
 ;-- Used for MultiInstance | Settings so the buttons work
 AnotherExtendedFunction(MultiInstanceUI, NSetting, AccountID, AccountOBJ) {
     SettingButton := MultiInstanceUI.AddButton("y" ((NSetting * 55 + (45))) " w100 h25 x83", "Open Settings")
-    ActivateButton := MultiInstanceUI.AddButton("y" ((NSetting * 55 + (45))) " w25 h25 xp+100", "🔍")
+    ActivateButton := MultiInstanceUI.AddButton("y" ((NSetting * 55 + (45))) " w25 h25 xp+100", "??")
 
     SettingButton.SetFont("s9")
     ActivateButton.OnEvent("Click", (*) => WinActivate("ahk_id " AccountID))
