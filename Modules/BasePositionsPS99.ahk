@@ -1,7 +1,7 @@
 ; V1.01
 
 global PositionMap := Map(
-    "TpButton", {Macros:["All"], Position:[118, 223], Version:"BF_V1.0.0"},
+    "TpButton", {Macros:["All"], Position:[118, 200], Version:"BF_V1.0.0"},
     "TpButtonTL", {Macros:["All"], Position:[112, 216], Version:"BF_V1.0.0"},
     "TpButtonBR", {Macros:["All"], Position:[120, 223], Version:"BF_V1.0.0"},
     "TpButtonCheckTL", {Macros:["All"], Position:[63, 133], Version:"BF_V1.0.0"},
