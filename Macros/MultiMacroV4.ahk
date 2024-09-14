@@ -1,10 +1,10 @@
-; /[V4.0.07]\ (Used for auto-update)
+; /[V4.0.08]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 
 global Version := "4.1.0"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\BasePositions.ahk"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\UsefulFunctions.ahk"
-#Include "%A_MyDocuments%\PS99_Macros\Modules\EasyUI.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\\Modules\BasePositions.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
+#Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 
 CoordMode "Pixel", "Window"
 CoordMode "Mouse", "Window"
@@ -797,7 +797,7 @@ CreationMap := Map(
         {Map:Routes, Name:"Routes", Type:"Text", SaveName:"Routes", IsAdvanced:true},
 
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\PS99_Macros\SavedSettings\", FolderName:"MultiMacroV4"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"MultiMacroV4"}
 )
 
 ReturnedUITable := CreateBaseUI(CreationMap)
@@ -1363,16 +1363,16 @@ F3::{
         return
     }
 
-    if not DirExist(A_MyDocuments "\PS99_Macros\Storage\MultiMacroV4Debug") {
-        DirCreate(A_MyDocuments "\PS99_Macros\Storage\MultiMacroV4Debug")
+    if not DirExist(A_MyDocuments "\MacroHubFiles\Storage\Debug\MultiMacroV4Debug") {
+        DirCreate(A_MyDocuments "\MacroHubFiles\Storage\Debug\MultiMacroV4Debug")
     }
 
     OpF_Num := 1
-    loop files, A_MyDocuments "\PS99_Macros\Storage\MultiMacroV4Debug\*.txt" {
+    loop files, A_MyDocuments "\MacroHubFiles\Storage\Debug\MultiMacroV4Debug\*.txt" {
         OpF_Num++
     }
 
-    OutPutFile := A_MyDocuments "\PS99_Macros\Storage\MultiMacroV4Debug\MMV4_Output_" OpF_Num ".txt"
+    OutPutFile := A_MyDocuments "\MacroHubFiles\Storage\Debug\MultiMacroV4Debug\MMV4_Output_" OpF_Num ".txt"
     FileAppend("-/ Macro Started at [" FormatTime(A_Now, "MM/dd/yyyy | h:mm tt") "] \-", OutPutFile)
     RunTime := A_TickCount
 
