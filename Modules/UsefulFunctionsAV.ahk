@@ -62,9 +62,10 @@ CameraticView() {
         Sleep(10)
     }
 
-    PM_ClickPos("CamSet1", "Down Right")
+    
+    PM_ClickPos("CamSet1", "Right Down")
     Sleep(200)
-    PM_ClickPos("CamSet1", "Up Right")
+    PM_ClickPos("CamSet2", "Right Up")
 
 }
 
