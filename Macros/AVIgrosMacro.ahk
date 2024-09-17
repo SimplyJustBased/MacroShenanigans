@@ -1,3 +1,5 @@
+; /[V1.0.0]\
+
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
 SetMouseDelay -1
