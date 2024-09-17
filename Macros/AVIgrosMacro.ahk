@@ -1,4 +1,4 @@
-; /[V1.0.1]\
+; /[V1.0.2]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -273,7 +273,8 @@ Main() {
                 break
             }
 
-            Sleep(200)
+            SendEvent "{Click,416, 156, 1}"
+            Sleep(100)
         }
         Sleep(1000)
 
