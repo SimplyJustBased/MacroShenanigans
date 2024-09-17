@@ -7,11 +7,9 @@ SetMouseDelay -1
 global PixelSearchTables := Map()
 
 ____ADVTextToFunctionMap := Map(
-    "Tp:", ____TP,
     "w_nV:", ____W_nV,
     "wt:", ____Wt,
     "r:", ____R,
-    "w:", ____W,
     "Sc:", ____SC,
     "Spl:", ____SPL,
     "ASpl:", ____ASPL,
@@ -263,56 +261,6 @@ ____CreatePSInstance(InstArray) {
     }
 
     PixelSearchTables[Name] := SetupTable
-}
-
-; Used for RouteUser
-____TP(Value) {
-    SetPixelSearchLoop("TpButton", 20000, 1)
-
-
-    Sleep(400)
-    PM_ClickPos("TpButton")
-    Sleep(400)
-
-    SetPixelSearchLoop("X", 20000, 1,,,150,,[{Func:____TP_1, Time:6000}])
-    PM_ClickPos("SearchField")
-    Sleep(200)
-    SendText Value
-
-    SetPixelSearchLoop("SearchField", 5000,1,,,,)
-    loop 3 {
-        Sleep(250)
-        PM_ClickPos("TpMiddle")
-    }
-    Sleep(500)
-
-    if StupidCatCheck() {
-        Clean_UI()
-    }
-}
-
-____TP_1(*) {
-    Clean_UI()
-    PM_ClickPos("TpButton")
-}
-
-____W(Value) {
-    SetPixelSearchLoop("TpButton", 20000, 1)
-
-    Sleep(400)
-    PM_ClickPos("TpButton")
-    Sleep(400)
-
-    SetPixelSearchLoop("X", 20000, 1,,,150,,[{Func:____TP_1, Time:6000}])
-
-    ButtonOrder := ["SpawnButton", "TechButton", "VoidButton"]
-    PositionToUse := ButtonOrder[Value]
-
-    Sleep(200)
-    PM_ClickPos(PositionToUse)
-    Sleep(400)
-
-    SetPixelSearchLoop("MiniX", 15000, 2, PM_GetPos("YesButton"))
 }
 
 ; Used for RouteUser
