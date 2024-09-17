@@ -1,4 +1,4 @@
-; /[V1.0.0]\
+; /[V1.0.1]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -126,7 +126,7 @@ RouteStatues(Quadrant) {
         Sleep(200)
 
         if Result1 or Result2 {
-            SendEvent "{" NumberValueMap["SlotFro"] "}"
+            SendEvent "{" NumberValueMap["SlotForStatues"] "}"
             Sleep(200)
             SendEvent "{Click, 411, 344, 0}"
             Sleep(200)
