@@ -39,7 +39,7 @@ WaveDetection() {
     
         return StrSplit(OCRResult.Text, " ")[2]
     } catch as E {
-        return 1
+        return 0
     }
 }
 
