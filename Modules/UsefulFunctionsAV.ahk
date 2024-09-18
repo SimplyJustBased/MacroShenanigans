@@ -142,7 +142,7 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                         }
                     }
 
-                    if not ToggleMapValues["NoMovementReset"] {
+                    if not ToggleMapValues["NoMovementReset"] and OffsetArray.Length > 1 {
                         TpToSpawn()
                         Sleep(500)
                     }
