@@ -100,7 +100,7 @@ ResetActions() {
 }
 
 EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15) {
-    Wave := 1
+    Wave := 0
 
     InverseKeys := Map(
         "W", "S",
