@@ -6,11 +6,18 @@
 ____PSCreationMap := [
     ["RetryButton", 0xD7CD03, 15, 1],
     ["ReturnToLobby", 0x1EB8E1, 15, 1],
-
+    ["StoreCheck", 0x3D0506, 5, 1], ; We use the store check for when we reconnect to make sure we are actually in game / loaded in
+    ["QueueLeaveButton", 0xBD3033, 3, 1],
+    ["ConfirmButton", 0x4FDA4B, 3, 1],
+    ["AutoStart", 0x04EE00, 3, 1],
+    ["SettingsX", 0xE13C3E, 5, 1],
     ["ResultBackgroundCheck1", 0x141414, 3, 2],
     ["ResultBackgroundCheck2", 0x030303, 3, 2],
     ["AutoSkipWavesToggle", 0x511818, 15, 2],
     ["DisableCameraShakeToggle", 0x511818, 15, 2],
+    ["DisconnectBG_LS", 0x393B3D, 3, 2],
+    ["DisconnectBG_RS", 0x393B3D, 3, 2],
+    ["ReconnectButton", 0xFFFFFF, 3, 2],
 ]
 
 DetectEndRoundUI() {
@@ -70,7 +77,7 @@ CameraticView() {
 }
 
 TpToSpawn() {
-    PM_ClickPos("SettingButton")
+    SetPixelSearchLoop("SettingsX", 6000, 1, PM_GetPos("SettingButton"),,,600)
     Sleep(400)
     PM_ClickPos("SettingMiddle")
     Sleep(300)
@@ -99,6 +106,7 @@ ResetActions() {
     }
 }
 
+
 EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15) {
     Wave := 0
 
@@ -115,6 +123,10 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
         if IsNumber(FoundNumber) and FoundNumber > Wave and (not FoundNumber > FoundNumber + WaveDetectionRange) and (not FoundNumber > MaxWave) {
             Wave := FoundNumber
             OutputDebug("`nNew Wave #: " Wave)
+        }
+
+        if DisconnectedCheck() {
+            break
         }
 
         if BreakOnLose and DetectEndRoundUI() {
@@ -196,6 +208,64 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
         }
 
         Sleep(400)
+    }
+}
+
+DisconnectedCheck() {
+    Arg1 := EvilSearch(PixelSearchTables["DisconnectBG_LS"])[1]
+    Arg2 := EvilSearch(PixelSearchTables["DisconnectBG_RS"])[1]
+    Arg3 := EvilSearch(PixelSearchTables["ReconnectButton"])[1]
+
+    if not (Arg1 and Arg2 and Arg3) {
+        return false
+    }
+
+    return true
+}
+
+ReconnecticalNightmares() {
+    if not DisconnectedCheck() {
+        return false
+    }
+
+    SetPixelSearchLoop("StoreCheck", 90000, 1, PM_GetPos("ReconnectButton"))
+    SendEvent "{Tab Down}{Tab Up}"
+    Sleep(300)
+    PM_ClickPos("PlayerX")
+    Sleep(300)
+    PM_ClickPos("AreaButton")
+    Sleep(300)
+    PM_ClickPos("Area_PlayButton")
+    Sleep(300)
+    PM_ClickPos("AreaButtonX")
+    Sleep(500)
+    RouteUser("r:[0%W600&650%A600&1300%W4000]")
+    Sleep(500)
+
+    loop {
+        SendEvent "{A Down}{Space Down}"
+        
+        Issue := 0
+        loop {
+            for _1, SearchName in ["QueueLeaveButton", "ConfirmButton"] {
+                if EvilSearch(PixelSearchTables[SearchName])[1] {
+                    Issue := _1
+                    SendEvent "{A Up}{Space Up}"
+                    break 2
+                }
+            }
+            Sleep(10)
+        }
+
+        switch Issue {
+            case 1:
+                PM_ClickPos("QueueLeaveButton")
+                Sleep(5000)
+                OutputDebug("Retrying")
+            case 2:
+                OutputDebug("Perfection")
+                return true
+        }
     }
 }
 
