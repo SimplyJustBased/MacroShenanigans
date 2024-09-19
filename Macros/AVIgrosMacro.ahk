@@ -1,4 +1,4 @@
-; /[V1.0.2]\
+; /[V1.0.3]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -59,6 +59,7 @@ global UnitMap := Map(
 
 global ToggleMapValues := Map(
     "NoMovementReset", true,
+    "Auto-Reconnect", true,
 )
 
 global NumberValueMap := Map(
@@ -242,6 +243,34 @@ RouteStatues(Quadrant) {
     TpToSpawn()
 }
 
+Reconnection() {
+    if not ToggleMapValues["Auto-Reconnect"] {
+        return false
+    }
+
+    if ReconnecticalNightmares() {
+        Sleep(400)
+        PM_ClickPos("LegendStagesButton_Select")
+        Sleep(400)
+        PM_ClickPos("Dungeon_2_Select")
+        Sleep(400)
+        PM_ClickPos("Act3_Igros_Select")
+        Sleep(400)
+        PM_ClickPos("ConfirmButton")
+        Sleep(600)
+        PM_ClickPos("QueueStartButton")
+        SetPixelSearchLoop("AutoStart", 90000, 1)
+        SendEvent "{Tab Down}{Tab Up}"
+        Sleep(200)
+        PM_ClickPos("AutoStart")
+        Sleep(200)
+        return true
+    }
+
+    return false
+
+}
+
 Main() {
     if not MacroEnabled {
         return
@@ -250,11 +279,23 @@ Main() {
     CameraticView()
     Sleep(200)
 
+    if EvilSearch(PixelSearchTables["AutoStart"])[1] {
+        PM_ClickPos("AutoStart")
+        Sleep(200)
+    }
+
     loop {
+        if Reconnection() {
+            continue
+        }
+
         TpToSpawn()
         Sleep(500)
 
         EnableWaveAutomation([15], true, 1, 15)
+        if Reconnection() {
+            continue
+        }
 
         if not DetectEndRoundUI() {
             TpToSpawn()
