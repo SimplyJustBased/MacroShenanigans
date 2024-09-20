@@ -1571,18 +1571,20 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
     }
 
     OpenUIID := NewUI
+    UnitSelfMap := TrueMap[UhhMap[OpenUIID].Key]
 
-    if not TrueMap[UhhMap[OpenUIID].Key].HasOwnProp("UI") {
-        TrueMap[UhhMap[OpenUIID].Key].UI := {}
+
+    if not UnitSelfMap.HasOwnProp("UI") {
+        UnitSelfMap.UI := {}
     }
 
-    TrueMap[UhhMap[OpenUIID].Key].UI.Row := RowNumber
+    UnitSelfMap.UI.Row := RowNumber
     FinalizedUI := Gui()
 
     TotalLength := 0
-    if UhhMap.Has(OpenUIID) and not TrueMap[UhhMap[OpenUIID].Key].UI.HasOwnProp("Gui") {
+    if UhhMap.Has(OpenUIID) and not UnitSelfMap.UI.HasOwnProp("Gui") {
         NewUIOrWhatever := Gui()
-        RealObject := TrueMap[UhhMap[OpenUIID].Key]
+        RealObject := UnitSelfMap
 
         ; Title
         UpperText := NewUIOrWhatever.AddText("w200 h25 Section", "Unit Setting | " OpenUIID)
@@ -1608,6 +1610,8 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
 
         ; Movement
         NewUIOrWhatever.AddText("w140 h25 Section xs y" (TotalLength), "Movement List").SetFont("s14 w700 underline")
+        TestMovemntButton := NewUIOrWhatever.AddButton("w60 h25 xp+140 yp", "Test")
+        TestMovemntButton.SetFont("s11 bold")
         MovementButtons := []
         
         TotalLength += 25
@@ -1694,11 +1698,13 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
 
         TotalLength += 30
         SumbitValueButton := NewUIOrWhatever.AddButton("w120 xs h30 y" (TotalLength), "Save Values")
+        ; CloneSelectionButton := NewUIOrWhatever.AddButton("w90 xp+110 h30 y" (TotalLength), "Clone Unit")
 
         Action_LeftArrow.SetFont("bold s15")
         Action_PageNumber.SetFont("bold s15")
         Action_RightArrow.SetFont("bold s15")
         SumbitValueButton.SetFont("s13")
+        ; CloneSelectionButton.SetFont("s12")
 
         ; Functionality of the UI
         SumbitValueButton.OnEvent("Click", (*) => SetValue())
@@ -1717,7 +1723,7 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
         MovementCurrentPage := 1
         
         FixMaps() {
-            for _1, __1 in [[ActionPages, TrueMap[UhhMap[OpenUIID].key].UnitData], [MovementPages, TrueMap[UhhMap[OpenUIID].key].MovementFromSpawn]] {
+            for _1, __1 in [[ActionPages, UnitSelfMap.UnitData], [MovementPages, UnitSelfMap.MovementFromSpawn]] {
                 for _2, Data in __1[2] {
                     if not __1[1].Has("p_" (Ceil(_2/5))) {
                         __1[1]["p_" (Ceil(_2/5))] := []
@@ -1843,12 +1849,12 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
         }
 
         AdditionAction() {
-            if TrueMap[UhhMap[OpenUIID].key].UnitData.Length >= 100 {
+            if UnitSelfMap.UnitData.Length >= 100 {
                 MsgBox("i know you are ecstatic to add more but im going to have to limit you here.")
                 return
             }
 
-            TrueMap[UhhMap[OpenUIID].key].UnitData.Push({Type:"Upgrade", Wave:1, ActionCompleted:false})
+            UnitSelfMap.UnitData.Push({Type:"Upgrade", Wave:1, ActionCompleted:false})
             ActionPages.Clear()
 
             FixMaps()
@@ -1856,12 +1862,12 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
         }
 
         AdditionMovement() {
-            if TrueMap[UhhMap[OpenUIID].key].MovementFromSpawn.Length >= 100 {
+            if UnitSelfMap.MovementFromSpawn.Length >= 100 {
                 MsgBox("i know you are ecstatic to add more but im going to have to limit you here.")
                 return
             }
             
-            TrueMap[UhhMap[OpenUIID].key].MovementFromSpawn.Push({Key:"W", TimeDown:100, Delay:1})
+            UnitSelfMap.MovementFromSpawn.Push({Key:"W", TimeDown:100, Delay:1})
             MovementPages.Clear()
 
             FixMaps()
@@ -1869,12 +1875,12 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
         }
 
         RemovalAction() {
-            if TrueMap[UhhMap[OpenUIID].key].UnitData.Length <= 0 {
+            if UnitSelfMap.UnitData.Length <= 0 {
                 MsgBox("What else could you possibly want removed?")
                 return
             }
 
-            TrueMap[UhhMap[OpenUIID].key].UnitData.RemoveAt(TrueMap[UhhMap[OpenUIID].key].UnitData.Length)
+            UnitSelfMap.UnitData.RemoveAt(UnitSelfMap.UnitData.Length)
             ActionPages.Clear()
 
             FixMaps()
@@ -1882,12 +1888,12 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
         }
 
         RemovalMovement() {
-            if TrueMap[UhhMap[OpenUIID].key].MovementFromSpawn.Length <= 0 {
+            if UnitSelfMap.MovementFromSpawn.Length <= 0 {
                 MsgBox("What else could you possibly want removed?")
                 return
             }
 
-            TrueMap[UhhMap[OpenUIID].key].MovementFromSpawn.RemoveAt(TrueMap[UhhMap[OpenUIID].key].MovementFromSpawn.Length )
+            UnitSelfMap.MovementFromSpawn.RemoveAt(UnitSelfMap.MovementFromSpawn.Length )
             MovementPages.Clear()
 
             FixMaps()
@@ -1903,15 +1909,15 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
 
                 ; Saving Actions
                 ; (A_Index + (5 * ActionCurrentPage) - 5)
-                if TrueMap[UhhMap[OpenUIID].key].UnitData.Has(A_Index + (5 * ActionCurrentPage) - 5) {
-                    UnitObject := TrueMap[UhhMap[OpenUIID].key].UnitData[A_Index + (5 * ActionCurrentPage) - 5]
+                if UnitSelfMap.UnitData.Has(A_Index + (5 * ActionCurrentPage) - 5) {
+                    UnitObject := UnitSelfMap.UnitData[A_Index + (5 * ActionCurrentPage) - 5]
 
                     UnitObject.Type := AbsoluteValues.%"Action" A_Index%
                     UnitObject.Wave := AbsoluteValues.%"Wave" A_Index%
                 }
 
-                if TrueMap[UhhMap[OpenUIID].key].MovementFromSpawn.Has(A_Index + (5 * MovementCurrentPage) - 5) {
-                    MovementObject := TrueMap[UhhMap[OpenUIID].key].MovementFromSpawn[A_Index + (5 * MovementCurrentPage) - 5]
+                if UnitSelfMap.MovementFromSpawn.Has(A_Index + (5 * MovementCurrentPage) - 5) {
+                    MovementObject := UnitSelfMap.MovementFromSpawn[A_Index + (5 * MovementCurrentPage) - 5]
 
                     MovementObject.Key := AbsoluteValues.%"Key" A_Index%
                     MovementObject.TimeDown := AbsoluteValues.%"TimeDown" A_Index%
@@ -1923,10 +1929,10 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
         SetValue() {
             AbsoluteValues := NewUIOrWhatever.Submit(true)
 
-            TrueMap[UhhMap[OpenUIID].key].Slot := AbsoluteValues.SlotNumber
-            TrueMap[UhhMap[OpenUIID].key].Pos := [AbsoluteValues.PosX, AbsoluteValues.PosY]
+            UnitSelfMap.Slot := AbsoluteValues.SlotNumber
+            UnitSelfMap.Pos := [AbsoluteValues.PosX, AbsoluteValues.PosY]
 
-            ActionNumber := TrueMap[UhhMap[OpenUIID].Key].UnitData.Length
+            ActionNumber := UnitSelfMap.UnitData.Length
 
             if ActionNumber > 1 {
                 ActionNumber := ActionNumber " Actions"
@@ -1935,12 +1941,27 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
             }
 
             LowestWave := 9999
-            for _, DataObj in TrueMap[UhhMap[OpenUIID].Key].UnitData {
+            for _, DataObj in UnitSelfMap.UnitData {
                 LowestWave := Min(LowestWave, DataObj.Wave)
             }
 
-            Lv.Modify(TrueMap[UhhMap[OpenUIID].Key].UI.Row, "Col1", AbsoluteValues.SlotNumber, ActionNumber, "Wave " LowestWave)
-            EvilLV.Modify(TrueMap[UhhMap[OpenUIID].Key].UI.Row, "Col1", AbsoluteValues.SlotNumber)
+            Lv.Modify(UnitSelfMap.UI.Row, "Col1", AbsoluteValues.SlotNumber, ActionNumber, "Wave " LowestWave)
+            EvilLV.Modify(UnitSelfMap.UI.Row, "Col1", AbsoluteValues.SlotNumber)
+        }
+
+        TestMovement() {
+            try {
+                WinActivate("ahk_exe RobloxPlayerBeta.exe")
+
+                for _, MovementObject in UnitSelfMap.MovementFromSpawn {
+                    Sleep(MovementObject.Delay)
+                    SendEvent "{" MovementObject.Key " Down}"
+                    Sleep(MovementObject.TimeDown)
+                    SendEvent "{" MovementObject.Key " Up}"
+                }
+            } catch as E {
+                MsgBox("Error : " E.Message)
+            }
         }
 
         Action_LeftArrow.OnEvent("Click", (*) => CHP_Action("Left"))
@@ -1953,6 +1974,8 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
         RemoveActionButton.OnEvent("Click", (*) => RemovalAction())
         RemoveMovementButton.OnEvent("Click", (*) => RemovalMovement())
 
+        TestMovemntButton.OnEvent("Click", (*) => TestMovement())
+
         FixMaps()
         PageChanged("Action", ActionPages, ActionButtons, ActionCurrentPage)
         PageChanged("Movement", MovementPages, MovementButtons, MovementCurrentPage)
@@ -1960,9 +1983,9 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
         __HeldUIs["UID" TrueObject.UID].Push(NewUIOrWhatever)
         
         FinalizedUI := NewUIOrWhatever
-        TrueMap[UhhMap[OpenUIID].Key].UI.Gui := FinalizedUI
+        UnitSelfMap.UI.Gui := FinalizedUI
     } else {
-        FinalizedUI := TrueMap[UhhMap[OpenUIID].Key].UI.Gui
+        FinalizedUI := UnitSelfMap.UI.Gui
     }
 
     OriginalUI.GetPos(&X1, &Y1, &X2, &Y2)
@@ -1973,9 +1996,11 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
 
 ; If you cant tell this shit is getting confusing as hell
 global UpwardUnitSelection := ""
+global UpwardUnitSelection_2 := ""
 UnitSelectionTypeUI(UhhMap) {
     AddtiveGui := Gui(,"Add UI")
     DeletiveGui := Gui()
+    Clone_ive := Gui()
     AddButton := ""
     RemoveButton := ""
 
@@ -1998,8 +2023,18 @@ UnitSelectionTypeUI(UhhMap) {
     RemoveButton.SetFont("s11")
     RemoveButton.Enabled := false
 
+    Clone_ive.AddText("w210 h30 Section","Clone Unit From UI").SetFont("bold s15")
+    Unit_LVC := Clone_ive.AddListView("r15 LV0x10 Hdr ReadOnly w210", ["Slot", "id"])
+    Clone_ive.AddText("xp+215 h30 yp w130", "Selection Chosen").SetFont("s10 bold underline")
+    SelectionTextC := Clone_ive.AddText("xp h30 yp+15 w130", "[None]")
+    SelectionTextC.SetFont("s10 bold")
+    CloneButton := Clone_ive.AddButton("xp h30 yp+239 w130", "Clone Selection")
+    CloneButton.SetFont("s11")
+    CloneButton.Enabled := false
+
     for ID, Idobj in UhhMap {
         Unit_LV.Add(, Idobj.Slot, ID)
+        Unit_LVC.Add(, Idobj.Slot, ID)
     }
 
     MinorFunc(LV, RowNum) {
@@ -2013,7 +2048,19 @@ UnitSelectionTypeUI(UhhMap) {
         RemoveButton.Enabled := true
     }
 
+    MinorFunc2(Lv, RowNum) {
+        global UpwardUnitSelection_2
+
+        SelectedID := Lv.GetText(RowNum, 2)
+        SelectedRow := RowNum
+        UpwardUnitSelection_2 := SelectedID
+
+        SelectionTextC.Text := SelectedID
+        CloneButton.Enabled := true
+    }
+
     Unit_LV.OnEvent("DoubleClick", MinorFunc)
+    Unit_LVC.OnEvent("DoubleClick", MinorFunc2)
 
     return {Add:{
         GUI:AddtiveGui,
@@ -2023,7 +2070,13 @@ UnitSelectionTypeUI(UhhMap) {
         Button:RemoveButton,
         LV:Unit_LV,
         SelectionText:SelectionText,
-    }}
+    }, Clone:{
+        GUI:Clone_ive,
+        Button:CloneButton,
+        LV:Unit_LVC,
+        SelectionText:SelectionTextC,
+    }
+}
 }
 
 global ListViewUnitNumber := 0
@@ -2039,11 +2092,11 @@ CreateUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variablistic
     UnitMap := _MapOBJ.Map
 
     UnitUI.AddText("w200 h25 Section", "Unit Settings").SetFont("s14 w700")
-    Unit_LV := UnitUI.AddListView("r15 LV0x10 Hdr ReadOnly", ["Slot", "Action #'s", "First Action Wave", "id"])
+    Unit_LV := UnitUI.AddListView("r15 LV0x10 Hdr ReadOnly w255", ["Slot", "Action #'s", "First Action Wave", "id"])
 
     AddSelectionButton := UnitUI.AddButton("w75 h25", "Add Selection")
     RemoveSelectionButton := UnitUI.AddButton("w95 h25 xp+75", "Remove Selection")
-
+    CloneSelectionButton := UnitUI.AddButton("w85 h25 xp+95", "Clone Selection")
 
     ListViewUnitFunc() {
         global ListViewUnitNumber
@@ -2076,9 +2129,11 @@ CreateUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variablistic
 
     AddSelectionButton.OnEvent("Click", (*) => ShowGuiRight(ReturnedUIObjects.Add.GUI))
     RemoveSelectionButton.OnEvent("Click", (*) => ShowGuiRight(ReturnedUIObjects.Remove.GUI))
+    CloneSelectionButton.OnEvent("Click", (*) => ShowGuiRight(ReturnedUIObjects.Clone.GUI))
+
     ReturnedUIObjects.Add.Button.OnEvent("Click", (*) => AddSelection())
     ReturnedUIObjects.Remove.Button.OnEvent("Click", (*) => RemoveSelection())
-
+    ReturnedUIObjects.Clone.Button.OnEvent("Click", (*) => CloneSelection())
 
     AddSelection() {
         global ListViewUnitNumber
@@ -2090,6 +2145,7 @@ CreateUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variablistic
 
         Unit_LV.Add(, UnitObject.Slot, UnitObject.UnitData.Length " Actions", "Wave " 999, "ID:" ListViewUnitNumber)
         ReturnedUIObjects.Remove.LV.Add(, UnitObject.Slot, "ID:" ListViewUnitNumber)
+        ReturnedUIObjects.Clone.LV.Add(, UnitObject.Slot, "ID:" ListViewUnitNumber)
         UhhMap["ID:" UnitObject.ID] := {Key:"Unit_" UnitMap.Count, Row:ListViewUnitNumber, Slot:UnitObject.Slot}
     }
 
@@ -2113,14 +2169,41 @@ CreateUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variablistic
         loop 100 {
             Unit_LV.Delete(101-A_Index)
             ReturnedUIObjects.Remove.LV.Delete(101-A_Index)
+            ReturnedUIObjects.Clone.LV.Delete(101-A_Index)
         }
 
         UhhMap.Clear()
         ListViewUnitFunc()
         
         for Id, Idobj in UhhMap {
+            ReturnedUIObjects.Clone.LV.Add(, Idobj.Slot, ID)
             ReturnedUIObjects.Remove.LV.Add(, Idobj.Slot, ID)
         }
+    }
+
+    CloneSelection() {
+        global ListViewUnitNumber
+
+
+        ReturnedUIObjects.Clone.GUI.Submit()
+        ReturnedUIObjects.Clone.Button.Enabled := false
+        ReturnedUIObjects.Clone.SelectionText.Text := "[None]"
+
+        NewClone := SwitchCheck(UnitMap[UhhMap[UpwardUnitSelection_2].Key])
+        ListViewUnitNumber++
+
+        NewClone.ID := ListViewUnitNumber
+        UnitObject := UnitMap["Unit_" (UnitMap.Count + 1)] := NewClone
+
+        EarliestWave := 999
+        for _, Obj in UnitObject.UnitData {
+            EarliestWave := Min(EarliestWave, Obj.Wave)
+        }
+
+        Unit_LV.Add(, UnitObject.Slot, UnitObject.UnitData.Length " Actions", "Wave " EarliestWave, "ID:" ListViewUnitNumber)
+        ReturnedUIObjects.Remove.LV.Add(, UnitObject.Slot, "ID:" ListViewUnitNumber)
+        ReturnedUIObjects.Clone.LV.Add(, UnitObject.Slot, "ID:" ListViewUnitNumber)
+        UhhMap["ID:" UnitObject.ID] := {Key:"Unit_" UnitMap.Count, Row:ListViewUnitNumber, Slot:UnitObject.Slot}
     }
 
     RefreshUI(*) {
