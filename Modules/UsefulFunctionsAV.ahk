@@ -37,7 +37,7 @@ DetectEndRoundUI() {
 
 WaveDetection() {
     try {
-        OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,1,{
+        OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
             X:101,
             Y:50,
             W:124,
