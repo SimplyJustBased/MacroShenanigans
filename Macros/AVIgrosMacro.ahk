@@ -1,4 +1,4 @@
-; /[V1.0.3]\
+; /[V1.0.4]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -294,6 +294,7 @@ Main() {
 
         EnableWaveAutomation([15], true, 1, 15)
         if Reconnection() {
+            ResetActions()
             continue
         }
 
@@ -334,3 +335,7 @@ ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
 F3::Main()
 F8::ExitApp()
 F6::Pause -1
+
+
+; TestMovemntButton
+; 
