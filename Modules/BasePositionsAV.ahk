@@ -38,6 +38,8 @@ global PositionMap := Map(
     "AutoStart", {Position:[356, 183]},
     "AutoStartTL", {Position:[311, 169]},
     "AutoStartBR", {Position:[398, 188]},
+    "UnitXTL", {Position:[224, 259]},
+    "UnitXTL", {Position:[240, 274]},
 
     ;-- Igros Related
     "LegendStagesButton_Select", {Position:[516, 600]},
