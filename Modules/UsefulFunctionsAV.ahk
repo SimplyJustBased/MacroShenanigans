@@ -11,6 +11,7 @@ ____PSCreationMap := [
     ["ConfirmButton", 0x4FDA4B, 3, 1],
     ["AutoStart", 0x04EE00, 3, 1],
     ["SettingsX", 0xE13C3E, 5, 1],
+    ["UnitX", 0xC53336, 3, 1],
     ["ResultBackgroundCheck1", 0x141414, 3, 2],
     ["ResultBackgroundCheck2", 0x030303, 3, 2],
     ["AutoSkipWavesToggle", 0x511818, 15, 2],
@@ -35,14 +36,21 @@ DetectEndRoundUI() {
     return false
 }
 
-WaveDetection() {
+WaveDetection(Highlight := false) { ;95, 38
     try {
-        OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
-            X:101,
-            Y:50,
-            W:124,
-            H:80
-        }, 0)
+        switch ToggleMapValues["SecondaryOCR"] {
+            case true:
+                WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
+
+                OCRResult := OCR.FromRect(XPos+101, Ypos+30, 124, 120)
+            case false:
+                OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
+                    X:101,
+                    Y:30,
+                    W:124,
+                    H:120
+                }, 0)
+        }
     
         return StrSplit(OCRResult.Text, " ")[2]
     } catch as E {
@@ -185,6 +193,7 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                             Sleep(15)
                             SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 1}"
                             Sleep(200)
+                            SetPixelSearchLoop("UnitX", 5000, 1)
                             PM_ClickPos("UnitX", 1)
                         case "Upgrade":
                             SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 0}"
@@ -193,6 +202,7 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                             Sleep(200)
                             SendEvent "{T Down}{T Up}"
                             Sleep(200)
+                            SetPixelSearchLoop("UnitX", 5000, 1)
                             PM_ClickPos("UnitX", 1)
                         case "Sell":
                             SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 0}"
