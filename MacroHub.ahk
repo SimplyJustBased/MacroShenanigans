@@ -1,4 +1,4 @@
-; /[V1.1.2]\
+; /[V1.1.3]\
 #Requires AutoHotkey v2.0 
 
 global Macro_Hub_Version := "1.0.4"
@@ -641,7 +641,7 @@ GameObjAddTo("Pet Simulator 99", "DiceMerchantMacro", "Event | Discontinued", "N
 GameObjAddTo("Pet Simulator 99", "MultiMacroV4", "Stable | Maintained", "A all around afk grind macro with many features!", "V4", "green", 1, ["EasyUI", "BasePositionsPS99", "UsefulFunctions", "UsefulFunctionsPS99"], "zju4zs9QQNc")
 GameObjAddTo("Pet Simulator 99", "EventMultiMacroV4", "Stable | Maintained", "A MultiMacroV4 Port for the EventWorld.", "V1?", "bf01bf", 1, ["EasyUI", "BasePositionsPS99", "UsefulFunctions", "UsefulFunctionsPS99"], "KLkE6DMxtss")
 GameObjAddTo("Pet Simulator 99", "TreeHouseMacroV2", "Stable | Maintained", "A Macro for automating usage of secret keys in the Secret TreeHouse Zone!", "V2", "green", 1, ["EasyUI", "BasePositionsPS99", "_JXON", "Router", "UWBOCRLib"], "9hHHg_fG36Q")
-GameObjAddTo("Anime Vanguards", "AVIgrosMacro", "Experimental | Stable?", "A Macro for automating the farming of Secret unit Igros", "V1", "009df2", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
+GameObjAddTo("Anime Vanguards", "AVIgrosMacro", "New | Stable", "A Macro for automating the farming of Secret unit Igros", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
 
 
 GameArray := []
