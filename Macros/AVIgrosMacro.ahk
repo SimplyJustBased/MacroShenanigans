@@ -1,4 +1,4 @@
-; /[V1.0.4]\
+; /[V1.0.5]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -10,6 +10,7 @@ SetMouseDelay -1
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
 
+global MacroVersion := "1.0.0"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
 
@@ -60,6 +61,7 @@ global UnitMap := Map(
 global ToggleMapValues := Map(
     "NoMovementReset", true,
     "Auto-Reconnect", true,
+    "SecondaryOCR", false,
 )
 
 global NumberValueMap := Map(
@@ -67,7 +69,7 @@ global NumberValueMap := Map(
 )
 
 ReturnedUIObject := CreateBaseUI(Map(
-    "Main", {Title:"AV Igros Macro", Video:"X", Description:"Public Test Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nStart when you start the wave, have UI scale at max and skip wave on aswell as camera shake off`n`nMAKE SURE TO ALSO CHANGE FONT TO TIMES NEW ROMAN", Version:"V1.0.0", DescY:"250", MacroName:"AVIgrosMacro", IncludeFonts:true, MultiInstancing:false},
+    "Main", {Title:"AV Igros Macro", Video:"X", Description:"Public Test Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nStart when you start the wave, have UI scale at max and skip wave on aswell as camera shake off`n`nMAKE SURE TO ALSO CHANGE FONT TO TIMES NEW ROMAN", Version:MacroVersion, DescY:"250", MacroName:"AVIgrosMacro", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
         {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
         {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
@@ -332,7 +334,14 @@ ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
 ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
 
 
-F3::Main()
+; F3::Main()
+
+F3::{
+    if EvilSearch(PixelSearchTables["UnitX"])[1] {
+        OutputDebug("A")
+    }
+}
+
 F8::ExitApp()
 F6::Pause -1
 
