@@ -1,4 +1,4 @@
-; /[V1.0.6]\
+; /[V1.0.7]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -17,7 +17,7 @@ global MacroEnabled := false
 ; Placement | Upgrade | Sell
 global UnitMap := Map(
     "Unit_1", {
-        Slot:4, 
+        Slot:1, 
         Pos:[152, 150], 
         UnitData:[
             {Type:"Placement", Wave:4, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false}
@@ -27,7 +27,7 @@ global UnitMap := Map(
         ]
     },
     "Unit_2", {
-        Slot:4, 
+        Slot:1, 
         Pos:[152, 192], 
         UnitData:[
             {Type:"Placement", Wave:5, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false}
@@ -37,7 +37,7 @@ global UnitMap := Map(
         ]
     },
     "Unit_3", {
-        Slot:4, 
+        Slot:1, 
         Pos:[152, 262], 
         UnitData:[
             {Type:"Placement", Wave:6, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false}
@@ -47,7 +47,7 @@ global UnitMap := Map(
         ]
     },
     "Unit_4", {
-        Slot:4, 
+        Slot:1, 
         Pos:[152, 305], 
         UnitData:[
             {Type:"Placement", Wave:7, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false}
@@ -278,6 +278,11 @@ Main() {
         return
     }
     
+
+    try {
+        WinMove(,,800, 600, "ahk_exe RobloxPlayerBeta.exe")
+    }
+    
     CameraticView()
     Sleep(200)
 
@@ -285,6 +290,7 @@ Main() {
         PM_ClickPos("AutoStart")
         Sleep(200)
     }
+
 
     loop {
         if Reconnection() {
@@ -338,7 +344,3 @@ F3::Main()
 
 F8::ExitApp()
 F6::Pause -1
-
-
-; TestMovemntButton
-; 
