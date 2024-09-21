@@ -1,4 +1,4 @@
-; /[V1.0.5]\
+; /[V1.0.6]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -334,13 +334,7 @@ ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
 ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
 
 
-; F3::Main()
-
-F3::{
-    if EvilSearch(PixelSearchTables["UnitX"])[1] {
-        OutputDebug("A")
-    }
-}
+F3::Main()
 
 F8::ExitApp()
 F6::Pause -1
