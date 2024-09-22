@@ -1,4 +1,4 @@
-; /[V1.0.7]\
+; /[V1.0.8]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -69,7 +69,7 @@ global NumberValueMap := Map(
 )
 
 ReturnedUIObject := CreateBaseUI(Map(
-    "Main", {Title:"AV Igros Macro", Video:"X", Description:"Public Test Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nStart when you start the wave, have UI scale at max and skip wave on aswell as camera shake off`n`nMAKE SURE TO ALSO CHANGE FONT TO TIMES NEW ROMAN", Version:MacroVersion, DescY:"250", MacroName:"AVIgrosMacro", IncludeFonts:true, MultiInstancing:false},
+    "Main", {Title:"AV Igros Macro", Video:"X", Description:"Public Release Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!`n`nI wish you the best of luck getting igros", Version:MacroVersion, DescY:"250", MacroName:"AVIgrosMacro", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
         {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
         {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
