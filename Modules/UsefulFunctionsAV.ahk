@@ -160,7 +160,7 @@ ResetActions() {
     }
 }
 
-EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15) {
+EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, Debug := false) {
     Wave := 0
     TimesLoopedOnMaxWave := 0
 
@@ -176,6 +176,11 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
 
         if IsNumber(FoundNumber) and FoundNumber > Wave and (not FoundNumber > FoundNumber + WaveDetectionRange) and (not FoundNumber > MaxWave) {
             Wave := FoundNumber
+
+            if Debug {
+                ToolTip("`nNew Wave #: " Wave,18, 566)
+            }
+
             OutputDebug("`nNew Wave #: " Wave)
         }
 
