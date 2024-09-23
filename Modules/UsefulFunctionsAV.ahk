@@ -36,7 +36,19 @@ DetectEndRoundUI() {
     return false
 }
 
-WaveDetection(Highlight := false) { ;95, 38
+global WAVE_DETECTION_CD := 0
+global LAST_WAVE_DETECTION_RESULT := 0
+WaveDetection(Highlight := false) {
+    global WAVE_DETECTION_CD
+    global LAST_WAVE_DETECTION_RESULT
+
+    TextObject := {Found:false, Number:0}
+    OutputDebug("`nDetecting Wave")
+
+    if not (A_TickCount - WAVE_DETECTION_CD > 5000) {
+        return 0
+    }
+
     try {
         switch ToggleMapValues["SecondaryOCR"] {
             case true:
@@ -52,10 +64,44 @@ WaveDetection(Highlight := false) { ;95, 38
                 }, 0)
         }
     
-        return StrSplit(OCRResult.Text, " ")[2]
+        TextObject.Number := StrSplit(OCRResult.Text, " ")[2]
+        TextObject.Found := true
     } catch as E {
-        return 0
+        try {
+            SendEvent "{Space Down}{Space Up}"
+            Sleep(150)
+    
+            switch ToggleMapValues["SecondaryOCR"] {
+                case true:
+                    WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
+    
+                    OCRResult := OCR.FromRect(XPos+101, Ypos+30, 124, 120)
+                case false:
+                    OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
+                        X:101,
+                        Y:30,
+                        W:124,
+                        H:120
+                    }, 0)
+            }
+    
+            Sleep(550)
+            TextObject.Number := StrSplit(OCRResult.Text, " ")[2]
+            TextObject.Found := true
+        }
     }
+
+    if TextObject.Found {
+        LAST_WAVE_DETECTION_RESULT := TextObject.Number
+        
+        if LAST_WAVE_DETECTION_RESULT = TextObject.Number {
+            WAVE_DETECTION_CD := A_TickCount
+            return TextObject.Number
+        }
+    }
+
+    LAST_WAVE_DETECTION_RESULT := 0
+    return 0 
 }
 
 DbJump() {
@@ -114,9 +160,9 @@ ResetActions() {
     }
 }
 
-
 EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15) {
     Wave := 0
+    TimesLoopedOnMaxWave := 0
 
     InverseKeys := Map(
         "W", "S",
@@ -143,7 +189,11 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
 
         for _, WaveBreak in WavesToBreak {
             if WaveBreak = Wave {
-                break 2
+                TimesLoopedOnMaxWave++
+
+                if TimesLoopedOnMaxWave > 3 {
+                    break 2
+                }
             }
         }
 
@@ -182,34 +232,68 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
 
 
                         PlayerPositionFromSpawn.%Movement.Key% += Movement.TimeDown
+                        Sleep(300)
                     }
 
-                    Sleep(300)
+                    if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                        PM_ClickPos("UnitX", 1)
+                        Sleep(200)
+                    }
+
                     switch ActionObject.Type {
                         case "Placement":
                             SendEvent "{" UnitObject.Slot " Down}{" UnitObject.Slot " Up}"
                             Sleep(200)
-                            SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 0}"
-                            Sleep(15)
+                            loop 3 {
+                                SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 0}"
+                                Sleep(15)
+                            }
+                            Sleep(150)
                             SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 1}"
-                            Sleep(200)
-                            SetPixelSearchLoop("UnitX", 5000, 1)
-                            PM_ClickPos("UnitX", 1)
+                            Sleep(100)
                         case "Upgrade":
-                            SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 0}"
-                            Sleep(15)
-                            SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 1}"
-                            Sleep(200)
+                            SubtractiveOffset := 0
+
+                            loop {
+                                loop 3 {
+                                    SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 0}"
+                                    Sleep(15)
+                                }
+                                Sleep(15)
+                                SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 1}"
+                                Sleep(200)
+
+                                if EvilSearch(PixelSearchTables["UnitX"])[1] or A_Index > 10 {
+                                    break
+                                }
+                                SubtractiveOffset -= 1
+                            }
+
                             SendEvent "{T Down}{T Up}"
                             Sleep(200)
-                            SetPixelSearchLoop("UnitX", 5000, 1)
-                            PM_ClickPos("UnitX", 1)
                         case "Sell":
-                            SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 0}"
+
+                            SubtractiveOffset := 0
+                            
+                            loop {
+                                loop 3 {
+                                    SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 0}"
+                                    Sleep(15)
+                                }
+                                Sleep(15)
+                                SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 1}"
+                                Sleep(30)
+
+                                if EvilSearch(PixelSearchTables["UnitX"])[1] or A_Index > 10 {
+                                    break
+                                }
+                                SubtractiveOffset -= 1
+                            }
+
                             Sleep(15)
                             SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 1}"
                             Sleep(200)
-                            SendEvent "{T Down}{T Up}"
+                            SendEvent "{X Down}{X Up}"
                     }
 
                     ActionObject.ActionCompleted := true
