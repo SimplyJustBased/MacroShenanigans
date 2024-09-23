@@ -1,4 +1,4 @@
-; /[V1.0.9]\
+; /[V1.0.-1]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -247,7 +247,7 @@ Main() {
     loop {
         Sleep(500)
 
-        EnableWaveAutomation([30], true, 1, 30, ToggleMapValues["WaveDebug"])
+        EnableWaveAutomation([30], true, 1, 30, 20000, ToggleMapValues["WaveDebug"])
 
         loop {
             if DetectEndRoundUI() {
