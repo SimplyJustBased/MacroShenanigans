@@ -1,4 +1,4 @@
-; /[V1.0.8]\
+; /[V1.0.9]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -91,7 +91,7 @@ global UnitMap := Map(
     "Unit_9", {
         Slot:1, Pos:[734, 503], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false},{Type:"Upgrade", Wave:6, ActionCompleted:false},{Type:"Sell", Wave:16, ActionCompleted:false}
+            {Type:"Placement", Wave:7, ActionCompleted:false},{Type:"Upgrade", Wave:7, ActionCompleted:false},{Type:"Upgrade", Wave:7, ActionCompleted:false},{Type:"Sell", Wave:16, ActionCompleted:false}
         ]
     },
 
