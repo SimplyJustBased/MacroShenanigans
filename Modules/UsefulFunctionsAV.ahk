@@ -160,9 +160,10 @@ ResetActions() {
     }
 }
 
-EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, Debug := false) {
+EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, DelayBreakTime := 0, Debug := false) {
     Wave := 0
-    TimesLoopedOnMaxWave := 0
+
+    NewerTable := {}
 
     InverseKeys := Map(
         "W", "S",
@@ -193,11 +194,14 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
         }
 
         for _, WaveBreak in WavesToBreak {
-            if WaveBreak = Wave {
-                TimesLoopedOnMaxWave++
+            if WaveBreak = Wave and not NewerTable.Active {
+                NewerTable.Active := true
+                NewerTable.Time := A_TickCount
+            }
 
-                if TimesLoopedOnMaxWave > 3 {
-                    break 2
+            if NewerTable.HasOwnProp("Active") and NewerTable.Active {
+                if A_TickCount - NewerTable.Time >= DelayBreakTime {
+                    break
                 }
             }
         }
