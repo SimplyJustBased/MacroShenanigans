@@ -1,4 +1,4 @@
-; /[V1.0.7]\
+; /[V1.0.8]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -18,7 +18,6 @@ global MacroEnabled := false
 
 ; Placement | Upgrade | Sell
 global UnitMap := Map(
-
     ;SprintWagon1
     "Unit_1", {
         Slot:5, Pos:[630, 207], MovementFromSpawn:[],
@@ -52,7 +51,7 @@ global UnitMap := Map(
         UnitData:[
             {Type:"Placement", Wave:2, ActionCompleted:false},{Type:"Upgrade", Wave:5, ActionCompleted:false},{Type:"Upgrade", Wave:7, ActionCompleted:false},
             {Type:"Upgrade", Wave:7, ActionCompleted:false},{Type:"Upgrade", Wave:8, ActionCompleted:false},{Type:"Upgrade", Wave:9, ActionCompleted:false},
-            {Type:"Upgrade", Wave:9, ActionCompleted:false}
+            {Type:"Upgrade", Wave:10, ActionCompleted:false}
         ]
     },
 
@@ -198,6 +197,7 @@ global ToggleMapValues := Map(
     "NoMovementReset", true,
     "Auto-Reconnect", true,
     "SecondaryOCR", false,
+    "WaveDebug", false
 )
 
 global NumberValueMap := Map()
@@ -247,7 +247,7 @@ Main() {
     loop {
         Sleep(500)
 
-        EnableWaveAutomation([30], true, 1, 30)
+        EnableWaveAutomation([30], true, 1, 30, ToggleMapValues["WaveDebug"])
 
         loop {
             if DetectEndRoundUI() {
