@@ -1,4 +1,4 @@
-; /[V1.0.-1]\
+; /[V1.0.0]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -195,7 +195,7 @@ global UnitMap := Map(
 
 global ToggleMapValues := Map(
     "NoMovementReset", true,
-    "Auto-Reconnect", true,
+    ; "Auto-Reconnect", true,
     "SecondaryOCR", false,
     "WaveDebug", false
 )
@@ -203,7 +203,7 @@ global ToggleMapValues := Map(
 global NumberValueMap := Map()
 
 ReturnedUIObject := CreateBaseUI(Map(
-    "Main", {Title:"AVIgrosEventMacro", Video:"X", Description:"Experimental Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!`n`nfollow directions i sent in the discord", Version:MacroVersion, DescY:"250", MacroName:"AVIgrosEventMacro", IncludeFonts:true, MultiInstancing:false},
+    "Main", {Title:"AVIgrosEventMacro", Video:"https://www.youtube.com/watch?v=Oq3mnED6Ym8", Description:"Public Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!", Version:MacroVersion, DescY:"250", MacroName:"AVIgrosEventMacro", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
         {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
         {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
