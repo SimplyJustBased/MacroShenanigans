@@ -201,7 +201,7 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
 
             if NewerTable.HasOwnProp("Active") and NewerTable.Active {
                 if A_TickCount - NewerTable.Time >= DelayBreakTime {
-                    break
+                    break 2
                 }
             }
         }
