@@ -163,7 +163,7 @@ ResetActions() {
 EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, DelayBreakTime := 0, Debug := false) {
     Wave := 0
 
-    NewerTable := {}
+    NewerTable := {Active:false}
 
     InverseKeys := Map(
         "W", "S",
