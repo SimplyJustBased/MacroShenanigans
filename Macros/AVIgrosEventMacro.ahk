@@ -1,4 +1,4 @@
-; /[V1.0.0]\
+; /[V1.0.1]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -12,7 +12,7 @@ SetMouseDelay -1
 
 ; 461, 117
 
-global MacroVersion := "1.0.0"
+global MacroVersion := "1.0.1 [Experimental]"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
 
@@ -20,174 +20,252 @@ global MacroEnabled := false
 global UnitMap := Map(
     ;SprintWagon1
     "Unit_1", {
-        Slot:5, Pos:[630, 207], MovementFromSpawn:[],
+        Slot:5, Pos:[496, 130], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false},{Type:"Upgrade", Wave:2, ActionCompleted:false},{Type:"Upgrade", Wave:3, ActionCompleted:false},
-            {Type:"Upgrade", Wave:4, ActionCompleted:false},{Type:"Upgrade", Wave:7, ActionCompleted:false},{Type:"Sell", Wave:30, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:27180},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:41000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:60260},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:81220},
+            {Type:"Sell", Wave:0, ActionCompleted:false, Delay:650000},
         ]
     },
 
     ;SprintWagon2
     "Unit_2", {
-        Slot:5, Pos:[540, 117], MovementFromSpawn:[],
+        Slot:5, Pos:[499, 80], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:2, ActionCompleted:false},{Type:"Upgrade", Wave:2, ActionCompleted:false},{Type:"Upgrade", Wave:3, ActionCompleted:false},
-            {Type:"Upgrade", Wave:4, ActionCompleted:false},{Type:"Upgrade", Wave:6, ActionCompleted:false},{Type:"Sell", Wave:30, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:20230},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:27180},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:46120},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:68260},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:90000},
+            {Type:"Sell", Wave:0, ActionCompleted:false, Delay:650000},
         ]
     },
 
     ;SprintWagon3
     "Unit_3", {
-        Slot:5, Pos:[615, 117], MovementFromSpawn:[],
+        Slot:5, Pos:[197, 185], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:2, ActionCompleted:false},{Type:"Upgrade", Wave:3, ActionCompleted:false},{Type:"Upgrade", Wave:4, ActionCompleted:false},
-            {Type:"Upgrade", Wave:5, ActionCompleted:false},{Type:"Upgrade", Wave:5, ActionCompleted:false},{Type:"Sell", Wave:30, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:20230},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:41000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:46120},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:68260},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:90000},
+            {Type:"Sell", Wave:0, ActionCompleted:false, Delay:650000},
         ]
     },
 
     ;StupidCoolMerchantGuy
     "Unit_4", {
-        Slot:4, Pos:[707, 117], MovementFromSpawn:[],
+        Slot:4, Pos:[269, 132], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:2, ActionCompleted:false},{Type:"Upgrade", Wave:5, ActionCompleted:false},{Type:"Upgrade", Wave:7, ActionCompleted:false},
-            {Type:"Upgrade", Wave:7, ActionCompleted:false},{Type:"Upgrade", Wave:8, ActionCompleted:false},{Type:"Upgrade", Wave:9, ActionCompleted:false},
-            {Type:"Upgrade", Wave:10, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:20230},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:121000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:129000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:129000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:161000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:180500},
         ]
     },
 
-    ;Original Cha-In Spot 1
+    ;Cha-in 1
     "Unit_5", {
-        Slot:1, Pos:[369, 241], MovementFromSpawn:[],
+        Slot:2, Pos:[355, 315], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false},{Type:"Sell", Wave:16, ActionCompleted:false}
+            {Type:"Placement", Wave:6, ActionCompleted:false, Delay:2000},
+            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:2000},
+            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:2000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:126000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:20000},
         ]
     },
-
-    ;Original Cha-In Spot 2
+    
+    ;Cha-in 2
     "Unit_6", {
-        Slot:1, Pos:[430, 241], MovementFromSpawn:[],
+        Slot:2, Pos:[336, 296], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false},{Type:"Sell", Wave:16, ActionCompleted:false}
+            {Type:"Placement", Wave:6, ActionCompleted:false, Delay:2000},
+            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:2000},
+            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:2000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:126000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:20000},
         ]
     },
 
-    ;Original Cha-In Spot 3
+    ;Cha-in 3
     "Unit_7", {
-        Slot:1, Pos:[401, 213], MovementFromSpawn:[],
+        Slot:2, Pos:[365, 364], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false},{Type:"Sell", Wave:16, ActionCompleted:false}
+            {Type:"Placement", Wave:7, ActionCompleted:false, Delay:8000},
+            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:1000},
+            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:1000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:126000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:20000},
         ]
     },
 
-    ;Original Cha-In Spot 4
+    ;Cha-in 4
     "Unit_8", {
-        Slot:1, Pos:[400, 244], MovementFromSpawn:[],
+        Slot:2, Pos:[345, 385], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false},{Type:"Sell", Wave:16, ActionCompleted:false}
+            {Type:"Placement", Wave:7, ActionCompleted:false, Delay:8000},
+            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:1000},
+            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:1000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:126000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:75000},
         ]
     },
 
-    ;Original Cha-In Spot 5
+    ;Tengon 1
     "Unit_9", {
-        Slot:1, Pos:[734, 503], MovementFromSpawn:[],
+        Slot:1, Pos:[342, 343], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:7, ActionCompleted:false},{Type:"Upgrade", Wave:7, ActionCompleted:false},{Type:"Upgrade", Wave:7, ActionCompleted:false},{Type:"Sell", Wave:16, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:190000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:190000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:190000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:190000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:190000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:208000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:208000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:248000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:248000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:248000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:268000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:268000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:268000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:268000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:268000},
         ]
     },
 
-    ; Dancing Bitch
+    ;Tengon 2
     "Unit_10", {
-        Slot:2, Pos:[386, 390], MovementFromSpawn:[],
+        Slot:1, Pos:[317, 321], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:10, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:288000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:300000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:300000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:300000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:300000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Target", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Target", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Target", Wave:20, ActionCompleted:false, Delay:5000},
         ]
     },
 
-    ; My goat IGROS 1
+    ;Tengon 3
     "Unit_11", {
-        Slot:3, Pos:[349, 376], MovementFromSpawn:[],
+        Slot:1, Pos:[316, 368], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:10, ActionCompleted:false},{Type:"Upgrade", Wave:11, ActionCompleted:false},{Type:"Upgrade", Wave:11, ActionCompleted:false},
-            {Type:"Upgrade", Wave:11, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:13, ActionCompleted:false},
-            {Type:"Upgrade", Wave:13, ActionCompleted:false},{Type:"Upgrade", Wave:14, ActionCompleted:false},{Type:"Upgrade", Wave:16, ActionCompleted:false},
-            {Type:"Upgrade", Wave:22, ActionCompleted:false},{Type:"Upgrade", Wave:26, ActionCompleted:false},{Type:"Upgrade", Wave:30, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:288000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:308000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:308000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:308000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:308000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:23000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:23000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:45000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:45000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:65000},
+            {Type:"Target", Wave:20, ActionCompleted:false, Delay:65000},
+            {Type:"Target", Wave:20, ActionCompleted:false, Delay:65000},
+            {Type:"Target", Wave:20, ActionCompleted:false, Delay:65000},
         ]
     },
 
-    ; My goat IGROS 2
+    ; Haruka
     "Unit_12", {
-        Slot:3, Pos:[377, 353], MovementFromSpawn:[],
+        Slot:3, Pos:[373, 336], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:10, ActionCompleted:false},{Type:"Upgrade", Wave:11, ActionCompleted:false},{Type:"Upgrade", Wave:11, ActionCompleted:false},
-            {Type:"Upgrade", Wave:11, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:13, ActionCompleted:false},
-            {Type:"Upgrade", Wave:13, ActionCompleted:false},{Type:"Upgrade", Wave:14, ActionCompleted:false},{Type:"Upgrade", Wave:16, ActionCompleted:false},
-            {Type:"Upgrade", Wave:22, ActionCompleted:false},{Type:"Upgrade", Wave:26, ActionCompleted:false},{Type:"Upgrade", Wave:30, ActionCompleted:false}
+            {Type:"Placement", Wave:5, ActionCompleted:false, Delay:18000},
         ]
     },
 
-    ; My goat IGROS 3
+    ; Croc 1
     "Unit_13", {
-        Slot:3, Pos:[412, 366], MovementFromSpawn:[],
+        Slot:6, Pos:[342, 143], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:10, ActionCompleted:false},{Type:"Upgrade", Wave:11, ActionCompleted:false},{Type:"Upgrade", Wave:11, ActionCompleted:false},
-            {Type:"Upgrade", Wave:11, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:13, ActionCompleted:false},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false},{Type:"Upgrade", Wave:15, ActionCompleted:false},{Type:"Upgrade", Wave:15, ActionCompleted:false},
-            {Type:"Upgrade", Wave:22, ActionCompleted:false},{Type:"Upgrade", Wave:27, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:215000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
         ]
     },
 
-    ;unOriginal Cha-In Spot 1
+    ; Croc 2
     "Unit_14", {
-        Slot:1, Pos:[330, 406], MovementFromSpawn:[],
+        Slot:6, Pos:[478, 275], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:17, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},
-            {Type:"Upgrade", Wave:23, ActionCompleted:false},{Type:"Upgrade", Wave:24, ActionCompleted:false},{Type:"Upgrade", Wave:27, ActionCompleted:false},
-            {Type:"Upgrade", Wave:27, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:215000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
         ]
     },
 
-    ;unOriginal Cha-In Spot 2
+    ; Croc 3
     "Unit_15", {
-        Slot:1, Pos:[359, 422], MovementFromSpawn:[],
+        Slot:6, Pos:[472, 430], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:17, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},
-            {Type:"Upgrade", Wave:23, ActionCompleted:false},{Type:"Upgrade", Wave:24, ActionCompleted:false},{Type:"Upgrade", Wave:27, ActionCompleted:false},
-            {Type:"Upgrade", Wave:28, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:215000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
         ]
     },
 
-    ;unOriginal Cha-In Spot 3
+    ; Croc 4
     "Unit_16", {
-        Slot:1, Pos:[395, 432], MovementFromSpawn:[],
+        Slot:6, Pos:[292, 608], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:17, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},
-            {Type:"Upgrade", Wave:23, ActionCompleted:false},{Type:"Upgrade", Wave:24, ActionCompleted:false},{Type:"Upgrade", Wave:28, ActionCompleted:false},
-            {Type:"Upgrade", Wave:28, ActionCompleted:false}
-        ]
-    },
-
-    ;unOriginal Cha-In Spot 4
-    "Unit_17", {
-        Slot:1, Pos:[419, 405], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:17, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:19, ActionCompleted:false},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false},{Type:"Upgrade", Wave:20, ActionCompleted:false},{Type:"Upgrade", Wave:20, ActionCompleted:false},
-            {Type:"Upgrade", Wave:23, ActionCompleted:false},{Type:"Upgrade", Wave:24, ActionCompleted:false},{Type:"Upgrade", Wave:29, ActionCompleted:false},
-            {Type:"Upgrade", Wave:29, ActionCompleted:false}
-        ]
-    },
-
-    ;unOriginal Cha-In Spot 5
-    "Unit_18", {
-        Slot:1, Pos:[445, 374], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:17, ActionCompleted:false},{Type:"Upgrade", Wave:20, ActionCompleted:false},{Type:"Upgrade", Wave:20, ActionCompleted:false},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false},{Type:"Upgrade", Wave:20, ActionCompleted:false},{Type:"Upgrade", Wave:20, ActionCompleted:false},
-            {Type:"Upgrade", Wave:23, ActionCompleted:false},{Type:"Upgrade", Wave:25, ActionCompleted:false},{Type:"Upgrade", Wave:29, ActionCompleted:false},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false}
+            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:215000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
+            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
         ]
     },
 )
@@ -237,6 +315,15 @@ Main() {
     try {
         WinMove(,,800, 600, "ahk_exe RobloxPlayerBeta.exe")
     }
+
+    Sleep(200)
+    SendEvent "{s Down}"
+    Sleep(4180)
+    SendEvent "{s Up}"
+
+    Sleep(200)
+    CameraticView()
+    Sleep(500)
     
     if EvilSearch(PixelSearchTables["AutoStart"])[1] {
         PM_ClickPos("AutoStart")
@@ -247,7 +334,7 @@ Main() {
     loop {
         Sleep(500)
 
-        EnableWaveAutomation([30], true, 1, 30, 20000, ToggleMapValues["WaveDebug"])
+        EnableWaveAutomation([125], true, 20, 30, 20000, ToggleMapValues["WaveDebug"], false)
 
         loop {
             if DetectEndRoundUI() {
@@ -272,5 +359,14 @@ ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
 
 
 F3::Main()
+F5::{
+    for _UnitData, UnitObject in UnitMap {
+        OutputDebug("`nInfo For " _UnitData)
+
+        for I, V in UnitObject.UnitData {
+            OutputDebug("`n[" I "]:" V.ActionCompleted)
+        }
+    }
+}
 F8::ExitApp()
 F6::Pause -1
