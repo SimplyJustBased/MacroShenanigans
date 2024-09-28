@@ -38,39 +38,14 @@ DetectEndRoundUI() {
 
 global WAVE_DETECTION_CD := 0
 global LAST_WAVE_DETECTION_RESULT := 0
-WaveDetection(Highlight := false) {
+WaveDetection(JumpOnFail) {
     global WAVE_DETECTION_CD
     global LAST_WAVE_DETECTION_RESULT
 
     TextObject := {Found:false, Number:0}
-    OutputDebug("`nDetecting Wave")
 
-    if not (A_TickCount - WAVE_DETECTION_CD > 5000) {
-        return 0
-    }
-
-    try {
-        switch ToggleMapValues["SecondaryOCR"] {
-            case true:
-                WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
-
-                OCRResult := OCR.FromRect(XPos+101, Ypos+30, 124, 120)
-            case false:
-                OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
-                    X:101,
-                    Y:30,
-                    W:124,
-                    H:120
-                }, 0)
-        }
-    
-        TextObject.Number := StrSplit(OCRResult.Text, " ")[2]
-        TextObject.Found := true
-    } catch as E {
+    loop 2 {
         try {
-            SendEvent "{Space Down}{Space Up}"
-            Sleep(150)
-    
             switch ToggleMapValues["SecondaryOCR"] {
                 case true:
                     WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
@@ -84,23 +59,61 @@ WaveDetection(Highlight := false) {
                         H:120
                     }, 0)
             }
-    
-            Sleep(550)
-            TextObject.Number := StrSplit(OCRResult.Text, " ")[2]
-            TextObject.Found := true
-        }
-    }
-
-    if TextObject.Found {
-        LAST_WAVE_DETECTION_RESULT := TextObject.Number
+            
+            Arg1 := RegExMatch(OCRResult.Text, "[\d]{3}")
+            ; OutputDebug("`nTry1 | Text: " OCRResult.Text)
+            if not Arg1 {
+                RegExMatch(OCRResult.Text, "[\d]{1,2}", &Returned)
+                TextObject.Number := Returned[]
+                TextObject.Found := true
+                ; OutputDebug("`nTry1 Succeed | Num: " Returned[])
+            }
+        } catch as E {
+            ; OutputDebug(E.Message)
+            if JumpOnFail {
+                try {
+                    SendEvent "{Space Down}{Space Up}"
+                    Sleep(150)
+            
+                    switch ToggleMapValues["SecondaryOCR"] {
+                        case true:
+                            WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
+            
+                            OCRResult := OCR.FromRect(XPos+101, Ypos+30, 124, 120)
+                        case false:
+                            OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
+                                X:101,
+                                Y:30,
+                                W:124,
+                                H:120
+                            }, 0)
+                    }
+                    Arg1 := RegExMatch(OCRResult.Text, "[\d]{3}")
+                    ; OutputDebug("`nTry2 | Text: " OCRResult.Text)
+                
+                    if not Arg1 {
+                        RegExMatch(OCRResult.Text, "[\d]{1,2}", &Returned)
+                        TextObject.Number := Returned[]
+                        TextObject.Found := true
+                        ; OutputDebug("`nTry2 Succeed | Num: " Returned[])
+                    }
         
-        if LAST_WAVE_DETECTION_RESULT = TextObject.Number {
-            WAVE_DETECTION_CD := A_TickCount
-            return TextObject.Number
+                    Sleep(550)
+                }
+            }
+        }
+    
+        if TextObject.Found {
+            if LAST_WAVE_DETECTION_RESULT = TextObject.Number {
+                return TextObject.Number
+            } else {
+                OutputDebug("`nL:" LAST_WAVE_DETECTION_RESULT " D:" TextObject.Number)
+            }
+    
+            LAST_WAVE_DETECTION_RESULT := TextObject.Number
         }
     }
 
-    LAST_WAVE_DETECTION_RESULT := 0
     return 0 
 }
 
@@ -160,10 +173,36 @@ ResetActions() {
     }
 }
 
-EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, DelayBreakTime := 0, Debug := false) {
-    Wave := 0
+_EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject) {
+    SubtractiveOffset := 0
 
+    if not CurrentOpenUnit = _UnitName {
+        loop {
+            loop 3 {
+                SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 0}"
+                Sleep(15)
+            }
+            Sleep(15)
+            SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 1}"
+            Sleep(200)
+
+            if EvilSearch(PixelSearchTables["UnitX"])[1] or A_Index > 10 {
+                break
+            }
+
+            SubtractiveOffset -= 1
+        }
+    }
+
+    return _UnitName
+}
+
+EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, DelayBreakTime := 0, Debug := false, EnableSecondaryJump := true) {
+    Wave := -1
+    WaveObject := {}
     NewerTable := {Active:false}
+    CurrentOpenUnit := "nil"
+    CompletedList := {}
 
     InverseKeys := Map(
         "W", "S",
@@ -173,7 +212,7 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
     )
 
     loop {
-        FoundNumber := WaveDetection()
+        FoundNumber := WaveDetection(EnableSecondaryJump)
 
         if IsNumber(FoundNumber) and FoundNumber > Wave and (not FoundNumber > FoundNumber + WaveDetectionRange) and (not FoundNumber > MaxWave) {
             Wave := FoundNumber
@@ -183,9 +222,31 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
             }
 
             OutputDebug("`nNew Wave #: " Wave)
+
+            if not WaveObject.HasOwnProp("Num" Wave) {
+                OutputDebug("`nNew Wave Added: " Wave)
+
+                WaveObject.%"Num" Wave% := A_TickCount
+            } else {
+                OutputDebug("`nFailure Wave Value: " WaveObject.%"Num" Wave%)
+            }
+
+            if Wave >= 1 {
+                loop(Wave) {
+                    if not WaveObject.HasOwnProp("Num" A_Index - 1) {
+                        WaveObject.%"Num" A_Index - 1% := A_TickCount
+                    }
+                }
+            }
+
         }
 
         if DisconnectedCheck() {
+            break
+        }
+
+        if ObjOwnPropCount(CompletedList) = UnitMap.Count {
+            OutputDebug("`nBroke Due to The Evil")
             break
         }
 
@@ -207,8 +268,24 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
         }
 
         for _UnitName, UnitObject in UnitMap {
+            if CompletedList.HasOwnProp(_UnitName) {
+                continue
+            }
+
+            CompletedActions := 0
+
             for _, ActionObject in UnitObject.UnitData {
                 if ActionObject.ActionCompleted = false and ActionObject.Wave <= Wave {
+                    if ActionObject.HasOwnProp("Delay") {
+                        if WaveObject.HasOwnProp("Num" ActionObject.Wave) {
+                            if not A_TickCount - WaveObject.%"Num" ActionObject.Wave% >= ActionObject.Delay {
+                                continue 2
+                            }
+                        } else {
+                            continue 2
+                        }
+                    }
+
                     OffsetArray := []
                     
                     for _, MovementObject in UnitObject.MovementFromSpawn {
@@ -244,13 +321,20 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                         Sleep(300)
                     }
 
-                    if EvilSearch(PixelSearchTables["UnitX"])[1] {
-                        PM_ClickPos("UnitX", 1)
-                        Sleep(200)
+                    if CurrentOpenUnit != _UnitName {                        
+                        if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                            PM_ClickPos("UnitX", 1)
+                            Sleep(200)
+                        }
                     }
 
                     switch ActionObject.Type {
                         case "Placement":
+                            if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                                PM_ClickPos("UnitX", 1)
+                                Sleep(200)
+                            }
+
                             SendEvent "{" UnitObject.Slot " Down}{" UnitObject.Slot " Up}"
                             Sleep(200)
                             loop 3 {
@@ -260,53 +344,41 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                             Sleep(150)
                             SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 1}"
                             Sleep(100)
+                            CurrentOpenUnit := _UnitName
                         case "Upgrade":
-                            SubtractiveOffset := 0
+                            CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
-                            loop {
-                                loop 3 {
-                                    SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 0}"
-                                    Sleep(15)
-                                }
-                                Sleep(15)
-                                SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 1}"
-                                Sleep(200)
-
-                                if EvilSearch(PixelSearchTables["UnitX"])[1] or A_Index > 10 {
-                                    break
-                                }
-                                SubtractiveOffset -= 1
-                            }
-
-                            SendEvent "{T Down}{T Up}"
+                            Sleep(299)
+                            PM_ClickPos("UnitUpgradeButton")
                             Sleep(200)
                         case "Sell":
+                            CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
-                            SubtractiveOffset := 0
-                            
-                            loop {
-                                loop 3 {
-                                    SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 0}"
-                                    Sleep(15)
-                                }
-                                Sleep(15)
-                                SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 1}"
-                                Sleep(30)
-
-                                if EvilSearch(PixelSearchTables["UnitX"])[1] or A_Index > 10 {
-                                    break
-                                }
-                                SubtractiveOffset -= 1
-                            }
-
-                            Sleep(15)
+                            Sleep(150)
                             SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 1}"
                             Sleep(200)
                             SendEvent "{X Down}{X Up}"
+                        case "Ability":
+                            CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
+
+                            Sleep(150)
+                            PM_ClickPos("UnitAbility")
+                        case "Target":
+                            CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
+
+                            Sleep(150)
+                            SendEvent "{R Down}{R Up}"
                     }
 
                     ActionObject.ActionCompleted := true
+                } else if ActionObject.ActionCompleted {
+                    CompletedActions++
                 }
+            }
+
+            if CompletedActions = UnitObject.UnitData.Length {
+                OutputDebug("`nAdded Completetion: " _UnitName)
+                CompletedList.%_UnitName% := true
             }
         }
 
