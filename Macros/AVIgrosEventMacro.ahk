@@ -1,4 +1,4 @@
-; /[V1.0.2]\
+; /[V1.0.1]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -12,7 +12,7 @@ SetMouseDelay -1
 
 ; 461, 117
 
-global MacroVersion := "1.0.1"
+global MacroVersion := "1.0.1 [Experimental]"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
 
@@ -303,7 +303,7 @@ ReturnedUIObject := CreateBaseUI(Map(
         {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
         {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_PUBLICTEST_IGROSEVENT_1"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_PUBLICTEST_IGROSEVENT_2"}
 ))
 
 
