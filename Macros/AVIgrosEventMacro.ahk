@@ -1,4 +1,4 @@
-; /[V1.0.1]\
+; /[V1.0.2]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -12,7 +12,7 @@ SetMouseDelay -1
 
 ; 461, 117
 
-global MacroVersion := "1.0.1 [Experimental]"
+global MacroVersion := "1.0.1"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
 
@@ -136,6 +136,23 @@ global UnitMap := Map(
             {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
             {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
             {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:75000},
+        ]
+    },
+
+    ;Cha-in 5
+    "Unit_Not8", {
+        Slot:2, Pos:[291, 337], MovementFromSpawn:[],
+        UnitData:[
+            {Type:"Placement", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
+            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
         ]
     },
 
