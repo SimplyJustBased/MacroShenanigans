@@ -274,7 +274,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                             if Data.UnitData.Length > 0 {
                                 FirstFormatText := Name "," Data.Slot "," Data.Pos[1] "," Data.Pos[2] "|"
                             } else {
-                                FirstFormatText := Name "," Data.Slot "," Data.Pos[1] "," Data.Pos[2]
+                                FirstFormatText := Name "," Data.Slot "," Data.Pos[1] "," Data.Pos[2] ""
                             }
                         } else {
                             if Data.UnitData.Length > 0 {
@@ -287,12 +287,12 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                         for _, UnitDataObject in Data.UnitData {
                             if _ = Data.UnitData.Length {
                                 if Data.MovementFromSpawn.Length > 0 {
-                                    FirstFormatText := FirstFormatText UnitDataObject.Type "," UnitDataObject.Wave "|"
+                                    FirstFormatText := FirstFormatText UnitDataObject.Type "," UnitDataObject.Wave "," UnitDataObject.Delay "|"
                                 } else {
-                                    FirstFormatText := FirstFormatText UnitDataObject.Type "," UnitDataObject.Wave
+                                    FirstFormatText := FirstFormatText UnitDataObject.Type "," UnitDataObject.Wave "," UnitDataObject.Delay
                                 }
                             } else {
-                                FirstFormatText := FirstFormatText UnitDataObject.Type "," UnitDataObject.Wave "?"
+                                FirstFormatText := FirstFormatText UnitDataObject.Type "," UnitDataObject.Wave "," UnitDataObject.Delay "?"
                             }
                         }
 
@@ -417,7 +417,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                             MassUnitData := StrSplit(Splitical_2[2], "?")
                             for _, UnitObj in MassUnitData {
                                 Splitical3 := StrSplit(UnitObj, ",")
-                                UnitDataArray.Push({Type:Splitical3[1], Wave:Splitical3[2], ActionCompleted:false})
+                                UnitDataArray.Push({Type:Splitical3[1], Wave:Splitical3[2], ActionCompleted:false, Delay:Splitical3[3]})
                             }
                         }
 
