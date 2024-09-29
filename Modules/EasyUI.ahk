@@ -1669,8 +1669,9 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
 
         TotalLength += 25
         NewUIOrWhatever.AddText("w55 h25 xs+5 y" (TotalLength), "#").SetFont("s11 bold")
-        NewUIOrWhatever.AddText("w55 h25 xp+50 y" (TotalLength), "Action").SetFont("s11 bold")
-        NewUIOrWhatever.AddText("w75 h25 xp+92 y" (TotalLength), "Wave").SetFont("s11 bold")
+        NewUIOrWhatever.AddText("w55 h25 xp+30 y" (TotalLength), "Action").SetFont("s11 bold")
+        NewUIOrWhatever.AddText("w75 h25 xp+69 y" (TotalLength), "Wave").SetFont("s11 bold")
+        NewUIOrWhatever.AddText("w42 h25 xp+55 y" (TotalLength), "Delay").SetFont("s11 bold")
 
         TotalLength += 20
 
@@ -1679,15 +1680,19 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
             Text.SetFont("s11")
 
             ; Action Dropdown
-            DropDown := NewUIOrWhatever.AddDropDownList("r5 w80 h25 xp+38 vAction" A_Index, ["Placement", "Upgrade", "Sell", "Ability", "Target"])
+            DropDown := NewUIOrWhatever.AddDropDownList("r5 w75 h25 xp+22 vAction" A_Index, ["Placement", "Upgrade", "Sell", "Ability", "Target"])
 
             ; Wave Edit
-            Edit := NewUIOrWhatever.AddEdit("w60 h20 xp+102", 0)
+            Edit := NewUIOrWhatever.AddEdit("w40 h20 xp+82", 0)
             UpDown := NewUIOrWhatever.AddUpDown("h25 vWave" A_Index " Range1-25000")
+
+            ; Delay Edit
+            DelayEdit := NewUIOrWhatever.AddEdit("w60 h20 xp+47", 0)
+            DelayUpDown := NewUIOrWhatever.AddUpDown("h25 vActionDelay" A_Index " Range1-9999999")
 
             TotalLength += 25
 
-            ActionButtons.Push({Num:Text, DDL:DropDown, Edit:Edit, EditUpDown:UpDown})
+            ActionButtons.Push({Num:Text, DDL:DropDown, Edit:Edit, EditUpDown:UpDown, DelayEdit:DelayEdit, DelayUpDown:DelayUpDown})
 
             DropDown.OnEvent("Change", (*) => ActionUpdated())
             Edit.OnEvent("Change", (*) => ActionUpdated())
@@ -1775,7 +1780,15 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
                         CorrespondingMacroObject.Edit.Text := DataObject.Wave
                         CorrespondingMacroObject.Edit.Visible := true
                         CorrespondingMacroObject.EditUpDown.Visible := true
+                        CorrespondingMacroObject.DelayEdit.Visible := true
+                        CorrespondingMacroObject.DelayUpDown.Visible := true
 
+                        if not DataObject.HasOwnProp("Delay") {
+                            DataObject.Delay := 0
+                        }
+
+                        CorrespondingMacroObject.DelayEdit.Text := DataObject.Delay
+                        
                         Action_PageNumber.Text := CurrentPage "/" PageMap.Count
                     case "Movement":
                         CorrespondingMacroObject := GuiObjectMap[_1]
