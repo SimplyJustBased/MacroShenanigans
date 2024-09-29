@@ -1,4 +1,4 @@
-; /[V1.1.5]\
+; /[V1.1.6]\
 #Requires AutoHotkey v2.0 
 
 global Macro_Hub_Version := "1.0.4"
@@ -643,8 +643,9 @@ GameObjAddTo("Pet Simulator 99", "DiceMerchantMacro", "Event | Discontinued", "N
 GameObjAddTo("Pet Simulator 99", "MultiMacroV4", "Stable | Maintained", "A all around afk grind macro with many features!", "V4", "green", 1, ["EasyUI", "BasePositionsPS99", "UsefulFunctions", "UsefulFunctionsPS99"], "zju4zs9QQNc")
 GameObjAddTo("Pet Simulator 99", "EventMultiMacroV4", "Stable | Maintained", "A MultiMacroV4 Port for the EventWorld.", "V1?", "bf01bf", 1, ["EasyUI", "BasePositionsPS99", "UsefulFunctions", "UsefulFunctionsPS99"], "KLkE6DMxtss")
 GameObjAddTo("Pet Simulator 99", "TreeHouseMacroV2", "Stable | Maintained", "A Macro for automating usage of secret keys in the Secret TreeHouse Zone!", "V2", "green", 1, ["EasyUI", "BasePositionsPS99", "_JXON", "Router", "UWBOCRLib"], "9hHHg_fG36Q")
-GameObjAddTo("Anime Vanguards", "AVIgrosMacro", "New | Stable", "A Macro for automating the farming of Secret unit Igros", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
-GameObjAddTo("Anime Vanguards", "AVIgrosEventMacro", "New | Semi-Stable", "A Macro for automating the limited time Igros boss event.", "V1", "bf01bf", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "Oq3mnED6Ym8")
+GameObjAddTo("Anime Vanguards", "AVIgrosMacro", "Stable", "A Macro for automating the farming of Secret unit Igros", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
+GameObjAddTo("Anime Vanguards", "AVIgrosEventMacro", "Stable", "A Macro for automating the limited time Igros boss event.", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "23_S_cJxkDI")
+GameObjAddTo("Anime Vanguards", "RengokuMacro", "New | Stable?", "A Macro for automating Act 4.", "V1", "bf01bf", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
 
 
 GameArray := []
