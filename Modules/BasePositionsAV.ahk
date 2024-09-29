@@ -40,7 +40,7 @@ global PositionMap := Map(
     "AutoStartBR", {Position:[398, 188]},
     "UnitXTL", {Position:[224, 259]},
     "UnitXTL", {Position:[240, 274]},
-    "UnitAbility", {Position:[256, 261]},
+    "UnitAbility", {Position:[261, 304]},
     "UnitUpgradeButton", {Position:[179, 382]},
 
     ;-- Igros Related
