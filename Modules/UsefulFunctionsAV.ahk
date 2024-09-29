@@ -354,10 +354,7 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                         case "Sell":
                             CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
-                            Sleep(150)
-                            SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 1}"
-                            Sleep(200)
-                            SendEvent "{X Down}{X Up}"
+                            PM_ClickPos("UnitSell")
                         case "Ability":
                             CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
