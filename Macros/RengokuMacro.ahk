@@ -17,7 +17,7 @@ global MacroEnabled := false
 global UnitMap := Map(
     ; SprintWagon 1
     "Unit_1", {
-        Slot:4, Pos:[605, 230], MovementFromSpawn:[],
+        Slot:4, Pos:[636, 312], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:0, ActionCompleted:false, Delay:0},
             {Type:"Upgrade", Wave:3, ActionCompleted:false, Delay:16000},
@@ -30,7 +30,7 @@ global UnitMap := Map(
 
     ; SprintWagon 2
     "Unit_2", {
-        Slot:4, Pos:[691, 306], MovementFromSpawn:[],
+        Slot:4, Pos:[670, 335], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:1, ActionCompleted:false, Delay:16000},
             {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:1500},
@@ -43,7 +43,7 @@ global UnitMap := Map(
 
     ; SprintWagon 3
     "Unit_3", {
-        Slot:4, Pos:[638, 462], MovementFromSpawn:[],
+        Slot:4, Pos:[669, 298], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:2, ActionCompleted:false, Delay:0},
             {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:1500},
@@ -56,7 +56,7 @@ global UnitMap := Map(
 
     ; Takaroda
     "Unit_4", {
-        Slot:5, Pos:[562, 383], MovementFromSpawn:[],
+        Slot:5, Pos:[786, 483], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:3, ActionCompleted:false, Delay:5000},
             {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:0},
@@ -134,7 +134,7 @@ global UnitMap := Map(
 
     ; Croc 1
     "Unit_9", {
-        Slot:3, Pos:[564, 232], MovementFromSpawn:[],
+        Slot:3, Pos:[599, 415], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:19, ActionCompleted:false, Delay:0},
             {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
@@ -148,7 +148,7 @@ global UnitMap := Map(
 
     ; Croc 2
     "Unit_10", {
-        Slot:3, Pos:[580, 256], MovementFromSpawn:[],
+        Slot:3, Pos:[549, 355], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:19, ActionCompleted:false, Delay:0},
             {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
