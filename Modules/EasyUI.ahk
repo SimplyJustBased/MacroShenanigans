@@ -417,7 +417,11 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                             MassUnitData := StrSplit(Splitical_2[2], "?")
                             for _, UnitObj in MassUnitData {
                                 Splitical3 := StrSplit(UnitObj, ",")
-                                UnitDataArray.Push({Type:Splitical3[1], Wave:Splitical3[2], ActionCompleted:false, Delay:Splitical3[3]})
+                                if Splitical3 > 2 {
+                                    UnitDataArray.Push({Type:Splitical3[1], Wave:Splitical3[2], ActionCompleted:false, Delay:Splitical3[3]})
+                                } else {
+                                    UnitDataArray.Push({Type:Splitical3[1], Wave:Splitical3[2], ActionCompleted:false, Delay:0})
+                                }
                             }
                         }
 
