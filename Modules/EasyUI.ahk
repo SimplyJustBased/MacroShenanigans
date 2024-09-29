@@ -417,7 +417,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                             MassUnitData := StrSplit(Splitical_2[2], "?")
                             for _, UnitObj in MassUnitData {
                                 Splitical3 := StrSplit(UnitObj, ",")
-                                if Splitical3 > 2 {
+                                if Splitical3.Length > 2 {
                                     UnitDataArray.Push({Type:Splitical3[1], Wave:Splitical3[2], ActionCompleted:false, Delay:Splitical3[3]})
                                 } else {
                                     UnitDataArray.Push({Type:Splitical3[1], Wave:Splitical3[2], ActionCompleted:false, Delay:0})
@@ -1679,7 +1679,7 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
             Text.SetFont("s11")
 
             ; Action Dropdown
-            DropDown := NewUIOrWhatever.AddDropDownList("r4 w80 h25 xp+38 vAction" A_Index, ["Placement", "Upgrade", "Sell"])
+            DropDown := NewUIOrWhatever.AddDropDownList("r5 w80 h25 xp+38 vAction" A_Index, ["Placement", "Upgrade", "Sell", "Ability", "Target"])
 
             ; Wave Edit
             Edit := NewUIOrWhatever.AddEdit("w60 h20 xp+102", 0)
@@ -1738,7 +1738,7 @@ CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject)
             }
         }
 
-        ActionMapChoose := Map("Placement", 1, "Upgrade", 2, "Sell", 3)
+        ActionMapChoose := Map("Placement", 1, "Upgrade", 2, "Sell", 3, "Ability", 4, "Target", 5)
         MovementMapChoose := Map("W", 1, "A", 2, "S", 3, "D", 4)
 
         PageChanged(Type, PageMap, GuiObjectMap, CurrentPage) {
