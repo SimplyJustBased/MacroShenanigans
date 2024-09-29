@@ -1,4 +1,4 @@
-; /[V1.0.0]\
+; /[V1.0.1]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -270,9 +270,13 @@ F3::{
 
     SendEvent "{w Down}"
     Sleep(400)
-    SendEvent "{w Up}{d Down}"
+    SendEvent "{w Up}"
+    Sleep(400)
+    SendEvent "{d Down}"
     Sleep(2000)
-    SendEvent "{d Up}{w Down}"
+    SendEvent "{d Up}"
+    Sleep(400)
+    SendEvent "{w Down}"
     Sleep(500)
     SendEvent "{w Up}"
 
