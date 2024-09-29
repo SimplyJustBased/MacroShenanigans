@@ -42,6 +42,7 @@ global PositionMap := Map(
     "UnitXTL", {Position:[240, 274]},
     "UnitAbility", {Position:[261, 304]},
     "UnitUpgradeButton", {Position:[179, 382]},
+    "UnitSell", {Position:[91, 390]},
 
     ;-- Igros Related
     "LegendStagesButton_Select", {Position:[516, 600]},
