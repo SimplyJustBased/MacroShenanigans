@@ -13,7 +13,7 @@ SetMouseDelay -1
 global MacroVersion := "1.0.0"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
-
+global MacroEnabled := false
 global UnitMap := Map(
     ; SprintWagon 1
     "Unit_1", {
@@ -224,7 +224,42 @@ global ToggleMapValues := Map(
 
 global NumberValueMap := Map()
 
+ReturnedUIObject := CreateBaseUI(Map(
+    "Main", {Title:"AVRengokuMacro", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!", Version:MacroVersion, DescY:"250", MacroName:"AVRengokuMacro", IncludeFonts:true, MultiInstancing:false},
+    "Settings", [
+        {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
+        {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
+    ],
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_RENGOKUTEST_1"}
+))
+
+
+EnableFunction() {
+    global MacroEnabled
+
+    if not MacroEnabled {
+        MacroEnabled := true
+
+        ReturnedUIObject.BaseUI.Hide()
+        for _, UI in __HeldUIs["UID" ReturnedUIObject.UID] {
+            try {
+                UI.submit()
+            }
+        }
+    }
+}
+
+
+ReturnedUIObject.BaseUI.Show()
+ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
+ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
+
 F3::{
+    global MacroEnabled
+    if not MacroEnabled {
+        return
+    }
+
     ; loop {
     ;     WaveDetection()
     ;     Sleep(1)
