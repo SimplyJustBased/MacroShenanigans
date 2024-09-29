@@ -354,7 +354,13 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                         case "Sell":
                             CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
+                            Sleep(200)
                             PM_ClickPos("UnitSell")
+                            
+                            Sleep(400)
+                            if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                                PM_ClickPos("UnitSell")
+                            }
                         case "Ability":
                             CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
