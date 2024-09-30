@@ -1,4 +1,4 @@
-; /[V1.0.1]\
+; /[V1.0.2]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -17,201 +17,185 @@ global MacroEnabled := false
 global UnitMap := Map(
     ; SprintWagon 1
     "Unit_1", {
-        Slot:4, Pos:[636, 312], MovementFromSpawn:[],
+        Slot:4, Pos:[468, 307], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:0, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:3, ActionCompleted:false, Delay:16000},
-            {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:17000},
-            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:16000},
-            ; Yes i forgot a upgrade here (In the Setting-Creation video) but it still works so idc
+            {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:16000},
+            {Type:"Upgrade", Wave:5, ActionCompleted:false, Delay:16000},
+            {Type:"Upgrade", Wave:7 , ActionCompleted:false, Delay:16000},
+            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:16000},
             {Type:"Sell", Wave:20, ActionCompleted:false, Delay:0},
         ]
     },
 
     ; SprintWagon 2
     "Unit_2", {
-        Slot:4, Pos:[670, 335], MovementFromSpawn:[],
+        Slot:4, Pos:[503, 279], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:1, ActionCompleted:false, Delay:16000},
-            {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:1500},
-            {Type:"Upgrade", Wave:5, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:7, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:16000},
+            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:16000},
+            {Type:"Upgrade", Wave:7, ActionCompleted:false, Delay:16000},
+            {Type:"Upgrade", Wave:9, ActionCompleted:false, Delay:0},
             {Type:"Sell", Wave:20, ActionCompleted:false, Delay:0},
         ]  
     },
 
     ; SprintWagon 3
     "Unit_3", {
-        Slot:4, Pos:[669, 298], MovementFromSpawn:[],
+        Slot:4, Pos:[448, 271], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:2, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:1500},
-            {Type:"Upgrade", Wave:5, ActionCompleted:false, Delay:16000},
-            {Type:"Upgrade", Wave:7, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:5, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:7, ActionCompleted:false, Delay:16000},
             {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:9, ActionCompleted:false, Delay:0},
             {Type:"Sell", Wave:20, ActionCompleted:false, Delay:0},
         ]
     },
 
     ; Takaroda
     "Unit_4", {
-        Slot:5, Pos:[786, 483], MovementFromSpawn:[],
+        Slot:5, Pos:[324, 282], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:3, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:16000},
+            {Type:"Placement", Wave:4, ActionCompleted:false, Delay:0},
             {Type:"Upgrade", Wave:9, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:9, ActionCompleted:false, Delay:16000},
-            {Type:"Upgrade", Wave:10, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:10, ActionCompleted:false, Delay:4000},
+            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:4000},
+            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:13, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:13, ActionCompleted:false, Delay:16000},
         ]
     },
 
-    ; Vogita 1
+    ; Tengon 1
     "Unit_5", {
-        Slot:1, Pos:[172, 260], MovementFromSpawn:[],
+        Slot:1, Pos:[73, 291], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:3, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:15, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:17, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:2000},
+            {Type:"Upgrade", Wave:10, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:15, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:16, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:2000},
         ]
     },
 
-    ; Vogita 2
+    ; Tengon 2
     "Unit_6", {
-        Slot:1, Pos:[203, 257], MovementFromSpawn:[],
+        Slot:1, Pos:[110, 278], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:15, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:17, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:2000},
+            {Type:"Placement", Wave:3, ActionCompleted:false, Delay:16000},
+            {Type:"Upgrade", Wave:10, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:15, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:16, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:2000},
         ]
     },
 
-    ; Vogita 3
+    ; Tengon 3
     "Unit_7", {
-        Slot:1, Pos:[232, 253], MovementFromSpawn:[],
+        Slot:1, Pos:[147, 262], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:6, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:15, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:17, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:2000},
+            {Type:"Upgrade", Wave:10, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:15, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:16, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
         ]
     },
 
-    ; Vogita 4
+    ; Haruka
     "Unit_8", {
-        Slot:1, Pos:[259, 251], MovementFromSpawn:[],
+        Slot:3, Pos:[61, 263], MovementFromSpawn:[],
         UnitData:[
             {Type:"Placement", Wave:6, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:15, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:17, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:2000},
-        ]
-    },
-
-    ; Croc 1
-    "Unit_9", {
-        Slot:3, Pos:[599, 415], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Target", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Target", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Target", Wave:19, ActionCompleted:false, Delay:0},
-        ]
-    },
-
-    ; Croc 2
-    "Unit_10", {
-        Slot:3, Pos:[549, 355], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Target", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Target", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Target", Wave:19, ActionCompleted:false, Delay:0},
         ]
     },
 
     ; Blossom
-    "Unit_11", {
-        Slot:2, Pos:[216, 277], MovementFromSpawn:[],
+    "Unit_9", {
+        Slot:2, Pos:[92, 247], MovementFromSpawn:[],
         UnitData:[
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:34700},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:34700},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:34700},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:34700},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:34700},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:34700},
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:36700},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:36700},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:36700},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:36700},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:36700},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:36700},
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:51000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:51000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:51000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:51000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:51000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:51000},
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:50000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:50000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:50000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:50000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:50000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:5000},
+
             {Type:"Placement", Wave:20, ActionCompleted:false, Delay:53000},
             {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:53000},
             {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:53000},
             {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:53000},
             {Type:"Ability", Wave:20, ActionCompleted:false, Delay:53000},
             {Type:"Sell", Wave:20, ActionCompleted:false, Delay:53000},
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:54000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:54000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:54000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:54000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:54000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:54000},
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:57000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:57000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:57000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:57000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:57000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:57000},
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:60000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:60000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:60000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:60000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:60000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:60000},
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:63000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:63000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:63000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:63000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:63000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:63000},
+
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:56000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:56000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:56000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:56000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:56000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:56000},
+
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:59000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:59000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:59000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:59000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:59000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:59000},
+
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:62000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:62000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:62000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:62000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:62000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:62000},
+
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:65000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:65000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:65000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:65000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:65000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:65000},
+
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:68000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:68000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:68000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:68000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:68000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:68000},
+
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:71000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:71000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:71000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:71000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:71000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:71000},
+
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:74000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:74000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:74000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:74000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:74000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:74000},
+
+            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:77000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:77000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:77000},
+            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:77000},
+            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:77000},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:77000},
         ]
     },
 )
@@ -269,16 +253,13 @@ F3::{
     Sleep(500)
 
     SendEvent "{w Down}"
-    Sleep(400)
+    Sleep(1000)
     SendEvent "{w Up}"
     Sleep(400)
     SendEvent "{d Down}"
-    Sleep(2000)
+    Sleep(1400)
     SendEvent "{d Up}"
     Sleep(400)
-    SendEvent "{w Down}"
-    Sleep(500)
-    SendEvent "{w Up}"
 
     Sleep(200)
     CameraticView()
