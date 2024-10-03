@@ -1,4 +1,4 @@
-; /[V1.0.3]\
+; /[V1.0.4]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -211,7 +211,7 @@ global ToggleMapValues := Map(
 global NumberValueMap := Map()
 
 ReturnedUIObject := CreateBaseUI(Map(
-    "Main", {Title:"AVRengokuMacro", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!", Version:MacroVersion, DescY:"250", MacroName:"AVRengokuMacro", IncludeFonts:true, MultiInstancing:false},
+    "Main", {Title:"AVRengokuMacro", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6 : Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!", Version:MacroVersion, DescY:"250", MacroName:"AVRengokuMacro", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
         {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
         {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
@@ -297,21 +297,4 @@ F3::{
 }
 
 F8::ExitApp()
-F5::{
-    TpToSpawn()
-    Sleep(500)
-
-    Sleep(200)
-    SendEvent "{a Down}"
-    Sleep(2000)
-    SendEvent "{a Up}"
-    Sleep(500)
-    SendEvent "{s Down}"
-    Sleep(1000)
-    SendEvent "{S Up}"
-
-    Sleep(200)
-    CameraticView()
-    Sleep(500)
-    
-}
+F6::Pause()
