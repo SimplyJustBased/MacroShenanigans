@@ -8,6 +8,7 @@ global PositionMap := Map(
     "SettingsXTL", {Position:[651, 64]},
     "SettingsXBR", {Position:[681, 89]},
     "UnitX", {Position:[233, 267]},
+    "ContinueButton", {Position:[205, 458]},
     "RetryButton", {Position:[501, 458]},
     "RetryButtonTL", {Position:[453, 443]},
     "RetryButtonBR", {Position:[547, 468]},
@@ -39,10 +40,12 @@ global PositionMap := Map(
     "AutoStartTL", {Position:[311, 169]},
     "AutoStartBR", {Position:[398, 188]},
     "UnitXTL", {Position:[224, 259]},
-    "UnitXTL", {Position:[240, 274]},
+    "UnitXBR", {Position:[240, 274]},
     "UnitAbility", {Position:[261, 304]},
     "UnitUpgradeButton", {Position:[179, 382]},
     "UnitSell", {Position:[91, 390]},
+    "UnitAbilityToggle", {Position:[263, 275]},
+    "UnitXPixel", {Position:[239, 264]},
 
     ;-- Igros Related
     "LegendStagesButton_Select", {Position:[516, 600]},
