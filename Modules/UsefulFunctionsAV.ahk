@@ -11,7 +11,7 @@ ____PSCreationMap := [
     ["ConfirmButton", 0x4FDA4B, 3, 1],
     ["AutoStart", 0x04EE00, 3, 1],
     ["SettingsX", 0xE13C3E, 5, 1],
-    ["UnitX", 0xC53336, 3, 1],
+    ["UnitXPixel", 0xD3393C, 12, 2, "UnitX"],
     ["ResultBackgroundCheck1", 0x141414, 3, 2],
     ["ResultBackgroundCheck2", 0x030303, 3, 2],
     ["AutoSkipWavesToggle", 0x511818, 15, 2],
@@ -19,6 +19,7 @@ ____PSCreationMap := [
     ["DisconnectBG_LS", 0x393B3D, 3, 2],
     ["DisconnectBG_RS", 0x393B3D, 3, 2],
     ["ReconnectButton", 0xFFFFFF, 3, 2],
+    ["UnitAbilityToggle", 0x511818, 3, 2],
 ]
 
 DetectEndRoundUI() {
@@ -184,7 +185,7 @@ _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
             }
             Sleep(15)
             SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 1}"
-            Sleep(200)
+            Sleep(300)
 
             if EvilSearch(PixelSearchTables["UnitX"])[1] or A_Index > 10 {
                 break
@@ -364,7 +365,7 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                         case "Ability":
                             CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
-                            Sleep(150)
+                            SetPixelSearchLoop("UnitAbilityToggle", 3000, 1,,,,50)
                             PM_ClickPos("UnitAbility")
                         case "Target":
                             CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
