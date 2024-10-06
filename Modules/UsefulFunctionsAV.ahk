@@ -39,83 +39,162 @@ DetectEndRoundUI() {
 
 global WAVE_DETECTION_CD := 0
 global LAST_WAVE_DETECTION_RESULT := 0
-WaveDetection(JumpOnFail) {
-    global WAVE_DETECTION_CD
-    global LAST_WAVE_DETECTION_RESULT
+global ChosenDetection := 1
 
-    TextObject := {Found:false, Number:0}
+WaveSetDetection(LoopAmount := 3) {
+    global ChosenDetection
+    Obj1_Points := 0 
+    Obj2_Points := 0
+    Obj3_Points := 0
 
-    loop 2 {
-        try {
-            switch ToggleMapValues["SecondaryOCR"] {
-                case true:
-                    WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
-    
-                    OCRResult := OCR.FromRect(XPos+101, Ypos+30, 124, 120)
-                case false:
-                    OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
-                        X:101,
-                        Y:30,
-                        W:124,
-                        H:120
-                    }, 0)
-            }
-            
-            Arg1 := RegExMatch(OCRResult.Text, "[\d]{3}")
-            ; OutputDebug("`nTry1 | Text: " OCRResult.Text)
-            if not Arg1 {
-                RegExMatch(OCRResult.Text, "[\d]{1,2}", &Returned)
-                TextObject.Number := Returned[]
-                TextObject.Found := true
-                ; OutputDebug("`nTry1 Succeed | Num: " Returned[])
-            }
-        } catch as E {
-            ; OutputDebug(E.Message)
-            if JumpOnFail {
-                try {
-                    SendEvent "{Space Down}{Space Up}"
-                    Sleep(150)
-            
-                    switch ToggleMapValues["SecondaryOCR"] {
-                        case true:
-                            WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
-            
-                            OCRResult := OCR.FromRect(XPos+101, Ypos+30, 124, 120)
-                        case false:
-                            OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
-                                X:101,
-                                Y:30,
-                                W:124,
-                                H:120
-                            }, 0)
-                    }
-                    Arg1 := RegExMatch(OCRResult.Text, "[\d]{3}")
-                    ; OutputDebug("`nTry2 | Text: " OCRResult.Text)
-                
-                    if not Arg1 {
-                        RegExMatch(OCRResult.Text, "[\d]{1,2}", &Returned)
-                        TextObject.Number := Returned[]
-                        TextObject.Found := true
-                        ; OutputDebug("`nTry2 Succeed | Num: " Returned[])
-                    }
-        
-                    Sleep(550)
-                }
-            }
-        }
-    
-        if TextObject.Found {
-            if LAST_WAVE_DETECTION_RESULT = TextObject.Number {
-                return TextObject.Number
-            } else {
-                OutputDebug("`nL:" LAST_WAVE_DETECTION_RESULT " D:" TextObject.Number)
-            }
-    
-            LAST_WAVE_DETECTION_RESULT := TextObject.Number
+    loop LoopAmount {
+        OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,1,OCRObject1, 0)
+
+
+        if OCRResult.Text != "" and RegExMatch(StrReplace(OCRResult.Text, "o", "0"), "[\d]{1,2}") {
+            OutputDebug("`n1++")
+
+            Obj1_Points++
         }
     }
 
-    return 0 
+    loop LoopAmount {
+        OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,1,OCRObject2, 0)
+
+
+        if OCRResult.Text != "" and RegExMatch(StrReplace(OCRResult.Text, "o", "0"), "[\d]{1,2}") {
+            OutputDebug("`n2++")
+
+            Obj2_Points++
+        }
+    }
+
+    loop LoopAmount {
+        OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,OCRObject3, 0)
+
+
+        if OCRResult.Text != "" and RegExMatch(StrReplace(OCRResult.Text, "o", "0"), "[\d]{1,2}") {
+            OutputDebug("`n3++")
+            Obj3_Points++
+        }
+    }
+
+    if Obj1_Points < Obj2_Points and Obj3_Points <= Obj2_Points {
+        ChosenDetection := 2
+        OutputDebug("`n2 Succeded")
+    } else if Obj1_Points > Obj2_Points and Obj1_Points >= Obj3_Points{
+        ChosenDetection := 1
+        OutputDebug("`n1 Succeded")
+    } else {
+        ChosenDetection := 3
+        OutputDebug("`n3 Succeded")
+
+    }
+}
+
+global OCRObject1 := {
+    X:106, Y:54, W:125, H:30, Size:1
+}
+
+global OCRObject2 := {
+    X:103, Y:99, W:125, H:30, Size:1
+}
+
+global OCRObject3 := {
+    X:101, Y:30, W:124, H:120, Size:2
+}
+
+WaveDetection(JumpOnFail, CurrentWave, WaveDetectionRange, FailureAmount := 0) {
+    global LAST_WAVE_DETECTION_RESULT
+    global OCRObject1
+    global OCRObject2
+    global OCRObject3
+
+    OCROBJECTARRAY := [OCRObject1, OCRObject2, OCRObject3]
+    TextObject := {Found:false, Number:0}
+    FailureCondition := false
+
+    loop {
+        SecondaryChosen := ChosenDetection
+
+        try {
+            if JumpOnFail and FailureCondition {
+                SendEvent "{Space Down}{Space Up}"
+                Sleep(150)
+            }
+
+            NumericalArray := []
+            OCRResult := ""
+
+            ; if FailureAmount > 3 {
+            ;     SecondaryChosen := 3
+            ; }
+
+            if ToggleMapValues.Has("SecondaryOCR") and ToggleMapValues["SecondaryOCR"] {
+                WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
+    
+                OCRResult := OCR.FromRect(XPos+101, Ypos+30, 124, 120)
+            } else {
+                OCRResult := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,OCROBJECTARRAY[SecondaryChosen].Size,OCROBJECTARRAY[SecondaryChosen], 0)
+            }
+
+            if ToggleMapValues.Has("WaveDebug") and ToggleMapValues["WaveDebug"] {
+                switch ToggleMapValues.Has("SecondaryOCR") and ToggleMapValues["SecondaryOCR"] {
+                    case true:
+                        OCRResult.Highlight(, -2000)
+                    case false:
+                        OCRResult.Highlight({X:0,Y:0,W:OCROBJECTARRAY[SecondaryChosen].W,H:OCROBJECTARRAY[SecondaryChosen].H}, -2000)
+                }
+
+                ToolTip("Found Text: " OCRResult.Text, 13, 640, 4)
+            }
+
+            StartingString := StrReplace(OCRResult.Text, "o", "0")
+
+            loop {
+                if RegExMatch(StartingString, "[\d]{1,2}", &Returned) {
+                    NumericalArray.Push(Returned[])
+                    StartingString := SubStr(StartingString, Returned.Pos + Returned.Len)
+                } else {
+                    break
+                }
+            }
+
+            if NumericalArray.Length >= 1 {
+                TextObject.NumberArray := NumericalArray
+                TextObject.Found := true
+            }
+
+            if JumpOnFail and FailureCondition {
+                Sleep(700)
+                FailureCondition := true
+            }
+        } catch as E {
+            FailureCondition := true
+            TextObject.Found := false
+            TextObject.NumberArray := []
+        }
+
+        if TextObject.Found {
+            for _, NumericalNumber in TextObject.NumberArray {
+                if NumericalNumber > CurrentWave and (not (NumericalNumber > CurrentWave + WaveDetectionRange)) {
+                    if LAST_WAVE_DETECTION_RESULT = NumericalNumber {
+                        return NumericalNumber
+                    } else {
+                        LAST_WAVE_DETECTION_RESULT := NumericalNumber
+                        TextObject.Found := false
+                        TextObject.NumberArray := []
+                    }
+                }
+            }
+        } else {
+            FailureCondition := true
+        }
+
+        if A_Index > 5 {
+            return 0
+        }
+    }
 }
 
 DbJump() {
@@ -178,6 +257,11 @@ _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
     SubtractiveOffset := 0
 
     if not CurrentOpenUnit = _UnitName {
+        if EvilSearch(PixelSearchTables["UnitX"])[1] {
+            PM_ClickPos("UnitX", 1)
+            Sleep(100)
+        }
+
         loop {
             loop 3 {
                 SendEvent "{Click, " UnitObject.Pos[1] + SubtractiveOffset ", " UnitObject.Pos[2] + SubtractiveOffset ", 0}"
@@ -198,12 +282,13 @@ _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
     return _UnitName
 }
 
-EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, DelayBreakTime := 0, Debug := false, EnableSecondaryJump := true) {
+EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, DelayBreakTime := 0, Debug := false, EnableSecondaryJump := true, WaveCheckDelays := {}) {
     Wave := -1
     WaveObject := {}
     NewerTable := {Active:false}
     CurrentOpenUnit := "nil"
     CompletedList := {}
+    FailureAmount := 0
 
     InverseKeys := Map(
         "W", "S",
@@ -213,9 +298,15 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
     )
 
     loop {
-        FoundNumber := WaveDetection(EnableSecondaryJump)
+        FoundNumber := ""
 
-        if IsNumber(FoundNumber) and FoundNumber > Wave and (not FoundNumber > FoundNumber + WaveDetectionRange) and (not FoundNumber > MaxWave) {
+        if WaveCheckDelays.HasOwnProp(Wave) and WaveObject.HasOwnProp("Num" Wave) and (A_TickCount - WaveObject.%"Num" Wave%) >= WaveCheckDelays.%Wave% {
+            FoundNumber := WaveDetection(EnableSecondaryJump, Wave, WaveDetectionRange, FailureAmount)
+        } else if not WaveCheckDelays.HasOwnProp(Wave) or not WaveObject.HasOwnProp("Num" Wave) {
+            FoundNumber := WaveDetection(EnableSecondaryJump, Wave, WaveDetectionRange, FailureAmount)
+        }
+
+        if IsNumber(FoundNumber) and FoundNumber > Wave and (not (FoundNumber > Wave + WaveDetectionRange)) and (not FoundNumber > MaxWave) {
             Wave := FoundNumber
 
             if Debug {
@@ -240,6 +331,9 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                 }
             }
 
+            FailureAmount := 0
+        } else {
+            FailureAmount++
         }
 
         if DisconnectedCheck() {
@@ -337,21 +431,20 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
                             }
 
                             SendEvent "{" UnitObject.Slot " Down}{" UnitObject.Slot " Up}"
-                            Sleep(200)
+                            Sleep(100)
                             loop 3 {
                                 SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 0}"
                                 Sleep(15)
                             }
                             Sleep(150)
                             SendEvent "{Click, " UnitObject.Pos[1] ", " UnitObject.Pos[2] ", 1}"
-                            Sleep(100)
                             CurrentOpenUnit := _UnitName
+                            Sleep(100)
                         case "Upgrade":
                             CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
-                            Sleep(299)
-                            PM_ClickPos("UnitUpgradeButton")
                             Sleep(200)
+                            PM_ClickPos("UnitUpgradeButton")
                         case "Sell":
                             CurrentOpenUnit := _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
 
