@@ -20,6 +20,8 @@ ____PSCreationMap := [
     ["DisconnectBG_RS", 0x393B3D, 3, 2],
     ["ReconnectButton", 0xFFFFFF, 3, 2],
     ["UnitAbilityToggle", 0x511818, 3, 2],
+    ["0.9xConfirm", 0x53DC4D, 15, 2],
+    ["0.9xLeave", 0xC2393C, 15, 2]
 ]
 
 DetectEndRoundUI() {
@@ -129,6 +131,11 @@ WaveDetection(JumpOnFail, CurrentWave, WaveDetectionRange, FailureAmount := 0) {
             ; if FailureAmount > 3 {
             ;     SecondaryChosen := 3
             ; }
+
+            if FailureAmount > 20 {
+                SendEvent "{Click, 787, 583, 1}"
+                Sleep(20)
+            }
 
             if ToggleMapValues.Has("SecondaryOCR") and ToggleMapValues["SecondaryOCR"] {
                 WinGetPos(&XPos, &Ypos, &XWidth, &YWidth, "ahk_exe RobloxPlayerBeta.exe")
