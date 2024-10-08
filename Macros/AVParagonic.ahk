@@ -1,4 +1,4 @@
-; /[V1.0.4]\
+; /[V1.0.2]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -675,6 +675,9 @@ F3::{
                     break
                 }
             }
+
+            CameraticView()
+            Sleep(200)
         }
 
         if ReconnecticalOfSimplicity() {
@@ -703,6 +706,9 @@ F3::{
                     break
                 }
             }
+
+            CameraticView()
+            Sleep(200)
         }
 
 
