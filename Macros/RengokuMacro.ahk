@@ -1,4 +1,4 @@
-; /[V1.0.4]\
+; /[V1.0.5]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -277,6 +277,7 @@ F3::{
     loop {
         Sleep(500)
 
+        WaveSetDetection(5)
         EnableWaveAutomation([125], true, 20, 30, 20000, ToggleMapValues["WaveDebug"], true)
 
         loop {
@@ -297,4 +298,4 @@ F3::{
 }
 
 F8::ExitApp()
-F6::Pause()
+F6::Pause -1
