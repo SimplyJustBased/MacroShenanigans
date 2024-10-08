@@ -1,4 +1,4 @@
-; /[V1.0.2]\
+; /[V1.0.4]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -566,7 +566,7 @@ F3::{
         return
     }
 
-    ResetRuns := TotalRuns := 300
+    ResetRuns := TotalRuns := 0
 
     CardFunction()
     Sleep(500)
@@ -612,6 +612,7 @@ F3::{
         }
 
         if ResetRuns >= ResetMap["Rejoin_Settings"].RunRejoinAmount and ResetMap["Rejoin_Settings"].ToRejoin {
+            ResetRuns := 0
             loop {
                 try {
                     WinClose("ahk_exe RobloxPlayerBeta.exe")
@@ -713,6 +714,8 @@ F3::{
         Sleep(400)
         PM_ClickPos("VoteStartButton", 1)
         ResetActions()
+        ResetRuns++
+        TotalRuns++
     }
 }
 
