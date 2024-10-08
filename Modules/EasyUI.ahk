@@ -967,7 +967,7 @@ CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
         }
 
         
-        ObjectSettingsUI.AddText("w200 h20 xs y" NextOffset, Name).SetFont("s11 w700 underline")
+        ObjectSettingsUI.AddText("w200 h20 xs y" NextOffset, Name).SetFont("s13 w700 underline")
         NextOffset += 30
 
         ; Arrange values to be in order from Array (Position) -> String (Text) -> Integer (Number) -> Boolean (Toggle)
@@ -1067,7 +1067,7 @@ CreateObjectUI(_MapOBJ, BaseUI, VariablisticMap, MI := false) {
                             Objective.%I% := ReturnedValues[I Name "Pos"]
                             OutputDebug("`nSet HalfPos Value")
                         } else {
-                            Objective.%I% := ReturnedValues[I Name]
+                            Objective.%I% := ObjectSettingsUI.Submit().%I Name%
                             OutputDebug("`nSet Value")
                         }
                 }
