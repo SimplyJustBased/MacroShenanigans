@@ -51,4 +51,8 @@ global PositionMap := Map(
     "LegendStagesButton_Select", {Position:[516, 600]},
     "Dungeon_2_Select", {Position:[115, 333]},
     "Act3_Igros_Select", {Position:[438, 394]},
+
+    ;-- Paragon Related
+    "0.9xConfirm", {Position:[338, 434]},
+    "0.9xLeave", {Position:[614, 451]},
 )
