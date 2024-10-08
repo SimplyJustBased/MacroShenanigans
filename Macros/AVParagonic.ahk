@@ -1,4 +1,4 @@
-; /[V1.0.1]\
+; /[V1.0.2]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -10,7 +10,7 @@ SetMouseDelay -1
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
 
-global MacroVersion := "1.0.0"
+global MacroVersion := "1.0.1"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
 global MacroEnabled := false
@@ -256,118 +256,160 @@ global ToggleMapValues := Map(
 
 global NumberValueMap := Map()
 
-ReturnedUIObject := CreateBaseUI(Map(         
-    "Main", {Title:"AVParagonic", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!", Version:MacroVersion, DescY:"250", MacroName:"AVParagonic", IncludeFonts:true, MultiInstancing:false},
-    "Settings", [
-        {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
-        {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
-    ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_PARAGONTEST_1"}
-))
+global ModifierCheckMap := Map(
+    "CardRed", {
+        Color:0x090101,
+        SpecificChecks:Map(
+            "Strong_Enemies", {ColorChecks:[0x4F1617, 98, 16, 97, 14], Amount:0}
+        )
+    },
 
+    "CardGreen", {
+        Color:0x010903,
+        SpecificChecks:Map(
+            "Revitalize", {ColorChecks:[0x020202, 86, 46, 86, 46], Amount:0},
+            "Regen", {ColorChecks:[0x0F4423, 86, 46, 86, 46], Amount:0}
+        )
+    },
 
-CardFuncTable := [
-    {Pos1:[202, 210], Pos2:[100, 260]},
-    {Pos1:[414, 225], Pos2:[310, 260]},
-    {Pos1:[614, 227], Pos2:[520, 260]},
-]
+    "CardBlue", {
+        Color:0x010508,
+        SpecificChecks:Map(
+            "Fast", {ColorChecks:[0x082C3D, 67, 61, 67, 61], Amount:0},
+            "Shielded", {ColorChecks:[0x020202, 67, 61, 67, 61], Amount:0}
+        )
+    },
+    "CardOrange", {
+        Color:0x0A0501,
+        SpecificChecks:Map(
+            "Exploding", {ColorChecks:[], Amount:0},
+        )
+    },
 
-keywordMap := Map(
-    "Strong", 1,
-    "Regen", 2,
-    "Thrice", 3,
-    "Shield", 5,
-    "Revital", 6,
-    "Explod", 7,
-    "Fast", 10
+    "CardPurple", {
+        Color:0x06020A,
+        SpecificChecks:Map(
+            "Thrice", {ColorChecks:[], Amount:0},
+        )
+    },
 )
 
-global ThriceAmount := 0
+global ModifierInfoMap := Map(
+    "Strong_Enemies", {Priority:1, Maxium:999, PostMaxiumPriority:11},
+    "Regen", {Priority:2, Maxium:999, PostMaxiumPriority:11},
+    "Thrice", {Priority:3, Maxium:20, PostMaxiumPriority:5},
+    "Shielded", {Priority:4, Maxium:999, PostMaxiumPriority:11},
+    "Revitalize", {Priority:5, Maxium:999, PostMaxiumPriority:11},
+    "Exploding", {Priority:6, Maxium:999, PostMaxiumPriority:11},
+    "Fast", {Priority:10, Maxium:999, PostMaxiumPriority:11}
+)
+
+global CardCheckPositions := Map(
+    "Slot1", {B_CC:{X1:102,Y1:405,X2:298,Y2:435}, Offset:[102, 185], ClickPos:[202, 385]},
+    "Slot2", {B_CC:{X1:310,Y1:405,X2:505,Y2:435}, Offset:[310, 185], ClickPos:[410, 385]},
+    "Slot3", {B_CC:{X1:520,Y1:405,X2:715,Y2:435}, Offset:[520, 185], ClickPos:[620, 385]},
+)
+
+global ResetMap := Map(
+    "Rejoin_Settings", {ToRejoin:false, PrivateServerLink:"", RunRejoinAmount:20}
+)
 
 CardFunction() {
-    global ThriceAmount
+    global CardCheckPositions, ModifierInfoMap, ModifierCheckMap
 
-    CardMap := Map(
-        "Slot1", 9,
-        "Slot2", 9,
-        "Slot3", 9
-    )
-
-    SetMouseDelay 1
+    LastChosenSlot := ""
     loop {
-        UpperBreakTime := A_TickCount
+        CardMap := Map(
+            "Slot1", {Name:"", Priority:9},
+            "Slot2", {Name:"", Priority:9},
+            "Slot3", {Name:"", Priority:9},
+        )
 
-        if ThriceAmount >= 9 {
-            keywordMap["Thrice"] := 6
-        }
+        OuterTickTime := A_TickCount
 
         loop {
-            SendEvent "{Click, 202, 200, 0}"
-            Sleep(400)
-
-            if PixelSearch(&u, &u, 121, 214, 121, 214, 0x040404, 2) {
+            PM_ClickPos("CamSet1", 0)
+            Sleep(15)
+    
+            if PixelSearch(&u, &u2, 701, 420, 701, 420, 0x020202, 9) {
+                Sleep(200)
                 break
             }
 
-            if A_TickCount - UpperBreakTime >= 4000 {
-                break 2
+            if (A_TickCount - OuterTickTime) >= (4000) {
+                break 2 
             }
         }
 
-        for I, V in CardFuncTable {
-            UpperIndex := A_Index
-            SendEvent "{Click, " V.Pos1[1] ", " V.Pos1[2] ", 0}"
-            Sleep(400)
-            CardOCR1 := OCR.FromWindow("ahk_exe RobloxPlayerBeta.exe",,2,{
-                X:V.Pos2[1],
-                Y:V.Pos2[2],
-                W:200,
-                H:30
-            }, 0)
-    
-            OutputDebug(CardOCR1.Text)
-            for I2, V2 in keywordMap {
-                if InStr(CardOCR1.Text, I2) {
-                    CardMap["Slot" UpperIndex] := V2
+        for SlotID, SlotObject in CardMap {
+            PSOBJ := CardCheckPositions[SlotID].B_CC
+
+            for CardColor, CardObject in ModifierCheckMap {
+                if PixelSearch(&u, &u2, PSOBJ.X1, PSOBJ.Y1, PSOBJ.X2, PSOBJ.Y2, CardObject.Color, 0) {
+                    if CardObject.SpecificChecks.Count = 1 {
+                        for Name, _ in CardObject.SpecificChecks {
+                            SlotObject.Name := Name
+                        }
+                    } else {
+                        for Name, SpecificObject in CardObject.SpecificChecks {
+                            PSOBJ2 := SpecificObject.ColorChecks
+                            Offset := CardCheckPositions[SlotID].Offset
+
+                            if PixelSearch(&u, &u2, Offset[1] + PSOBJ2[2], Offset[2] + PSOBJ2[3], Offset[1] + PSOBJ2[4], Offset[2] + PSOBJ2[5], PSOBJ2[1], 2) {
+                                SlotObject.Name := Name
+                                break
+                            }
+                        }
+                    }
+
+                    if SlotObject.Name != "" {
+                        if CardObject.SpecificChecks[SlotObject.Name].Amount >= ModifierInfoMap[SlotObject.Name].Maxium {
+                            SlotObject.Priority := ModifierInfoMap[SlotObject.Name].PostMaxiumPriority
+                        } else {
+                            SlotObject.Priority := ModifierInfoMap[SlotObject.Name].Priority
+                        }
+                    } else {
+                        SlotObject.Name := "Unknown"
+                    }
+
                     break
                 }
             }
         }
-    
-        LowestCard := {I:"Slot1", V:999}
-    
-        for I, V in CardMap {
-            OutputDebug("`n" V)
-            if LowestCard.V > V {
-                LowestCard.I := I
-                LowestCard.V := V
+
+        LowestSlot := ""
+
+        for SlotID, SlotObject in CardMap {
+            if LowestSlot = "" {
+                LowestSlot := SlotID
+                continue
+            }
+
+            if CardMap[LowestSlot].Priority > SlotObject.Priority {
+                LowestSlot := SlotID
             }
         }
-    
-        OutputDebug(LowestCard.I)
-        switch LowestCard.I {
-            case "Slot1":
-                SendEvent "{Click, 202, 325, 0}"
-                Sleep(15)
-                SendEvent "{Click, 202, 325, 1}"
-            case "Slot2":
-                SendEvent "{Click, 414, 325, 0}"
-                Sleep(15)
-                SendEvent "{Click, 414, 325, 1}"
-            case "Slot3":
-                SendEvent "{Click, 614, 325, 0}"
-                Sleep(15)
-                SendEvent "{Click, 614, 325, 1}"
-        }
 
-        if LowestCard.V = 3 {
-            ThriceAmount++
+        if LastChosenSlot = LowestSlot {
+            OuterTickTime_2 := A_TickCount
+
+            loop {
+                SendEvent "{Click, " CardCheckPositions[LowestSlot].ClickPos[1] ", " CardCheckPositions[LowestSlot].ClickPos[2] ", 1}"
+
+                if not PixelSearch(&u, &u2, 690, 210, 690, 210, 0x020202, 3) or (A_TickCount - OuterTickTime_2 >= 5000) {
+                    break
+                }
+
+                Sleep(100)
+            }
+
+            LastChosenSlot := ""
+        } else {
+            LastChosenSlot := LowestSlot
         }
     }
-
-    SetMouseDelay -1
+    Sleep(100)
 }
-
 
 EnableFunction() {
     global MacroEnabled
@@ -384,6 +426,135 @@ EnableFunction() {
     }
 }
 
+SetTo0Point9X() {
+    SetPixelSearchLoop("SettingsX", 6000, 1, PM_GetPos("SettingButton"),,,600)
+    Sleep(400)
+    PM_ClickPos("SettingMiddle")
+    Sleep(300)
+
+    loop 15 {
+        SendEvent "{WheelDown}"
+        Sleep(10)
+    }
+
+    Sleep(100)
+    SendEvent "{Click, 429, 557, 1}"
+    Sleep(760)
+
+    ; Settings X
+    SendEvent "{Click, 563, 178, 0}"
+    Sleep(15)
+    SendEvent "{Click, 563, 178, 1}"
+    Sleep(100)
+}
+
+SetTo1Point5X() {
+    ; Settings
+    SendEvent "{Click, 24, 616, 1}"
+    Sleep(450)
+    ; Setting Middle
+    SendEvent "{Click, 409, 202, 1}"
+    Sleep(100)
+
+    loop 15 {
+        SendEvent "{WheelDown}"
+        Sleep(10)
+    }
+
+    Sleep(100)
+    ; UISCALE 1.5
+    SendEvent "{Click, 514, 465, 1}"
+    Sleep(1000)
+    PM_ClickPos("SettingsX")
+}
+
+ReconnecticalOfSimplicity() {
+    if not DisconnectedCheck() {
+        return false
+    }
+
+    YeahYeahFunction(true)
+    return true
+}
+
+YeahYeahFunction(BooleanValue := false) {
+    if BooleanValue {
+        SetPixelSearchLoop("StoreCheck", 90000, 1, PM_GetPos("ReconnectButton"))
+    } else {
+        SetPixelSearchLoop("StoreCheck", 90000, 1)
+    }
+    
+    SendEvent "{Tab Down}{Tab Up}"
+    Sleep(300)
+    PM_ClickPos("PlayerX")
+    Sleep(300)
+    PM_ClickPos("AreaButton")
+    Sleep(300)
+    PM_ClickPos("Area_PlayButton")
+    Sleep(300)
+    PM_ClickPos("AreaButtonX")
+    Sleep(500)
+    RouteUser("r:[0%W600&650%A600&1300%W4000]")
+    Sleep(500)
+
+    SetTo0Point9X()
+    loop {
+        SendEvent "{A Down}{Space Down}"
+        
+        Issue := 0
+        loop {
+            for _1, SearchName in ["0.9xLeave", "0.9xConfirm"] {
+                if EvilSearch(PixelSearchTables[SearchName])[1] {
+                    Issue := _1
+                    SendEvent "{A Up}{Space Up}"
+                    break 2
+                }
+            }
+            Sleep(10)
+        }
+
+        switch Issue {
+            case 1:
+                SendEvent "{Click, 622, 456, 1}"
+                Sleep(5000)
+                OutputDebug("Retrying")
+            case 2:
+                OutputDebug("Perfection")
+                break
+        }
+    }
+
+    Sleep(400)
+    SendEvent "{Click, 	426, 275, 1}"
+    Sleep(300)
+
+    loop 15 {
+        SendEvent "{WheelDown}"
+        Sleep(10)
+    }
+    Sleep(300)
+    SendEvent "{Click, 422, 395, 1}"
+    Sleep(700)
+    SendEvent "{Click, 743, 245, 1}"
+    Sleep(300)
+    PM_ClickPos("0.9xConfirm")
+    Sleep(500)
+    SendEvent "{Click, 584, 454, 1}"
+    Sleep(4000)
+}
+
+
+ModifierOrder := ["Strong_Enemies", "Regen", "Thrice", "Shielded", "Revitalize", "Exploding", "Fast"]
+ReturnedUIObject := CreateBaseUI(Map(         
+    "Main", {Title:"AVParagonic", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!", Version:MacroVersion, DescY:"250", MacroName:"AVParagonic", IncludeFonts:true, MultiInstancing:false},
+    "Settings", [
+        {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
+        {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
+        {Map:ModifierInfoMap, Name:"Modifier Settings", Type:"Object", SaveName:"ModSettings", IsAdvanced:false, ObjectOrder:ModifierOrder, ObjectIgnore:Map(), Booleans:Map(), ObjectsPerPage:3},
+        {Map:ResetMap, Name:"Reset Fix Settings", Type:"Object", SaveName:"RejoinSettings", IsAdvanced:false, ObjectOrder:["Rejoin_Settings"], ObjectIgnore:Map(), Booleans:Map("ToRejoin", true), ObjectsPerPage:1},
+    ],
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_PARAGONTEST_1"}
+))
 
 ReturnedUIObject.BaseUI.Show()
 ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
@@ -395,10 +566,7 @@ F3::{
         return
     }
 
-    ; loop {
-    ;     WaveDetection()
-    ;     Sleep(1)
-    ; }
+    ResetRuns := TotalRuns := 300
 
     CardFunction()
     Sleep(500)
@@ -413,7 +581,6 @@ F3::{
         PM_ClickPos("AutoStart")
         Sleep(200)
     }
-
 
     loop {
         Sleep(500)
@@ -444,6 +611,100 @@ F3::{
             Sleep(1000)
         }
 
+        if ResetRuns >= ResetMap["Rejoin_Settings"].RunRejoinAmount and ResetMap["Rejoin_Settings"].ToRejoin {
+            loop {
+                try {
+                    WinClose("ahk_exe RobloxPlayerBeta.exe")
+                }
+
+                Sleep(1000)
+
+                if not WinExist("ahk_exe RobloxPlayerBeta.exe") {
+                    break
+                }
+
+                Sleep(200)
+            }
+            Sleep(1000)
+            OutputDebug(ResetMap["Rejoin_Settings"].PrivateServerLink)
+            Run(ResetMap["Rejoin_Settings"].PrivateServerLink)
+
+            Timical := A_TickCount
+            loop {
+                if WinExist("ahk_exe RobloxPlayerBeta.exe") {
+                    break
+                }
+
+                Sleep(1000)
+
+                if A_TickCount - Timical >= 120000 {
+                    Run(ResetMap["Rejoin_Settings"].PrivateServerLink)
+                }
+            }
+            Sleep(400)
+            WinActivate("ahk_exe RobloxPlayerBeta.exe")
+            Sleep(200)
+            WinMove(,,800,600,"ahk_exe RobloxPlayerBeta.exe")
+            Sleep(200)
+            YeahYeahFunction()
+            Sleep(2500)
+
+            loop {
+                SendEvent "{Click, 24, 616, 1}"
+                Sleep(500)
+
+                if PixelSearch(&u, &u, 545, 166, 579, 197, 0xD43335, 2) {
+                    ; Setting Middle
+                    SendEvent "{Tab Down}{Tab Up}"
+                    Sleep(100)
+
+                    SendEvent "{Click, 409, 202, 1}"
+                    Sleep(100)
+
+                    loop 15 {
+                        SendEvent "{WheelDown}"
+                        Sleep(10)
+                    }
+
+                    Sleep(100)
+                    ; UISCALE 1.5
+                    SendEvent "{Click, 514, 479, 1}"
+                    Sleep(200)
+                    PM_ClickPos("SettingsX")
+                    break
+                }
+            }
+        }
+
+        if ReconnecticalOfSimplicity() {
+            loop {
+                SendEvent "{Click, 24, 616, 1}"
+                Sleep(500)
+
+                if PixelSearch(&u, &u, 545, 166, 579, 197, 0xD43335, 2) {
+                    ; Setting Middle
+                    SendEvent "{Tab Down}{Tab Up}"
+                    Sleep(100)
+
+                    SendEvent "{Click, 409, 202, 1}"
+                    Sleep(100)
+
+                    loop 15 {
+                        SendEvent "{WheelDown}"
+                        Sleep(10)
+                    }
+
+                    Sleep(100)
+                    ; UISCALE 1.5
+                    SendEvent "{Click, 514, 479, 1}"
+                    Sleep(200)
+                    PM_ClickPos("SettingsX")
+                    break
+                }
+            }
+        }
+
+
         CardFunction()
         Sleep(500)
         TpToSpawn()
@@ -458,12 +719,4 @@ F3::{
 F8::ExitApp()
 F6::Pause -1
 
-F5::{
-    ; WaveSetDetection(5)
-    global ChosenDetection := 2
-
-    loop {
-        ToolTip("`nReturned: " WaveDetection(true, 0, 1230))
-        Sleep(100)
-    }
-}
+F5::YeahYeahFunction(false)
