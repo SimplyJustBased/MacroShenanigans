@@ -3,7 +3,7 @@ global PositionMap := Map(
     "SettingMiddle", {Position:[421, 122]},
     "DisableCameraShakeToggle", {Position:[610, 373]},
     "AutoSkipWavesToggle", {Position:[610, 510]},
-    "TeleportToSpawnButton", {Position:[610, 255]},
+    "TeleportToSpawnButton", {Position:[582, 197]},
     "SettingsX", {Position:[665, 79]},
     "SettingsXTL", {Position:[651, 64]},
     "SettingsXBR", {Position:[681, 89]},
@@ -46,6 +46,8 @@ global PositionMap := Map(
     "UnitSell", {Position:[91, 390]},
     "UnitAbilityToggle", {Position:[263, 275]},
     "UnitXPixel", {Position:[239, 264]},
+    "UnitUpgradeGreenCheckTL", {Position:[125, 369]},
+    "UnitUpgradeGreenCheckBR", {Position:[228, 393]},
 
     ;-- Igros Related
     "LegendStagesButton_Select", {Position:[516, 600]},
@@ -55,4 +57,11 @@ global PositionMap := Map(
     ;-- Paragon Related
     "0.9xConfirm", {Position:[338, 434]},
     "0.9xLeave", {Position:[614, 451]},
+
+    ;-- Shibuya Inf Releated
+    "BossBarPixel", {Position:[406, 376]},
+    "HairColorSukunaTL", {Position:[498, 351]},
+    "HairColorSukunaBR", {Position:[581, 391]},
+    "SkinColorSukunaTL", {Position:[481, 392]},
+    "SkinColorSukunaBR", {Position:[592, 509]},
 )
