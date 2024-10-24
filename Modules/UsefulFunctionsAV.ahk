@@ -21,7 +21,11 @@ ____PSCreationMap := [
     ["ReconnectButton", 0xFFFFFF, 3, 2],
     ["UnitAbilityToggle", 0x511818, 3, 2],
     ["0.9xConfirm", 0x53DC4D, 15, 2],
-    ["0.9xLeave", 0xC2393C, 15, 2]
+    ["0.9xLeave", 0xC2393C, 15, 2],
+    ["UnitUpgradeGreenCheck", 0x39D038, 4, 1],
+    ["BossBarPixel", 0xE62E30, 20, 2],
+    ["HairColorSukuna", 0x76524D, 1, 1],
+    ["SkinColorSukuna", 0xE4B28E, 2, 1],
 ]
 
 DetectEndRoundUI() {
@@ -114,7 +118,7 @@ WaveDetection(JumpOnFail, CurrentWave, WaveDetectionRange, FailureAmount := 0) {
 
     OCROBJECTARRAY := [OCRObject1, OCRObject2, OCRObject3]
     TextObject := {Found:false, Number:0}
-    FailureCondition := false
+    FailureCondition := SecondaryFailureCondition := false
 
     loop {
         SecondaryChosen := ChosenDetection
@@ -123,6 +127,10 @@ WaveDetection(JumpOnFail, CurrentWave, WaveDetectionRange, FailureAmount := 0) {
             if JumpOnFail and FailureCondition {
                 SendEvent "{Space Down}{Space Up}"
                 Sleep(150)
+
+                if SecondaryFailureCondition {
+                    SendEvent "{Space Down}{Space Up}"
+                }
             }
 
             NumericalArray := []
@@ -134,6 +142,7 @@ WaveDetection(JumpOnFail, CurrentWave, WaveDetectionRange, FailureAmount := 0) {
 
             if FailureAmount > 20 {
                 SendEvent "{Click, 787, 583, 1}"
+                global CurrentOpenUnit := "nil"
                 Sleep(20)
             }
 
@@ -154,9 +163,11 @@ WaveDetection(JumpOnFail, CurrentWave, WaveDetectionRange, FailureAmount := 0) {
                 }
 
                 ToolTip("Found Text: " OCRResult.Text, 13, 640, 4)
+                OutputDebug(OCRResult.Text)
             }
 
             StartingString := StrReplace(OCRResult.Text, "o", "0")
+            StartingString := StrReplace(StartingString, "I", "1")
 
             loop {
                 if RegExMatch(StartingString, "[\d]{1,2}", &Returned) {
@@ -175,6 +186,7 @@ WaveDetection(JumpOnFail, CurrentWave, WaveDetectionRange, FailureAmount := 0) {
             if JumpOnFail and FailureCondition {
                 Sleep(700)
                 FailureCondition := true
+                SecondaryFailureCondition := true
             }
         } catch as E {
             FailureCondition := true
@@ -183,6 +195,7 @@ WaveDetection(JumpOnFail, CurrentWave, WaveDetectionRange, FailureAmount := 0) {
         }
 
         if TextObject.Found {
+            SecondaryFailureCondition := false
             for _, NumericalNumber in TextObject.NumberArray {
                 if NumericalNumber > CurrentWave and (not (NumericalNumber > CurrentWave + WaveDetectionRange)) {
                     if LAST_WAVE_DETECTION_RESULT = NumericalNumber {
@@ -222,7 +235,6 @@ CameraticView() {
         SendEvent "{WheelDown}"
         Sleep(10)
     }
-
     
     PM_ClickPos("CamSet1", "Right Down")
     Sleep(200)
@@ -235,13 +247,6 @@ TpToSpawn() {
     Sleep(400)
     PM_ClickPos("SettingMiddle")
     Sleep(300)
-
-    loop 15 {
-        SendEvent "{WheelDown}"
-        Sleep(10)
-    }
-
-    Sleep(200)
     PM_ClickPos("TeleportToSpawnButton")
     Sleep(200)
     loop 3 {
@@ -255,6 +260,12 @@ TpToSpawn() {
 ResetActions() {
     for _UnitName, UnitObject in UnitMap {
         for _, ActionObject in UnitObject.UnitData {
+            ActionObject.ActionCompleted := false
+        }
+    }
+
+    try {
+        for _, ActionObject in UnitActionArray {
             ActionObject.ActionCompleted := false
         }
     }
@@ -289,13 +300,282 @@ _EnableWaveAutomation_Helper_UnitUICheck(CurrentOpenUnit, _UnitName, UnitObject)
     return _UnitName
 }
 
-EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange := 1, MaxWave := 15, DelayBreakTime := 0, Debug := false, EnableSecondaryJump := true, WaveCheckDelays := {}) {
+/**
+global UnitMap := Map(
+    "Unit_1", {Slot:4, Pos:[670, 335], MovementFromSpawn:[], UnitData:[]},
+)
+
+UnitActionArray := [
+    {Unit:"Unit_1", ActionList:["Placement", "Upgrade", "Action"], ActionCompleted:false}
+]
+*/
+
+DetectPlacementIcons() {
+    MouseGetPos(&MouseX, &MouseY)
+
+    OffsetCoords := [MouseX + 43, MouseY - 8]
+
+    if PixelSearch(&u,&u,OffsetCoords[1], OffsetCoords[2], OffsetCoords[1], OffsetCoords[2], 0x1F1F1F, 3) {
+        return true
+    }
+
+    return false
+}
+
+BreakChecks(T_A_C, A_B_N, U_A_A) {
+    if DetectEndRoundUI() {
+        return true
+    }
+
+    if not (A_B_N < 0) and T_A_C >= A_B_N {
+        return true
+    }
+
+    if DisconnectedCheck() {
+        return true
+    }
+
+    if T_A_C >= U_A_A.Length {
+        return true
+    }
+
+    return false
+}
+
+PresenceInShibuya() {
+    ; return false
+    Arg1 := EvilSearch(PixelSearchTables["BossBarPixel"])[1]
+    Arg2 := EvilSearch(PixelSearchTables["HairColorSukuna"])[1]
+    Arg3 := EvilSearch(PixelSearchTables["SkinColorSukuna"])[1]
+
+    AddArgAmount := (Arg1 + Arg2 + Arg3)
+
+    OutputDebug("Arguments Found`nArg1: " Arg1 "`nArg2: " Arg2 "`nArg3: " Arg3)
+    if AddArgAmount >= 3 {
+        return true
+    }
+
+    return false
+}
+
+EnableActionAutomation(SettingsTable := Map()) {
+    ; Global Values
+    global BlowUpAndDieChallengeMrBeastV2
+
+    ; Setting Values
+    ActionBreakNumber := SettingsTable["ActionBreakNumber"]
+    PreviousCompletedActions := SettingsTable["PreviousCompletedActions"]
+
+    ; Settings that dont need to be set
+    FingerCheckBreak := false
+
+
+    if SettingsTable.Has("FingerCheckBreak") {
+        FingerCheckBreak := SettingsTable["FingerCheckBreak"]
+    }
+
+    ; Base Variables
+    FailedPlacements := []
+    CompletedPlacements := []
+    TotalActionsCompleted := (0 + PreviousCompletedActions)
+    CurrentSelectedUnit := ""
+    BreakID := -1
+
+
+    for _, ActionObject in UnitActionArray {
+        if ActionObject.ActionCompleted {
+            CompletedPlacements.Push(_)
+            continue
+        }
+
+        if BreakChecks(TotalActionsCompleted, ActionBreakNumber, UnitActionArray) {
+            BreakID := 1
+            break
+        }
+
+        if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
+            if PresenceInShibuya() {
+                OutputDebug("Set Finger Time")
+                BlowUpAndDieChallengeMrBeastV2[1] := true
+                BlowUpAndDieChallengeMrBeastV2[2]:= A_TickCount
+            }
+        } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
+            OutputDebug("Checking Finger Time")
+            if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
+                BreakID := 100
+                break
+            }
+        }
+        ; Checks if Unit is placed, and is not currently selected. If so then select unit
+        if (((not CurrentSelectedUnit) and EvilSearch(PixelSearchTables["UnitX"])[1]) or (CurrentSelectedUnit != ActionObject.Unit)) and UnitMap[ActionObject.Unit].IsPlaced {
+            if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                PM_ClickPos("UnitX")
+                Sleep(10)
+            }
+
+            loop 6 {
+                SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] + (A_Index - 1) ", " UnitMap[ActionObject.Unit].Pos[2] + (A_Index - 1) ", 0}"
+                Sleep(15)
+                SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] + (A_Index - 1) ", " UnitMap[ActionObject.Unit].Pos[2] + (A_Index - 1) ", 1}"
+
+                Sleep(300)
+                if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                    CurrentSelectedUnit := ActionObject.Unit
+                    break
+                }
+            }
+        }
+
+        for _2, Action in ActionObject.ActionList {
+            switch Action {
+                case "Placement":
+                    UnitPlacementFails := 0
+
+                    loop {
+                        if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
+                            if PresenceInShibuya() {
+                                OutputDebug("Set Finger Time")
+                                BlowUpAndDieChallengeMrBeastV2[1] := true
+                                BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                            }
+                        } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
+                        OutputDebug("Checking Finger Time")
+                        if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
+                                BreakID := 100
+                                break 3
+                            }
+                        }
+
+                        if BreakChecks(TotalActionsCompleted, ActionBreakNumber, UnitActionArray) {
+                            BreakID := 1
+                            break 3
+                        }
+
+                        if not DetectPlacementIcons() {
+                            SendEvent UnitMap[ActionObject.Unit].Slot
+                        }
+                        Sleep(100)
+
+                        SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] ", " UnitMap[ActionObject.Unit].Pos[2] ", 0}"
+                        Sleep(15)
+                        SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] ", " UnitMap[ActionObject.Unit].Pos[2] ", 1}"
+
+                        Sleep(500)
+                        FoundUnitX := EvilSearch(PixelSearchTables["UnitX"])[1]
+                        FoundPlacementIcons := DetectPlacementIcons()
+                        
+                        if FoundPlacementIcons and FoundUnitX {
+                            ; We probably already placed this unit, but due to lag some stupid stuff happened
+                            ; (or user is trying to place a unit on another unit [Which is not my problem.])
+
+                            UnitMap[ActionObject.Unit].IsPlaced := true
+                            SendEvent UnitMap[ActionObject.Unit].Slot
+                            CurrentSelectedUnit := ActionObject.Unit
+                            break
+                        } else if not FoundPlacementIcons and FoundUnitX {
+                            ; Unit has been placed
+
+                            UnitMap[ActionObject.Unit].IsPlaced := true
+                            CurrentSelectedUnit := ActionObject.Unit
+                            break
+                        } else if FoundPlacementIcons and not FoundUnitX {
+                            ; Probably placing unit in a spot we cant
+
+                            UnitPlacementFails++
+
+                            if UnitPlacementFails >= 8 {
+                                FailedPlacements.Push(ActionObject.unit)
+                                SendEvent UnitMap[ActionObject.Unit].Slot
+                                break
+                            }
+                        } else {
+                            ; Unit failed to place due to invalid money count / max units placed
+
+                            ; No clue what to put here as of now but yeah were goated
+                            Sleep(200)
+                        }
+                    }
+                
+                    Sleep(100)
+                case "Upgrade":
+                    loop {
+                        if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
+                            if PresenceInShibuya() {
+                                OutputDebug("Set Finger Time")
+                                BlowUpAndDieChallengeMrBeastV2[1] := true
+                                BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                            }
+                        } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
+                            OutputDebug("Checking Finger Time")
+                            if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
+                                BreakID := 100
+                                break 3
+                            }
+                        }
+
+                        if BreakChecks(TotalActionsCompleted, ActionBreakNumber, UnitActionArray) {
+                            BreakID := 1
+                            break 3
+                        }
+
+                        if EvilSearch(PixelSearchTables["UnitUpgradeGreenCheck"])[1] {
+                            SendEvent "T"
+                            break
+                        }
+                        Sleep(60)
+                    }
+
+                    Sleep(200)
+                case "Sell":
+                    SendEvent "X"
+                case "Ability":
+                    ; Not working yet
+                case "Target":
+                    SendEvent "R"
+            }
+        }
+
+        TotalActionsCompleted += 1
+        ActionObject.ActionCompleted := true
+    }
+
+    return [TotalActionsCompleted, BreakID]
+}
+
+
+/**
+    "Unit_2", {
+        Slot:4, Pos:[670, 335], MovementFromSpawn:[],
+        UnitData:[
+            {Type:"Placement", Wave:1, ActionCompleted:false, Delay:16000},
+            {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:1500},
+            {Type:"Upgrade", Wave:5, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:7, ActionCompleted:false, Delay:0},
+            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:0},
+            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:0},
+        ]  
+    },
+ */
+
+EnableWaveAutomation(SettingsTable := Map()) {
     Wave := -1
     WaveObject := {}
     NewerTable := {Active:false}
-    CurrentOpenUnit := "nil"
+    global CurrentOpenUnit := "nil"
     CompletedList := {}
     FailureAmount := 0
+    TimedWaveDelay_CD := 0
+
+    ; From : Settings table
+    WavesToBreak := SettingsTable["WavesToBreak"]
+    BreakOnLose := SettingsTable["BreakOnLose"]
+    WaveDetectionRange := SettingsTable["WaveDetectionRange"]
+    MaxWave := SettingsTable["MaxWave"]
+    DelayBreakTime := SettingsTable["DelayBreakTime"]
+    Debug := SettingsTable["Debug"]
+    EnableSecondaryJump := SettingsTable["EnableSecondaryJump"]
+    WaveCheckDelays := SettingsTable["WaveCheckDelays"]
+    TimedWaveDelays := SettingsTable["TimedWaveDelays"]
 
     InverseKeys := Map(
         "W", "S",
@@ -307,10 +587,28 @@ EnableWaveAutomation(WavesToBreak := [], BreakOnLose := true, WaveDetectionRange
     loop {
         FoundNumber := ""
 
-        if WaveCheckDelays.HasOwnProp(Wave) and WaveObject.HasOwnProp("Num" Wave) and (A_TickCount - WaveObject.%"Num" Wave%) >= WaveCheckDelays.%Wave% {
-            FoundNumber := WaveDetection(EnableSecondaryJump, Wave, WaveDetectionRange, FailureAmount)
-        } else if not WaveCheckDelays.HasOwnProp(Wave) or not WaveObject.HasOwnProp("Num" Wave) {
-            FoundNumber := WaveDetection(EnableSecondaryJump, Wave, WaveDetectionRange, FailureAmount)
+        if TimedWaveDelays.HasOwnProp("D") {
+            if TimedWaveDelay_CD = 0 {
+                TimedWaveDelay_CD := A_TickCount
+            }
+
+            if TimedWaveDelays.HasOwnProp(Wave + 1) {
+                if A_TickCount - TimedWaveDelay_CD >= TimedWaveDelays.%Wave+1% {
+                    FoundNumber := Wave + 1
+                    TimedWaveDelay_CD := A_TickCount
+                }
+            } else {
+                if A_TickCount - TimedWaveDelay_CD >= TimedWaveDelays.D {
+                    FoundNumber := Wave + 1
+                    TimedWaveDelay_CD := A_TickCount
+                }
+            }
+        } else {
+            if WaveCheckDelays.HasOwnProp(Wave) and WaveObject.HasOwnProp("Num" Wave) and (A_TickCount - WaveObject.%"Num" Wave%) >= WaveCheckDelays.%Wave% {
+                FoundNumber := WaveDetection(EnableSecondaryJump, Wave, WaveDetectionRange, FailureAmount)
+            } else if not WaveCheckDelays.HasOwnProp(Wave) or not WaveObject.HasOwnProp("Num" Wave) {
+                FoundNumber := WaveDetection(EnableSecondaryJump, Wave, WaveDetectionRange, FailureAmount)
+            }
         }
 
         if IsNumber(FoundNumber) and FoundNumber > Wave and (not (FoundNumber > Wave + WaveDetectionRange)) and (not FoundNumber > MaxWave) {
