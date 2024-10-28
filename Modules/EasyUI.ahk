@@ -10,7 +10,8 @@ TypeToFunction := Map(
     "Selection", CreateSelectionUI,
     "Object", CreateObjectUI,
     "MM_Empower", CreateEmpoweredUI,
-    "UnitUI", CreateUnitUI
+    "UnitWaveUI", CreateWaveUnitUI,
+    "UnitActionUI", CreateActionUnitUI
 )
 
 global __HeldUIs := Map()
@@ -35,7 +36,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
 
     AdvancedSettings := Gui()
     AdvancedSettings.AddTab3("", ["Main"])
-    AdvancedSettings.Opt("+AlwaysOnTop")
+    AdvancedSettings.Opt("")
     AdvancedSettings.AddText("Section w240 h25 x20 y35", "Advanced Settings").SetFont("s15 w700")
     
     __HeldUIs["UID" UIDigit].InsertAt(__HeldUIs["UID" UIDigit].Length + 1, AdvancedSettings)
@@ -49,7 +50,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
 
     UIObject := {}
     BaseGui := Gui(,MapIndex["Main"].MacroName " | V" MapIndex["Main"].Version)
-    BaseGui.Opt("+AlwaysOnTop")
+    BaseGui.Opt("")
 
     Tab3Array := ["Main", "Settings", "Extras"]
     if MapIndex["Main"].MultiInstancing and not IsForMulti {
@@ -92,7 +93,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                 NewButton := AdvancedSettings.AddButton("w160 h30 xs y" ADVSettingButtonSpacing, SettingObject.Name)
         
                 switch SettingObject.type {
-                    case "Selection", "MM_Empower", "UnitUI":
+                    case "Selection", "MM_Empower", "UnitWaveUI", "UnitActionUI":
                         NewUIObject := TypeToFunction[SettingObject.type](SettingObject, AdvancedSettings, {Button:NewButton, UID:UIDigit},,VariablisticMap)
                         NewButton.SetFont("s10")
             
@@ -109,7 +110,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                 NewButton := BaseGui.AddButton("w160 h30 x" (UIWidth/2 + 75 - BaseGui.MarginX) " y" SettingButtonSpacing, SettingObject.Name)
         
                 switch SettingObject.type {
-                    case "Selection", "MM_Empower", "UnitUI":
+                    case "Selection", "MM_Empower", "UnitWaveUI", "UnitActionUI":
                         NewUIObject := TypeToFunction[SettingObject.type](SettingObject, BaseGui, {Button:NewButton, UID:UIDigit},,VariablisticMap)
                         NewButton.SetFont("s10")
             
@@ -266,7 +267,86 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
 
         for _, SettingObject in MapIndex["Settings"] {
             switch SettingObject.Type {
-                case "UnitUI":
+                case "UnitActionUI":
+                    UnitMap := SettingObject.Map["UnitMap"]
+                    UnitActionArray := SettingObject.Map["UnitActionArray"]
+                    UnitEventArray := SettingObject.Map["UnitEventArray"]
+
+                    FormattedText_1 := ""
+                    FormattedText_2 := ""
+                    FormattedText_3 := ""
+
+                    FormattedTextArray_1 := []
+                    for UnitName, UnitData in UnitMap {
+                        Slot := UnitData.Slot
+                        PosX := UnitData.Pos[1]
+                        PosY := UnitData.Pos[2]
+                        MovementFromSpawnArray := UnitData.MovementFromSpawn
+
+                        MovementText := ""
+                        for _, MovementObject in MovementFromSpawnArray {
+                            if _ = MovementFromSpawnArray.Length {
+                                MovementText := MovementText MovementObject.Key "?" MovementObject.Timedown "?" MovementObject.Delay
+                            } else {
+                                MovementText MovementObject.Key "?" MovementObject.Timedown "?" MovementObject.Delay ","
+                            }
+                        }
+
+                        if MovementText = "" {
+                            MovementText := "nil"
+                        }
+
+                        FormattedTextArray_1.Push(UnitName "|" Slot "|" PosX "." PosY "|" MovementText)
+                    }
+
+                    FormattedTextArray_2 := []
+                    for _1, UnitObject in UnitActionArray {
+
+                        Unit := UnitObject.Unit
+                        Action := UnitObject.Action
+
+                        FormattedTextArray_2.Push(Unit "|" Action)
+                    }
+
+                    FormattedTextArray_3 := []
+                    for _2, UnitObject in UnitEventArray {
+                        Unit := UnitObject.Unit
+                        Action := UnitObject.Action
+                        AfterAction := UnitObject.AfterAction
+                        IsLooped := UnitObject.IsLooped
+                        LoopDelay := UnitObject.LoopDelay
+
+                        FormattedTextArray_3.Push(Unit "|" Action "|" AfterAction "|" IsLooped "|" LoopDelay)
+                    }
+
+                    for _, Text in FormattedTextArray_1 {
+                        if _ = FormattedTextArray_1.Length {
+                            FormattedText_1 := FormattedText_1 Text
+                        } else {
+                            FormattedText_1 := FormattedText_1 Text "!"
+                        }
+                    }
+
+                    for _, Text in FormattedTextArray_2 {
+                        if _ = FormattedTextArray_2.Length {
+                            FormattedText_2 := FormattedText_2 Text
+                        } else {
+                            FormattedText_2 := FormattedText_2 Text "!"
+                        }
+                    }
+
+                    for _, Text in FormattedTextArray_3 {
+                        if _ = FormattedTextArray_3.Length {
+                            FormattedText_3 := FormattedText_3 Text
+                        } else {
+                            FormattedText_3 := FormattedText_3 Text "!"
+                        }
+                    }
+
+                    IniWrite(FormattedText_1, FileToSaveTo, SettingObject.SaveName, "FormatString_Unit")
+                    IniWrite(FormattedText_2, FileToSaveTo, SettingObject.SaveName, "FormatString_Action")
+                    IniWrite(FormattedText_3, FileToSaveTo, SettingObject.SaveName, "FormatString_Event")
+                case "UnitWaveUI":
                     FormattedText := ""
 
                     for Name, Data in SettingObject.Map {
@@ -400,7 +480,65 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
     LoadSetting(LoadFile) {
         for _, SettingObject in MapIndex["Settings"] {
             switch SettingObject.Type {
-                case "UnitUI":
+                case "UnitActionUI":
+                    FormattedText1 := IniRead(LoadFile, SettingObject.SaveName, "FormatString_Unit")
+                    FormattedText2 := IniRead(LoadFile, SettingObject.SaveName, "FormatString_Action")
+                    FormattedText3 := IniRead(LoadFile, SettingObject.SaveName, "FormatString_Event")
+
+                    UnitMap := SettingObject.Map["UnitMap"]
+                    UnitActionArray := SettingObject.Map["UnitActionArray"]
+                    UnitEventArray := SettingObject.Map["UnitEventArray"]
+
+                    UnitMap.Clear()
+                    Upperspltical1 := StrSplit(FormattedText1, "!")
+                    for _, UnitString in Upperspltical1 {
+                        LowerSplitical1 := StrSplit(UnitString, "|")
+
+                        UnitName := LowerSplitical1[1]
+                        UnitSlot := LowerSplitical1[2]
+                        UnitPosition := StrSplit(LowerSplitical1[3], ".")
+                        UnitMovementData := LowerSplitical1[4]
+
+                        DataObject := {Slot:UnitSlot, Pos:[UnitPosition[1], UnitPosition[2]], MovementFromSpawn:[], UnitData:[], IsPlaced:false}
+
+                        if not UnitMovementData = "nil" {
+                            LowerSplitical2 := StrSplit(UnitMovementData, ",")
+
+                            for _, MovementString in LowerSplitical2 {
+                                LowerSplitical3 := StrSplit(MovementString, "?")
+
+                                DataObject.MovementFromSpawn.Push({Key:LowerSplitical3[1], TimeDown:LowerSplitical3[2], Delay:LowerSplitical3[3]})
+                            }
+                        }
+
+                        UnitMap[UnitName] := DataObject
+                    }
+
+                    
+                    Upperspltical2 := StrSplit(FormattedText2, "!")
+                    loop UnitActionArray.Length {
+                        UnitActionArray.RemoveAt(1)
+                    }
+
+                    for _, ActionString in Upperspltical2 {
+                        LowerSplitical1 := StrSplit(ActionString, "|")
+
+                        UnitActionArray.Push({Unit:LowerSplitical1[1], Action:LowerSplitical1[2]})
+                    }
+
+                    Upperspltical3 := StrSplit(FormattedText3, "!")
+                    loop UnitEventArray.Length {
+                        UnitEventArray.RemoveAt(1)
+                    }
+
+                    for _, EventString in Upperspltical3 {
+                        LowerSplitical1 := StrSplit(EventString, "|")
+
+                        UnitEventArray.Push({Unit:LowerSplitical1[1], Action:LowerSplitical1[2], AfterAction:LowerSplitical1[3], IsLooped:LowerSplitical1[4], LoopDelay:LowerSplitical1[5], LastDelay:0})
+                    }
+
+                    SettingObject.UIObject.RefreshFunc()
+                case "UnitWaveUI":
                     FormattedText := IniRead(LoadFile, SettingObject.SaveName, "FormatString")
                     SettingObject.Map.Clear()
 
@@ -1565,6 +1703,7 @@ CreateEmpoweredUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variabl
 
 ;-- Used for AV, UnitPlacement and shit idk tbf
 global OpenUIID := ""
+global OpenUI := ""
 CharacteristicUI(RowNumber, UhhMap, Lv, TrueMap, OriginalUI, EvilLV, TrueObject) {
     global OpenUIID
     global CurrentPostionLabel
@@ -2097,7 +2236,7 @@ UnitSelectionTypeUI(UhhMap) {
 }
 
 global ListViewUnitNumber := 0
-CreateUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, VariablisticMap := Map()) {
+CreateWaveUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, VariablisticMap := Map()) {
     global __HeldUIs
     TrueObject := PreviousObject
 
@@ -2238,7 +2377,7 @@ CreateUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variablistic
         global OpenUIID := ""
         global ListViewUnitNumber := 0
 
-        NewUIObject := CreateUnitUI(_MapOBJ, BaseUI, TrueObject)
+        NewUIObject := CreateWaveUnitUI(_MapOBJ, BaseUI, TrueObject)
         NewUIObject.UI.Show()
         TrueObject.Button.OnEvent("Click", ShowFunction, false)
     }
@@ -2258,7 +2397,7 @@ CreateUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variablistic
         global OpenUIID := ""
         global ListViewUnitNumber := 0
 
-        NewUIObject := CreateUnitUI(_MapOBJ, BaseUI, TrueObject)
+        NewUIObject := CreateWaveUnitUI(_MapOBJ, BaseUI, TrueObject)
         TrueObject.Button.OnEvent("Click", ShowFunction, false)
     }
 
@@ -2276,6 +2415,875 @@ CreateUnitUI(_MapOBJ, BaseUI, PreviousObject := {}, ShowUI := true, Variablistic
     UIS := [UnitUI, ReturnedUIObjects.Add.GUI, ReturnedUIObjects.Remove.GUI]
     For _, UI in UIS {
         __HeldUIs["UID" PreviousObject.UID].InsertAt(__HeldUIs["UID" PreviousObject.UID].Length + 1, UI)
+    }
+
+    return TrueObject
+}
+
+;-- AV, New placement system
+RevampCharacteristicUI(Lv, RN, Maps, UhhMap, TrueObject, RedoFunc, OriginalUI) {
+    global OpenUIID
+    global CurrentPostionLabel
+    global OpenUI
+
+    if RN == 0 {
+        return
+    }
+
+    UnitMap := Maps[1]
+    UnitActionArray := Maps[2]
+    UnitEventArray := Maps[3]
+
+
+    SelfKey := Lv.GetText(RN, 1)
+
+    if OpenUIID != "" and OpenUIID != SelfKey {
+        UnitMap[OpenUIID].UI.Gui.Hide()
+    }
+
+    OpenUIID := SelfKey
+    UnitSelfMap := UnitMap[SelfKey]
+
+
+    if not UnitSelfMap.HasOwnProp("UI") {
+        UnitSelfMap.UI := {}
+    }
+
+    FinalizedUI := Gui()
+
+    TotalLength := 0
+    if UhhMap.Has("ID:" UnitSelfMap.ID) and not UnitSelfMap.UI.HasOwnProp("Gui") {
+        NewUIOrWhatever := Gui()
+        RealObject := UnitSelfMap
+
+        ; Title
+        UpperText := NewUIOrWhatever.AddText("w250 h25 Section", "Unit Settings | " OpenUIID)
+        UpperText.SetFont("s12 w700")
+        TotalLength += 35
+
+        ; Name
+        NewUIOrWhatever.AddText("w100 h25 xs y" (TotalLength), "Name :").SetFont("s11")
+        NewUIOrWhatever.AddEdit("w100 h20 yp xp+110 vName", SelfKey)
+        TotalLength += 25
+
+        ; Slot #
+        NewUIOrWhatever.AddText("w100 h25 xs y" (TotalLength), "Slot :").SetFont("s11")
+        NewUIOrWhatever.AddEdit("w60 h20 yp xp+150")
+        NewUIOrWhatever.AddUpDown("vSlotNumber range1-10000000", RealObject.Slot)
+        TotalLength += 25
+
+        ; Pos
+        NewUIOrWhatever.AddText("w55 h25 xs y" (TotalLength), "Position :").SetFont("s11")
+        SetPosButton := NewUIOrWhatever.Add("Button", "w25 h25 xp+65 yp-2", "S")
+
+        PosX := NewUIOrWhatever.AddEdit("yp+2 xp+25 w60")
+        NewUIOrWhatever.AddUpDown("vPosX Range1-40000", RealObject.Pos[1])
+        PosY := NewUIOrWhatever.AddEdit("yp xp+60 w60")
+        NewUIOrWhatever.AddUpDown("vPosY Range1-40000", RealObject.Pos[2])
+        SetPosButton.OnEvent("Click", (*) => CurrentPostionLabel := [PosX, PosY])
+        TotalLength += 35
+
+        ; Movement
+        NewUIOrWhatever.AddText("w140 h25 Section xs y" (TotalLength), "Movement List").SetFont("s14 w700 underline")
+        TestMovemntButton := NewUIOrWhatever.AddButton("w60 h25 xp+140 yp", "Test")
+        TestMovemntButton.SetFont("s11 bold")
+        MovementButtons := []
+        
+        TotalLength += 25
+        NewUIOrWhatever.AddText("w55 h25 xs+5 y" (TotalLength), "#").SetFont("s11 bold")
+        NewUIOrWhatever.AddText("w55 h25 xp+22 y" (TotalLength), "Key").SetFont("s11 bold")
+        NewUIOrWhatever.AddText("w75 h25 xp+35 y" (TotalLength), "TimeDown").SetFont("s11 bold")
+        NewUIOrWhatever.AddText("w55 h25 xp+85 y" (TotalLength), "Delay").SetFont("s11 bold")
+
+        TotalLength += 20
+
+        loop 5 {
+            Text := NewUIOrWhatever.AddText("w20 h25 xs y" (TotalLength), "[X]")
+            Text.SetFont("s11")
+
+            ; Key Dropdown
+            DropDown := NewUIOrWhatever.AddDropDownList("r4 w40 h25 xp+22 vKey" A_Index, ["W", "A", "S", "D"])
+
+            ; TimeDown Edit
+            Edit := NewUIOrWhatever.AddEdit("w60 h20 xp+50", 0)
+            EditUpDown := NewUIOrWhatever.AddUpDown("h25 vTimeDown" A_Index " Range10-25000")
+
+            ; Delay Edit
+            Edit2 := NewUIOrWhatever.AddEdit("w60 h20 xp+70", 0)
+            Edit2UpDown := NewUIOrWhatever.AddUpDown("h25 vDelay" A_Index " Range10-25000")
+
+            TotalLength += 25
+            MovementButtons.Push({Num:Text, DDL:DropDown, Edit1:Edit, Edit1UpDown:EditUpDown, Edit2:Edit2, Edit2UpDown:Edit2UpDown})
+
+            DropDown.OnEvent("Change", (*) => ActionUpdated())
+            Edit.OnEvent("Change", (*) => ActionUpdated())
+            Edit2.OnEvent("Change", (*) => ActionUpdated())
+        }
+        TotalLength += 5
+
+        AddMovementButton := NewUIOrWhatever.AddButton("xs h25 y" (TotalLength) " w40", "Add")
+        RemoveMovementButton := NewUIOrWhatever.AddButton("xp+40 h25 y" (TotalLength) " w50", "Remove")
+
+        Movement_LeftArrow := NewUIOrWhatever.AddButton("w25 xp+75 h25 yp", "<")
+        Movement_PageNumber := NewUIOrWhatever.AddText("w35 xp+25 h25 yp +Center", "1/X")
+        Movement_RightArrow := NewUIOrWhatever.AddButton("w25 xp+35 h25 yp", ">")
+
+        TotalLength += 30
+        SumbitValueButton := NewUIOrWhatever.AddButton("w120 xs h30 y" (TotalLength), "Save Values")
+        ; CloneSelectionButton := NewUIOrWhatever.AddButton("w90 xp+110 h30 y" (TotalLength), "Clone Unit")
+
+        SumbitValueButton.SetFont("s13")
+        ; CloneSelectionButton.SetFont("s12")
+
+        ; Functionality of the UI
+        SumbitValueButton.OnEvent("Click", (*) => SetValue())
+
+
+        Movement_LeftArrow.SetFont("bold s15")
+        Movement_PageNumber.SetFont("bold s15")
+        Movement_RightArrow.SetFont("bold s15")
+        MovementPages := Map()
+        MovementCurrentPage := 1
+        
+        FixMaps() {
+            for _1, __1 in [[MovementPages, UnitSelfMap.MovementFromSpawn]] {
+                for _2, Data in __1[2] {
+                    if not __1[1].Has("p_" (Ceil(_2/5))) {
+                        __1[1]["p_" (Ceil(_2/5))] := []
+                    }
+
+                    __1[1]["p_" (Ceil(_2/5))].Push(Data)
+                }
+            }
+        }
+
+        MovementMapChoose := Map("W", 1, "A", 2, "S", 3, "D", 4)
+
+        PageChanged(Type, PageMap, GuiObjectMap, CurrentPage) {
+            if not PageMap.Has("p_" CurrentPage) and not PageMap.Count < 1 {
+                switch Type {
+                    case "Movement":
+                        CHP_Movement("Left")
+                }
+
+                OutputDebug(1)
+                return
+            } else if PageMap.Count < 1 {
+                for _1, GuiObject in GuiObjectMap {
+                    for _2, GuiControl in GuiObject.OwnProps() {
+                        
+                        GuiControl.Visible := false
+                    }
+                }
+
+                return
+            }
+
+            for _1, DataObject in PageMap["p_" CurrentPage] {
+                switch Type {
+                    case "Movement":
+                        CorrespondingMacroObject := GuiObjectMap[_1]
+
+                        CorrespondingMacroObject.Num.Text := "[" _1 + ((5 * CurrentPage) - 5) "]"
+                        CorrespondingMacroObject.Num.Visible := true
+                        CorrespondingMacroObject.DDL.Choose(MovementMapChoose[DataObject.Key])
+                        CorrespondingMacroObject.DDL.Visible := true
+                        CorrespondingMacroObject.Edit1.Text := DataObject.TimeDown
+                        CorrespondingMacroObject.Edit1.Visible := true
+                        CorrespondingMacroObject.Edit2.Text := DataObject.delay
+                        CorrespondingMacroObject.Edit2.Visible := true
+
+                        CorrespondingMacroObject.Edit1UpDown.Visible := true
+                        CorrespondingMacroObject.Edit2UpDown.Visible := true
+
+                        Movement_PageNumber.Text := CurrentPage "/" PageMap.Count
+                }
+            }
+
+        
+            if PageMap["p_" CurrentPage].Length < 5 {
+                for _1, GuiObject in GuiObjectMap {
+                    if _1 > PageMap["p_" CurrentPage].Length {
+                        for _2, GuiControl in GuiObject.OwnProps() {
+                            
+                            GuiControl.Visible := false
+                        }
+                    }
+                }
+            }
+        }
+
+        ChangePage(Direction := "Right", PageMap := Map(), CurrentPage := 1) {
+            if PageMap.Count <= 1 and not CurrentPage != 1 {
+                return 9999
+            }
+
+            switch Direction {
+                case "Right":
+                    if (CurrentPage + 1) > PageMap.Count {
+                        return 1
+                    }
+        
+                    return CurrentPage += 1
+                case "Left":
+                    if (CurrentPage - 1) <= 0 {
+                        return PageMap.Count
+                    }
+        
+                    return CurrentPage - 1
+            }
+        }
+
+        CHP_Movement(Direction) {
+            MovementCurrentPage := ChangePage(Direction, MovementPages, MovementCurrentPage)
+
+            if MovementCurrentPage = 9999 {
+                MovementCurrentPage := 1
+                return
+            }
+
+            PageChanged("Movement", MovementPages, MovementButtons, MovementCurrentPage)
+        }
+
+        AdditionMovement() {
+            if UnitSelfMap.MovementFromSpawn.Length >= 100 {
+                MsgBox("i know you are ecstatic to add more but im going to have to limit you here.")
+                return
+            }
+            
+            UnitSelfMap.MovementFromSpawn.Push({Key:"W", TimeDown:100, Delay:1})
+            MovementPages.Clear()
+
+            FixMaps()
+            PageChanged("Movement", MovementPages, MovementButtons, MovementCurrentPage)
+        }
+
+        RemovalMovement() {
+            if UnitSelfMap.MovementFromSpawn.Length <= 0 {
+                MsgBox("What else could you possibly want removed?")
+                return
+            }
+
+            UnitSelfMap.MovementFromSpawn.RemoveAt(UnitSelfMap.MovementFromSpawn.Length )
+            MovementPages.Clear()
+
+            FixMaps()
+            PageChanged("Movement", MovementPages, MovementButtons, MovementCurrentPage)
+        }
+
+        ActionUpdated() {
+            AbsoluteValues := NewUIOrWhatever.Submit(false)
+
+            loop 5 {
+                MovementGuiObject := MovementButtons[A_Index]
+
+                if UnitSelfMap.MovementFromSpawn.Has(A_Index + (5 * MovementCurrentPage) - 5) {
+                    MovementObject := UnitSelfMap.MovementFromSpawn[A_Index + (5 * MovementCurrentPage) - 5]
+
+                    MovementObject.Key := AbsoluteValues.%"Key" A_Index%
+                    MovementObject.TimeDown := AbsoluteValues.%"TimeDown" A_Index%
+                    MovementObject.Delay := AbsoluteValues.%"Delay" A_Index%
+                }
+            }
+        }
+
+        SetValue() {
+            AbsoluteValues := NewUIOrWhatever.Submit(false)
+
+            UnitSelfMap.Slot := AbsoluteValues.SlotNumber
+            UnitSelfMap.Pos := [AbsoluteValues.PosX, AbsoluteValues.PosY]
+
+            if AbsoluteValues.Name != SelfKey {
+                if UnitMap.Has(AbsoluteValues.Name) {
+                    MsgBox("Already existing name for: " AbsoluteValues.Name)
+                    return
+                }
+
+                Cloned := SwitchCheck(UnitSelfMap)
+
+                UnitMap.Delete(SelfKey)
+                UnitMap[AbsoluteValues.Name] := Cloned
+                OpenUIID := AbsoluteValues.Name
+
+                for _, V1 in [UnitActionArray, UnitEventArray] {
+                    for _, V2 in V1 {
+                        if V2.Unit = SelfKey {
+                            V2.Unit := AbsoluteValues.Name
+                        }
+                    }
+                }
+
+                SelfKey := AbsoluteValues.Name
+                NewUIOrWhatever.Hide
+            }
+
+            RedoFunc()
+        }
+
+        TestMovement() {
+            try {
+                WinActivate("ahk_exe RobloxPlayerBeta.exe")
+
+                for _, MovementObject in UnitSelfMap.MovementFromSpawn {
+                    Sleep(MovementObject.Delay)
+                    SendEvent "{" MovementObject.Key " Down}"
+                    Sleep(MovementObject.TimeDown)
+                    SendEvent "{" MovementObject.Key " Up}"
+                }
+            } catch as E {
+                MsgBox("Error : " E.Message)
+            }
+        }
+
+        Movement_LeftArrow.OnEvent("Click", (*) => CHP_Movement("Left"))
+        Movement_RightArrow.OnEvent("Click", (*) => CHP_Movement("Right"))
+
+        AddMovementButton.OnEvent("Click", (*) => AdditionMovement())
+        RemoveMovementButton.OnEvent("Click", (*) => RemovalMovement())
+
+        TestMovemntButton.OnEvent("Click", (*) => TestMovement())
+
+        FixMaps()
+        PageChanged("Movement", MovementPages, MovementButtons, MovementCurrentPage)
+
+        __HeldUIs["UID" TrueObject.UID].Push(NewUIOrWhatever)
+        
+        FinalizedUI := NewUIOrWhatever
+        UnitSelfMap.UI.Gui := FinalizedUI
+    } else {
+        FinalizedUI := UnitSelfMap.UI.Gui
+    }
+
+    OriginalUI.GetPos(&X1, &Y1, &X2, &Y2)
+    FinalizedUI.Show("X" X1 + X2 " Y" Y1)
+    OpenUI := FinalizedUI
+
+    return FinalizedUI
+}
+
+global _UnitMap_ListViewNumber := 0
+global _UnitActionArray_ListViewNumber := 0
+global _UnitEventArray_ListViewNumber := 0
+
+global UpwardSelections := [["", ""], ["", ""], ["", ""]] 
+global __t_2 := []
+global __t_3 := []
+global __t_4 := []
+
+OutsideFunction(_1, _2, ListViewObjects, UI, Names, BaseStuff, UiComplex) {
+    _ListView := UI.AddListView("r15 LV0x10 Hdr ReadOnly w215", ListViewObjects[_1])
+    UI.AddText("xp+220 h30 yp w130", "Selection Chosen").SetFont("s10 bold underline")
+    SelectionText := UI.AddText("xp h30 yp+15 w130", "[None]")
+    SelectionText.SetFont("s10 bold")
+    ConfirmButton := UI.AddButton("xp h30 yp+239 w130", StrReplace(Names[_2], " [X]", " ") "Selection")
+    ConfirmButton.SetFont("s11")
+    ConfirmButton.Enabled := false
+
+    ; OutputDebug(_ListView.Count)
+    switch _1 {
+        case 3:
+            _ListView.ModifyCol(1,80)
+            _ListView.ModifyCol(2,70)
+            _ListView.ModifyCol(3,60)
+            _ListView.ModifyCol(4,0)
+        default:
+            _ListView.ModifyCol(1,105)
+            _ListView.ModifyCol(2,105)
+            _ListView.ModifyCol(3,0)
+    }
+
+    for _3, DataObj in BaseStuff[_1] {
+        switch _1 {
+            case 1:
+                _ListView.Add(, _3, DataObj.Slot, DataObj.ID)
+            case 2:
+                _ListView.Add(, DataObj.Unit, DataObj.Action, DataObj.ID)
+            case 3:
+                _ListView.Add(, DataObj.Unit, DataObj.Action, DataObj.IsLooped, DataObj.ID)
+        }
+    }
+
+    if _2 == 2 {
+        __t_2.Push(_ListView)
+    }
+
+    if _1 == 3 {
+        __t_3.Push(_ListView)
+    } else if _1 == 2 {
+        __t_4.Push(_ListView)
+    }
+
+    UiComplex[_2].ListView := _ListView
+    UiComplex[_2].ConfirmButton := ConfirmButton
+    UiComplex[_2].SelectionText := SelectionText
+
+    MinorFunctionOne(Lv, RowNum) {
+        if RowNum = 0 {
+            return
+        }
+
+        TypeOfListView := 2
+        IdRow := 3
+        ParentMap := 1
+
+        ; TypeOfListView = [1 = Remove, 2 = Clone]
+        ; IDRow = [3 = Id found on row 3, 4 = Id found on Row 4]
+        ; ParentMap = [1 = UnitMap, 2 = UnitActionArray, 3 = UnitEventArray]
+
+        for _5, PotentialLVArray in [__t_2, __t_3, __t_4] {
+            for _6, PotentialLV in PotentialLVArray {
+                if PotentialLV = Lv {
+                    switch _5 {
+                        case 1:
+                            TypeOfListView := 1
+                        case 2:
+                            IdRow := 4
+                            ParentMap := 3
+                        case 3:
+                            ParentMap := 2
+                    }
+                }
+            }
+        }
+        
+        OutputDebug("`n" TypeOfListView ":" IdRow ":" ParentMap)
+        SelectedID := Lv.GetText(RowNum, IdRow)
+        UpwardSelections[ParentMap][TypeOfListView] := SelectedID
+
+        SelectionText.Text := Lv.GetText(RowNum, 1)
+        ConfirmButton.Enabled := true
+    }
+
+    _ListView.OnEvent("DoubleClick", MinorFunctionOne)
+
+}
+
+Create_ADD_REMOVE_CLONE_ActionUIS(UM_UM, UM_UAA, UM_UEA, BaseStuff) {
+    Names := ["Add [X]", "Remove [X]", "Clone [X]"]
+    UITypes := ["Unit", "Unit Action", "Unit Event"]
+    ListViewObjects := [["Unit", "Slot"],["Unit", "Action"],["Unit", "Action", "IsLooped"]]
+
+    MajorComplex := []
+
+    for _1, UhhMap_Specific in [UM_UM, UM_UAA, UM_UEA] {
+        AddUI := Gui(,"Additive UI")
+        RemoveUI := Gui(,"Removical UI")
+        CloneUI := Gui(,"Clonitive UI")
+
+        UiComplex := [
+            {GUI:AddUI}, {GUI:RemoveUI}, {GUI:CloneUI}
+        ]
+        ListViewObjects[_1].Push("ID")
+
+        for _2, UI in [AddUI, RemoveUI, CloneUI] {
+            UI.AddText("w195 h30 Section", StrReplace(Names[_2], "[X]", UITypes[_1])).SetFont("bold s15 underline")
+
+            if _2 != 1 {
+                OutsideFunction(_1, _2, ListViewObjects, UI, Names, BaseStuff, UiComplex)
+            }
+        }
+
+        switch _1 {
+            case 1: ; Unit Map
+
+                ; Additive UI
+                ; Name
+                AddUI.AddText("w45 h25 xs yp+30", "Name:").SetFont("s12")
+                UiComplex[1].UnitName := AddUI.AddEdit("w75 h20 xp+90 yp vName", "Unit_" (UhhMap_Specific.Count + 1))
+
+                ; Slot
+                AddUI.AddText("w45 h25 xs yp+30", "Slot:").SetFont("s12")
+                AddUI.AddEdit("Number w75 h20 xp+90 yp", 1)
+                AddUI.AddUpDown("vSlotNumber")
+            case 2: ; Unit Action
+                ; Unit [Name]
+                UnitArray := []
+                for ID, IdObj in UM_UM {
+                    UnitArray.Push(IdObj.Key)
+                } 
+
+                AddUI.AddText("w45 h25 xs yp+30", "Unit:").SetFont("s12")
+                UiComplex[1].UnitDDL := AddUI.AddDDL("w95 h25 xp+90 yp vUnit r5", UnitArray)
+
+                ; Action
+                AddUI.AddText("w50 h25 xs yp+30", "Action:").SetFont("s12")
+                UiComplex[1].ActionDDL := AddUI.AddDDL("w95 h25 xp+90 yp vAction r5", ["Placement", "Upgrade"])
+
+                ; AddUI.Show()
+            case 3: ; Unit Event
+                ; Unit [Name]
+                UnitArray := []
+                for ID, IdObj in UM_UM {
+                    UnitArray.Push(IdObj.Key)
+                } 
+
+                AddUI.AddText("w45 h25 xs yp+30", "Unit:").SetFont("s11")
+                UiComplex[1].UnitDDL := AddUI.AddDDL("w95 h25 xp+90 yp vUnit r5", UnitArray)
+
+                ; Action
+                AddUI.AddText("w50 h25 xs yp+30", "Action:").SetFont("s11")
+                AddUI.AddDDL("w95 h25 xp+90 yp vAction r5", ["Sell", "Target", "Ability"])
+
+                ; AfterAction
+                AddUI.AddText("w75 h25 xs yp+30", "AfterAction:").SetFont("s11")
+                AddUI.AddEdit("Number w95 h20 xp+90 yp", 1)
+                AddUI.AddUpDown("vAfterAction")
+
+                ; IsLooped
+                AddUI.AddText("w60 h25 xs yp+30", "IsLooped:").SetFont("s11")
+                IsLoopedDDL := AddUI.AddDDL("w95 h25 xp+90 yp VIsLooped r5 choose2", ["True", "False"])
+
+                ; LoopDelay
+                AddUI.AddText("w75 h25 xs yp+30", "LoopDelay:").SetFont("s11")
+                LoopDelayEdit := AddUI.AddEdit("Number w95 h20 xp+90 yp", 1)
+                AddUI.AddUpDown("vLoopDelay")
+
+                EnableLoopCheck() {
+                    if IsLoopedDDL.Value = 1 {
+                        LoopDelayEdit.Enabled := true
+                        return
+                    }
+                    
+                    LoopDelayEdit.Enabled := false
+                }
+                EnableLoopCheck()
+
+                IsLoopedDDL.OnEvent("Change", (*) => EnableLoopCheck())
+        }
+
+        AddButtonSizes := [70, 110, 110]
+        AddButton := AddUI.AddButton("xs yp+35 w" AddButtonSizes[_1] " h25","Add " UITypes[_1])
+        AddButton.SetFont("s11")
+        
+        UiComplex[1].ConfirmButton := AddButton
+        MajorComplex.Push(UiComplex)
+    }
+
+    return MajorComplex
+}
+
+OutsideFunction_2(NumberID, MainUIs, ButtonObject, SettingMaps, RedoFunc) {
+    ButtonObject.AddButton.OnEvent("Click", (*) => MainUIs[NumberID][1].Gui.Show())
+    ButtonObject.RemoveButton.OnEvent("Click", (*) => MainUIs[NumberID][2].Gui.Show())
+    ButtonObject.CloneButton.OnEvent("Click", (*) => MainUIs[NumberID][3].Gui.Show())
+
+    MainUIs[NumberID][1].ConfirmButton.OnEvent("Click", (*) => _ActionAdditive(NumberID, MainUIs[NumberID][1].Gui, SettingMaps, RedoFunc))
+    MainUIs[NumberID][2].ConfirmButton.OnEvent("Click", (*) => _ActionRemovical(NumberID, MainUIs[NumberID][1].Gui, SettingMaps, RedoFunc))
+    MainUIs[NumberID][3].ConfirmButton.OnEvent("Click", (*) => _ActionClonical(NumberID, MainUIs[NumberID][1].Gui, SettingMaps, RedoFunc))
+}
+
+_ActionAdditive(NumberID := 1, UI := Gui(), SettingMaps := [], RedoFunc := 1) {
+    FinalizedValues := UI.Submit(false)
+
+    _UnitMap := SettingMaps[1]
+    _UnitActionArray := SettingMaps[2]
+    _UnitEventArray := SettingMaps[3]
+
+    switch NumberID {
+        case 1:
+            SlotNumber := FinalizedValues.SlotNumber
+            UnitName := FinalizedValues.Name
+
+            if _UnitMap.Has(UnitName) {
+                MsgBox("Unit With Name Already Exists")
+                return
+            }
+
+            if UnitName = "" {
+                return
+            }
+
+            _UnitMap[UnitName] := {Slot:SlotNumber, Pos:[1,1], MovementFromSpawn:[], UnitData:[], IsPlaced:false}
+        case 2:
+            ChosenUnit := FinalizedValues.Unit
+            Action := FinalizedValues.Action
+
+            if ChosenUnit = "" or Action = "" {
+                return
+            }
+
+            _UnitActionArray.Push({Unit:ChosenUnit, Action:Action, ActionCompleted:false})
+        case 3:
+            ChosenUnit := FinalizedValues.Unit
+            Action := FinalizedValues.Action
+            AfterAction := FinalizedValues.AfterAction
+            IsLooped := FinalizedValues.IsLooped
+            LoopDelay := FinalizedValues.LoopDelay
+
+            for _, Val in [ChosenUnit, Action, AfterAction, IsLooped, LoopDelay] {
+                if Val = "" {
+                    return
+                }
+            }
+            
+            _UnitEventArray.Push({Unit:ChosenUnit, AfterAction:AfterAction, Action:Action, IsLooped:(Map("True", true, "False", false)[IsLooped]), LoopDelay:LoopDelay, LastDelay:0})
+    }
+
+    UI.Hide()
+    RedoFunc()
+}
+
+_ActionRemovical(NumberID := 1, UI := Gui(), SettingMaps := [], RedoFunc := 1) {
+    global OpenUIID
+    RemovicalID := UpwardSelections[NumberID][1]
+    ChosenMap := SettingMaps[NumberID]
+
+    for I, V in ChosenMap {
+        if V.ID = RemovicalID {
+            if V.HasOwnProp("UI") {
+                if I = OpenUIID {
+                    OpenUIID := ""
+                }
+                V.UI.GUI.Destroy()
+            }
+
+            if NumberID = 1 {
+                ChosenMap.Delete(I)
+                break
+            }
+
+            ChosenMap.RemoveAt(I)
+            break
+        }
+    }
+
+    RedoFunc()
+}
+
+_ActionClonical(NumberID := 1, UI := Gui(), SettingMaps := [], RedoFunc := 1) {
+    ClonicalID := UpwardSelections[NumberID][2]
+    ChosenMap := SettingMaps[NumberID]
+
+    for I, V in ChosenMap {
+        if V.ID = ClonicalID {
+            Cloned := SwitchCheck(V)
+
+            if NumberID = 1 {
+                ChosenMap["Unit_" ChosenMap.Count + 1] := Cloned
+                break
+            }
+
+            ChosenMap.Push(Cloned)
+            break
+        }
+    }
+
+    RedoFunc()
+}
+
+CreateActionUnitUI(_MapOBJFalse, BaseUI, PreviousObject := {}, ShowUI := true, VariablisticMap := Map()) {
+    global __HeldUIs
+    TrueObject := PreviousObject
+
+    UnitUI := Gui()
+    UhhMap_UM := Map()
+    UhhMap_UAA := Map()
+    UhhMap_UEA := Map()
+
+    UIARRAY := []
+
+    _MapOBJ := _MapOBJFalse.Map
+
+    _UnitMap := _MapOBJ["UnitMap"]
+    _UnitActionArray := _MapObj["UnitActionArray"]
+    _UnitEventArray := _MapObj["UnitEventArray"]
+
+    __Buttons := [{}, {}, {}]
+
+    UnitUI.AddText("w200 h25 Section", "Unit Settings").SetFont("s14 w700")
+    Unit_Map_LV := UnitUI.AddListView("r15 LV0x10 Hdr ReadOnly ys+50 xs w115", ["Unit", "Slot", "ID"])
+    Unit_Action_LV := UnitUI.AddListView("r15 LV0x10 Hdr ReadOnly w175 yp xp+125", ["Unit", "Action", "ID"])
+    Unit_Event_LV := UnitUI.AddListView("r15 LV0x10 Hdr ReadOnly w215 yp xp+185", ["Unit", "Action", "IsLooped", "ID"])
+
+    UnitUI.AddText("w200 h25 xs ys+25", "Units").SetFont("s12 w700 underline")
+    UnitUI.AddText("w200 h25 xs+125 ys+25", "Unit Actions").SetFont("s12 w700 underline")
+    UnitUI.AddText("w200 h25 xp+185 ys+25", "Unit Events").SetFont("s12 w700 underline")
+
+
+    for _, UI in [Unit_Map_LV, Unit_Action_LV, Unit_Event_LV] {
+        UI.GetPos(&XPos, &YPos, &Width, &Height)
+
+        HeightPosition := (YPos + Height + 2)
+
+        AddButton := UnitUI.AddButton("w25 h25 x" (XPos) " y" HeightPosition, "+")
+        RemoveButton := UnitUI.AddButton("w25 h25 x" (XPos + 25) " y" HeightPosition, "-")
+        CloneButton := UnitUI.AddButton("w25 h25 x" (XPos + 50) " y" HeightPosition, "C")
+
+        AddButton.SetFont("s12", "Tahoma")
+        RemoveButton.SetFont("s12", "Tahoma")
+        CloneButton.SetFont("s12", "Tahoma")
+
+        __Buttons[_].AddButton := AddButton
+        __Buttons[_].RemoveButton := RemoveButton
+        __Buttons[_].CloneButton := CloneButton
+    }
+
+    UnitMap_ListViewFunc() {
+        global _UnitMap_ListViewNumber
+
+        for UnitMapKey, UnitObject in _UnitMap {
+            if not UnitObject.HasOwnProp("ID") {
+                _UnitMap_ListViewNumber++
+                UnitObject.ID := _UnitMap_ListViewNumber
+            }
+
+            Unit_Map_LV.Add(, UnitMapKey, UnitObject.Slot, "ID:" UnitObject.ID)
+            UhhMap_UM["ID:" UnitObject.ID] := {Key:UnitMapKey, Row:_UnitMap_ListViewNumber, Slot:UnitObject.Slot}
+        }
+    }
+
+    UnitActionArray_ListViewFunc() {
+        global _UnitActionArray_ListViewNumber
+
+        for _, UnitObject in _UnitActionArray {
+            if not UnitObject.HasOwnProp("ID") {
+                _UnitActionArray_ListViewNumber++
+                UnitObject.ID := _UnitActionArray_ListViewNumber
+            }
+
+            Unit_Action_LV.Add(, UnitObject.Unit, UnitObject.Action, "ID:" UnitObject.ID)
+            UhhMap_UAA["ID:" UnitObject.ID] := {Key:_, Row:_UnitActionArray_ListViewNumber}
+        }
+    }
+
+    UnitEventArray_ListViewFunc() {
+        TempInfo := ["False", "True"]
+
+        global _UnitEventArray_ListViewNumber
+
+        for _, UnitObject in _UnitEventArray {
+            if not UnitObject.HasOwnProp("ID") {
+                _UnitEventArray_ListViewNumber++
+                UnitObject.ID := _UnitEventArray_ListViewNumber
+            }
+
+            Unit_Event_LV.Add(, UnitObject.Unit, UnitObject.Action, TempInfo[UnitObject.IsLooped + 1], "ID:" UnitObject.ID)
+            UhhMap_UEA["ID:" UnitObject.ID] := {Key:_, Row:_UnitEventArray_ListViewNumber}
+        }
+    }
+    
+    UnitMap_ListViewFunc()
+    UnitActionArray_ListViewFunc()
+    UnitEventArray_ListViewFunc()
+
+    Unit_Map_LV.ModifyCol(1,80)
+    Unit_Map_LV.ModifyCol(2,"Center 30")
+    Unit_Map_LV.ModifyCol(3,"0")
+    Unit_Action_LV.ModifyCol(1,80)
+    Unit_Action_LV.ModifyCol(2,70)
+    Unit_Action_LV.ModifyCol(3,0)
+    Unit_Event_LV.ModifyCol(1,80)
+    Unit_Event_LV.ModifyCol(2,70)
+    Unit_Event_LV.ModifyCol(3,60)
+    Unit_Event_LV.ModifyCol(4,0)
+
+    ShowGuiRight(TheGui) {
+        UnitUI.GetPos(&x1, &x2, &x3, &x4)
+        TheGui.Show("X" x1 + x3 " Y" x2)
+    }
+
+    ; [
+    ;     [{Additive}, {Removal}, {Clone}],
+    ;     [{Additive}, {Removal}, {Clone}],
+    ;     [{Additive}, {Removal}, {Clone}],
+    ; ] EACH HAS .ConfirmButton & .GUI
+    MainUIs := Create_ADD_REMOVE_CLONE_ActionUIS(UhhMap_UM, UhhMap_UAA, UhhMap_UEA, [_UnitMap, _UnitActionArray, _UnitEventArray])
+
+    for _2, ButtonObject in __Buttons {
+        OutsideFunction_2(_2, MainUIs, ButtonObject, [_UnitMap, _UnitActionArray, _UnitEventArray], RedoLists)
+    }
+
+    RdClean(*) {
+        global OpenUI
+        global OpenUIID
+
+        try {
+            if OpenUI != "" {
+                OpenUI.Hide()
+                OpenUIID := ""
+                OpenUI := ""
+            }
+        }
+
+        RedoLists()
+    }
+
+    RedoLists() {
+        for _, ListView in [Unit_Map_LV, Unit_Action_LV, Unit_Event_LV] {
+            loop 100 {
+                ListView.Delete(101-A_Index)
+            }
+        }
+
+        UnitMap_ListViewFunc()
+        UnitActionArray_ListViewFunc()
+        UnitEventArray_ListViewFunc()
+
+        UpdatedUnitArray := []
+        for ID, IdObj in _UnitMap {
+            UpdatedUnitArray.Push(ID)
+        }
+
+        for _, DDL in [MainUIs[2][1].UnitDDL, MainUIs[3][1].UnitDDL] {
+            DDL.Delete()
+            DDL.Add(UpdatedUnitArray)
+        }
+
+        MainUIs[1][1].UnitName.Text := "Unit_" UpdatedUnitArray.Length + 1
+
+        for _5, ObjectArray in MainUIs {
+            ListViewRemoval := ObjectArray[2].ListView
+            ListViewClone := ObjectArray[3].ListView
+
+            ObjectArray[2].SelectionText.Text := "[None]"
+            ObjectArray[3].SelectionText.Text := "[None]"
+            ObjectArray[2].ConfirmButton.Enabled := false
+            ObjectArray[3].ConfirmButton.Enabled := false
+
+            for _, ListView in [ListViewRemoval, ListViewClone] {
+                loop 100 {
+                    ListView.Delete(101-A_Index)
+                }
+            }
+
+            for _3, DataObj in [_UnitMap, _UnitActionArray, _UnitEventArray][_5] {
+                switch _5 {
+                    case 1:
+                        ListViewClone.Add(, _3, DataObj.Slot, DataObj.ID)
+                        ListViewRemoval.Add(, _3, DataObj.Slot, DataObj.ID)
+                    case 2:
+                        ListViewClone.Add(, DataObj.Unit, DataObj.Action, DataObj.ID)
+                        ListViewRemoval.Add(, DataObj.Unit, DataObj.Action, DataObj.ID)
+                    case 3:
+                        ; OutputDebug(DataObj.IsLooped)
+                        ListViewClone.Add(, DataObj.Unit, DataObj.Action, DataObj.IsLooped, DataObj.ID)
+                        ListViewRemoval.Add(, DataObj.Unit, DataObj.Action, DataObj.IsLooped, DataObj.ID)
+                }
+            }
+        }
+    }
+
+    Unit_Map_LV.OnEvent("DoubleClick", (Lv, RowNumber) => UIARRAY.Push(RevampCharacteristicUI(Lv, RowNumber, [_UnitMap, _UnitActionArray, _UnitEventArray], UhhMap_UM, TrueObject, RedoLists, UnitUI)))
+
+    ShowFunction(*) {
+        UnitUI.Show()
+    }
+
+    TrueObject.ShowFunction := ShowFunction
+    TrueObject.UI := UnitUI
+    TrueObject.Button.OnEvent("Click", ShowFunction, true)
+    TrueObject.RefreshFunc := RdClean
+
+    UIs := [UnitUI]
+
+    for _, _Array in MainUIs {
+        for _2, Obj in _Array {
+            UIs.Push(Obj.GUI)
+        }
+    }
+
+    for _, UI in UIs {
+        __HeldUIs["UID" PreviousObject.UID].Push(UI)
     }
 
     return TrueObject
