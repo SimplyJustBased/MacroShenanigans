@@ -350,12 +350,23 @@ PresenceInShibuya() {
 
     AddArgAmount := (Arg1 + Arg2 + Arg3)
 
-    OutputDebug("Arguments Found`nArg1: " Arg1 "`nArg2: " Arg2 "`nArg3: " Arg3)
+    ; OutputDebug("Arguments Found`nArg1: " Arg1 "`nArg2: " Arg2 "`nArg3: " Arg3)
     if AddArgAmount >= 3 {
         return true
     }
 
     return false
+}
+
+EventActionSimplicity(Action) {
+    switch Action {
+        case "Sell":
+            SendEvent "X"
+        case "Ability":
+            PM_ClickPos("UnitAbility")
+        case "Target":
+            SendEvent "R"
+    }
 }
 
 EnableActionAutomation(SettingsTable := Map()) {
@@ -381,6 +392,30 @@ EnableActionAutomation(SettingsTable := Map()) {
     CurrentSelectedUnit := ""
     BreakID := -1
 
+    PlacementCheck(UnitID, CurrentSelectedUnit_F) {
+        ReturnedUnitID := CurrentSelectedUnit_F
+
+        if (((not CurrentSelectedUnit) and EvilSearch(PixelSearchTables["UnitX"])[1]) or (CurrentSelectedUnit != UnitID)) and UnitMap[UnitID].IsPlaced {
+            if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                PM_ClickPos("UnitX")
+                Sleep(10)
+            }
+
+            loop 6 {
+                SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (A_Index - 1) ", " UnitMap[UnitID].Pos[2] + (A_Index - 1) ", 0}"
+                Sleep(15)
+                SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (A_Index - 1) ", " UnitMap[UnitID].Pos[2] + (A_Index - 1) ", 1}"
+
+                Sleep(300)
+                if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                    ReturnedUnitID := UnitID
+                    break
+                }
+            }
+        }
+
+        return ReturnedUnitID
+    }
 
     for _, ActionObject in UnitActionArray {
         if ActionObject.ActionCompleted {
@@ -395,148 +430,145 @@ EnableActionAutomation(SettingsTable := Map()) {
 
         if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
             if PresenceInShibuya() {
-                OutputDebug("Set Finger Time")
                 BlowUpAndDieChallengeMrBeastV2[1] := true
                 BlowUpAndDieChallengeMrBeastV2[2]:= A_TickCount
             }
         } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
-            OutputDebug("Checking Finger Time")
+            ; OutputDebug("Checking Finger Time")
             if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
                 BreakID := 100
                 break
             }
         }
         ; Checks if Unit is placed, and is not currently selected. If so then select unit
-        if (((not CurrentSelectedUnit) and EvilSearch(PixelSearchTables["UnitX"])[1]) or (CurrentSelectedUnit != ActionObject.Unit)) and UnitMap[ActionObject.Unit].IsPlaced {
-            if EvilSearch(PixelSearchTables["UnitX"])[1] {
-                PM_ClickPos("UnitX")
-                Sleep(10)
-            }
+        CurrentSelectedUnit := PlacementCheck(ActionObject.Unit, CurrentSelectedUnit)
 
-            loop 6 {
-                SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] + (A_Index - 1) ", " UnitMap[ActionObject.Unit].Pos[2] + (A_Index - 1) ", 0}"
-                Sleep(15)
-                SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] + (A_Index - 1) ", " UnitMap[ActionObject.Unit].Pos[2] + (A_Index - 1) ", 1}"
+        switch ActionObject.Action {
+            case "Placement":
+                UnitPlacementFails := 0
 
-                Sleep(300)
-                if EvilSearch(PixelSearchTables["UnitX"])[1] {
-                    CurrentSelectedUnit := ActionObject.Unit
-                    break
-                }
-            }
-        }
-
-        for _2, Action in ActionObject.ActionList {
-            switch Action {
-                case "Placement":
-                    UnitPlacementFails := 0
-
-                    loop {
-                        if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
-                            if PresenceInShibuya() {
-                                OutputDebug("Set Finger Time")
-                                BlowUpAndDieChallengeMrBeastV2[1] := true
-                                BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
-                            }
-                        } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
-                        OutputDebug("Checking Finger Time")
-                        if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
-                                BreakID := 100
-                                break 3
-                            }
+                loop {
+                    if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
+                        if PresenceInShibuya() {
+                            BlowUpAndDieChallengeMrBeastV2[1] := true
+                            BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
                         }
-
-                        if BreakChecks(TotalActionsCompleted, ActionBreakNumber, UnitActionArray) {
-                            BreakID := 1
-                            break 3
-                        }
-
-                        if not DetectPlacementIcons() {
-                            SendEvent UnitMap[ActionObject.Unit].Slot
-                        }
-                        Sleep(100)
-
-                        SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] ", " UnitMap[ActionObject.Unit].Pos[2] ", 0}"
-                        Sleep(15)
-                        SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] ", " UnitMap[ActionObject.Unit].Pos[2] ", 1}"
-
-                        Sleep(500)
-                        FoundUnitX := EvilSearch(PixelSearchTables["UnitX"])[1]
-                        FoundPlacementIcons := DetectPlacementIcons()
-                        
-                        if FoundPlacementIcons and FoundUnitX {
-                            ; We probably already placed this unit, but due to lag some stupid stuff happened
-                            ; (or user is trying to place a unit on another unit [Which is not my problem.])
-
-                            UnitMap[ActionObject.Unit].IsPlaced := true
-                            SendEvent UnitMap[ActionObject.Unit].Slot
-                            CurrentSelectedUnit := ActionObject.Unit
-                            break
-                        } else if not FoundPlacementIcons and FoundUnitX {
-                            ; Unit has been placed
-
-                            UnitMap[ActionObject.Unit].IsPlaced := true
-                            CurrentSelectedUnit := ActionObject.Unit
-                            break
-                        } else if FoundPlacementIcons and not FoundUnitX {
-                            ; Probably placing unit in a spot we cant
-
-                            UnitPlacementFails++
-
-                            if UnitPlacementFails >= 8 {
-                                FailedPlacements.Push(ActionObject.unit)
-                                SendEvent UnitMap[ActionObject.Unit].Slot
-                                break
-                            }
-                        } else {
-                            ; Unit failed to place due to invalid money count / max units placed
-
-                            ; No clue what to put here as of now but yeah were goated
-                            Sleep(200)
+                    } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
+                    ; OutputDebug("Checking Finger Time")
+                    if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
+                            BreakID := 100
+                            break 2
                         }
                     }
-                
+
+                    if BreakChecks(TotalActionsCompleted, ActionBreakNumber, UnitActionArray) {
+                        BreakID := 1
+                        break 2
+                    }
+
+                    if not DetectPlacementIcons() {
+                        SendEvent UnitMap[ActionObject.Unit].Slot
+                    }
                     Sleep(100)
-                case "Upgrade":
-                    loop {
-                        if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
-                            if PresenceInShibuya() {
-                                OutputDebug("Set Finger Time")
-                                BlowUpAndDieChallengeMrBeastV2[1] := true
-                                BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
-                            }
-                        } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
-                            OutputDebug("Checking Finger Time")
-                            if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
-                                BreakID := 100
-                                break 3
-                            }
-                        }
 
-                        if BreakChecks(TotalActionsCompleted, ActionBreakNumber, UnitActionArray) {
-                            BreakID := 1
-                            break 3
-                        }
+                    SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] ", " UnitMap[ActionObject.Unit].Pos[2] ", 0}"
+                    Sleep(15)
+                    SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] ", " UnitMap[ActionObject.Unit].Pos[2] ", 1}"
 
-                        if EvilSearch(PixelSearchTables["UnitUpgradeGreenCheck"])[1] {
-                            SendEvent "T"
+                    Sleep(500)
+                    FoundUnitX := EvilSearch(PixelSearchTables["UnitX"])[1]
+                    FoundPlacementIcons := DetectPlacementIcons()
+                    
+                    if FoundPlacementIcons and FoundUnitX {
+                        ; We probably already placed this unit, but due to lag some stupid stuff happened
+                        ; (or user is trying to place a unit on another unit [Which is not my problem.])
+
+                        UnitMap[ActionObject.Unit].IsPlaced := true
+                        SendEvent UnitMap[ActionObject.Unit].Slot
+                        CurrentSelectedUnit := ActionObject.Unit
+                        break
+                    } else if not FoundPlacementIcons and FoundUnitX {
+                        ; Unit has been placed
+
+                        UnitMap[ActionObject.Unit].IsPlaced := true
+                        CurrentSelectedUnit := ActionObject.Unit
+                        break
+                    } else if FoundPlacementIcons and not FoundUnitX {
+                        ; Probably placing unit in a spot we cant
+
+                        UnitPlacementFails++
+
+                        if UnitPlacementFails >= 8 {
+                            FailedPlacements.Push(ActionObject.unit)
+                            SendEvent UnitMap[ActionObject.Unit].Slot
                             break
                         }
-                        Sleep(60)
+                    } else {
+                        ; Unit failed to place due to invalid money count / max units placed
+
+                        ; No clue what to put here as of now but yeah were goated
+                        Sleep(200)
+                    }
+                }
+            
+                Sleep(100)
+            case "Upgrade":
+                loop {
+                    if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
+                        if PresenceInShibuya() {
+                            OutputDebug("Set Finger Time")
+                            BlowUpAndDieChallengeMrBeastV2[1] := true
+                            BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                        }
+                    } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
+                        ; OutputDebug("Checking Finger Time")
+                        if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
+                            BreakID := 100
+                            break 2
+                        }
                     }
 
-                    Sleep(200)
-                case "Sell":
-                    SendEvent "X"
-                case "Ability":
-                    ; Not working yet
-                case "Target":
-                    SendEvent "R"
-            }
+                    if BreakChecks(TotalActionsCompleted, ActionBreakNumber, UnitActionArray) {
+                        BreakID := 1
+                        break 2
+                    }
+
+                    if EvilSearch(PixelSearchTables["UnitUpgradeGreenCheck"])[1] {
+                        SendEvent "T"
+                        break
+                    }
+                    Sleep(60)
+                }
+
+                ; Sleep(200)
+                ; SendEvent "R"
         }
 
         TotalActionsCompleted += 1
         ActionObject.ActionCompleted := true
+
+        for _, EventObject in UnitEventArray {
+            if EventObject.AfterAction >= TotalActionsCompleted {
+                switch EventObject.IsLooped {
+                    case true:
+                        if EventObject.LastDelay = 0 {
+                            EventObject.LastDelay := A_TickCount
+                        }
+
+                        if (A_TickCount - EventObject.LastDelay) >= EventObject.LoopDelay {
+                            CurrentSelectedUnit := PlacementCheck(EventObject.Unit, CurrentSelectedUnit)
+
+                            EventActionSimplicity(EventObject.Action)
+                            EventObject.LastDelay := A_TickCount
+                        }
+                    case false:
+                        CurrentSelectedUnit := PlacementCheck(EventObject.Unit, CurrentSelectedUnit)
+
+                        EventActionSimplicity(EventObject.Action)
+                }
+
+            }
+        }
     }
 
     return [TotalActionsCompleted, BreakID]
