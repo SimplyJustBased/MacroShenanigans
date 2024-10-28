@@ -1,4 +1,4 @@
-; /[V1.0.0]\
+; /[V1.0.1]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -10,71 +10,97 @@ SetMouseDelay -1
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
 
-global MacroVersion := "1.0.0"
+global MacroVersion := "1.0.1"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
 global UnitMap := Map(
     ; SprintWagons
-    "Unit_1", {Slot:3, Pos:[236, 412], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Unit_2", {Slot:3, Pos:[304, 410], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Unit_3", {Slot:3, Pos:[298, 341], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 1", {Slot:3, Pos:[236, 412], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 2", {Slot:3, Pos:[304, 410], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 3", {Slot:3, Pos:[298, 341], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
     ; Vogitas
-    "Unit_4", {Slot:2, Pos:[363, 385], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Unit_5", {Slot:2, Pos:[452, 389], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Unit_6", {Slot:2, Pos:[364, 297], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Unit_7", {Slot:2, Pos:[453, 298], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 1", {Slot:2, Pos:[363, 385], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 2", {Slot:2, Pos:[452, 389], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 3", {Slot:2, Pos:[364, 297], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 4", {Slot:2, Pos:[453, 298], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
     ; Igrises
-    "Unit_8", {Slot:1, Pos:[478, 456], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Unit_9", {Slot:1, Pos:[400, 461], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Unit_10", {Slot:1, Pos:[484, 394], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-
+    "Igros 1", {Slot:1, Pos:[478, 456], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Igros 2", {Slot:1, Pos:[400, 461], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Igros 3", {Slot:1, Pos:[484, 394], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 )
 
 global UnitActionArray := [
     ; Vogitas
-    {Unit:"Unit_4", ActionList:["Placement"], ActionCompleted:false},
-    {Unit:"Unit_5", ActionList:["Placement"], ActionCompleted:false},
-    {Unit:"Unit_6", ActionList:["Placement"], ActionCompleted:false},
-    {Unit:"Unit_7", ActionList:["Placement"], ActionCompleted:false},
+    {Unit:"Vogita 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Placement", ActionCompleted:false},
 
     ; Farms
-    {Unit:"Unit_1", ActionList:["Placement"], ActionCompleted:false},
-    {Unit:"Unit_2", ActionList:["Placement"], ActionCompleted:false},
-    {Unit:"Unit_3", ActionList:["Placement"], ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Placement", ActionCompleted:false},
 
     ; 4 x 1 Upgrade
-    {Unit:"Unit_1", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_2", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_3", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_1", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_2", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_3", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_1", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_2", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_3", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_1", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_2", ActionList:["Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_3", ActionList:["Upgrade"], ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
 
     ; Igris
-    {Unit:"Unit_8", ActionList:["Placement"], ActionCompleted:false},
-    {Unit:"Unit_9", ActionList:["Placement"], ActionCompleted:false},
-    {Unit:"Unit_10", ActionList:["Placement"], ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Placement", ActionCompleted:false},
 
     ; Upgrade 1 x 2
-    {Unit:"Unit_8", ActionList:["Upgrade", "Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_9", ActionList:["Upgrade", "Upgrade"], ActionCompleted:false},
-    {Unit:"Unit_10", ActionList:["Upgrade", "Upgrade"], ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Igros 3", Action:"Upgrade", ActionCompleted:false},
 ]
 
-; IGris upgrade but im too lazy to add them into the map :tear:
-loop 9 {
-    UnitActionArray.Push({Unit:"Unit_8", ActionList:["Upgrade"], ActionCompleted:false})
-    UnitActionArray.Push({Unit:"Unit_9", ActionList:["Upgrade"], ActionCompleted:false})
-    UnitActionArray.Push({Unit:"Unit_10", ActionList:["Upgrade"], ActionCompleted:false})
-}
+global UnitEventArray := [
+    ; {Unit:"Igros 1", AfterAction:25, Action:"Sell", IsLooped:false, LoopDelay:100000, LastDelay:0}
+]
 
 global WaveAutomationSettings := Map(
     "WavesToBreak", [],
@@ -106,7 +132,7 @@ global NumberValueMap := Map()
 ReturnedUIObject := CreateBaseUI(Map(
     "Main", {Title:"AVInfSquared", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6 : Pause`nF8 : Stop", Version:MacroVersion, DescY:"250", MacroName:"AVInfSquared", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
-        ; {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
+        {Map:Map("UnitMap", UnitMap, "UnitActionArray", UnitActionArray, "UnitEventArray", UnitEventArray), Name:"Unit Settings", Type:"UnitActionUI", SaveName:"UnitSettings", IsAdvanced:false},
         ; {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
     ],
     "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_SHIBUYATEST_1"}
