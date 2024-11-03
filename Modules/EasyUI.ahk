@@ -523,7 +523,7 @@ CreateBaseUI(MapIndex, IsForMulti := false, UIDForcing := -1) {
                     for _, ActionString in Upperspltical2 {
                         LowerSplitical1 := StrSplit(ActionString, "|")
 
-                        UnitActionArray.Push({Unit:LowerSplitical1[1], Action:LowerSplitical1[2]})
+                        UnitActionArray.Push({Unit:LowerSplitical1[1], Action:LowerSplitical1[2], ActionCompleted:false})
                     }
 
                     Upperspltical3 := StrSplit(FormattedText3, "!")
