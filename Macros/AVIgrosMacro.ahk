@@ -1,4 +1,4 @@
-; /[V1.0.8]\
+; /[V1.0.9]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -10,74 +10,114 @@ SetMouseDelay -1
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
 
-global MacroVersion := "1.0.0"
+global MacroVersion := "1.0.1"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
-
-; Placement | Upgrade | Sell
 global UnitMap := Map(
-    "Unit_1", {
-        Slot:1, 
-        Pos:[152, 150], 
-        UnitData:[
-            {Type:"Placement", Wave:4, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false}
-        ], 
-        MovementFromSpawn:[
-            {Key:"A", TimeDown:700, Delay:200}, {Key:"S", TimeDown:400, Delay:200}
-        ]
-    },
-    "Unit_2", {
-        Slot:1, 
-        Pos:[152, 192], 
-        UnitData:[
-            {Type:"Placement", Wave:5, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false}
-        ], 
-        MovementFromSpawn:[
-            {Key:"A", TimeDown:700, Delay:200}, {Key:"S", TimeDown:400, Delay:200}
-        ]
-    },
-    "Unit_3", {
-        Slot:1, 
-        Pos:[152, 262], 
-        UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false}
-        ], 
-        MovementFromSpawn:[
-            {Key:"A", TimeDown:700, Delay:200}, {Key:"S", TimeDown:400, Delay:200}
-        ]
-    },
-    "Unit_4", {
-        Slot:1, 
-        Pos:[152, 305], 
-        UnitData:[
-            {Type:"Placement", Wave:7, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false},{Type:"Upgrade", Wave:12, ActionCompleted:false}
-        ], 
-        MovementFromSpawn:[
-            {Key:"A", TimeDown:700, Delay:200}, {Key:"S", TimeDown:400, Delay:200}
-        ]
-    },
+    ; SprintWagons
+    "SprintWagon 1", {Slot:3, Pos:[569, 260], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 2", {Slot:3, Pos:[528, 259], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 3", {Slot:3, Pos:[489, 257], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+
+    ; Vogitas
+    "Vogita 1", {Slot:1, Pos:[192, 147], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 2", {Slot:1, Pos:[228, 145], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 3", {Slot:1, Pos:[190, 180], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 4", {Slot:1, Pos:[227, 180], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+)
+
+
+global UnitActionArray := [
+    ; Farms
+    {Unit:"SprintWagon 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Placement", ActionCompleted:false},
+
+    {Unit:"Vogita 1", Action:"Placement", ActionCompleted:false},
+
+    ; 4 x 1 Upgrade
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Vogita 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Placement", ActionCompleted:false},
+
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+]
+
+global UnitEventArray := [
+    ; {Unit:"Igros 1", AfterAction:25, Action:"Sell", IsLooped:false, LoopDelay:100000, LastDelay:0}
+]
+
+global WaveAutomationSettings := Map(
+    ; "WavesToBreak", [],
+    ; "BreakOnLose", true,
+    ; "WaveDetectionRange", 1,
+    ; "MaxWave", 35,
+    ; "DelayBreakTime", 0,
+    ; "Debug", false,
+    ; "EnableSecondaryJump", true,
+    ; "WaveCheckDelays", {},
+    ; "TimedWaveDelays", {}
+)
+
+global ActionAutomationSettings := Map(
+    "ActionBreakNumber", -1,
+    "PreviousCompletedActions", 0,
+    "BossBarBreak_Double", true
 )
 
 global ToggleMapValues := Map(
-    "NoMovementReset", true,
-    "Auto-Reconnect", true,
-    "SecondaryOCR", false,
+    ; "NoMovementReset", true,
+    ; "SecondaryOCR", false,
+    ; "WaveDebug", true,
 )
 
 global NumberValueMap := Map(
     "SlotForStatues", 2,
 )
 
-ReturnedUIObject := CreateBaseUI(Map(
-    "Main", {Title:"AV Igros Macro", Video:"X", Description:"Public Release Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!`n`nI wish you the best of luck getting igros", Version:MacroVersion, DescY:"250", MacroName:"AVIgrosMacro", IncludeFonts:true, MultiInstancing:false},
-    "Settings", [
-        {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
-        {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
-        {Map:NumberValueMap, Name:"Number Settings", Type:"Number", SaveName:"NumberSettings", IsAdvanced:false},
-    ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_PublicTest_Igros_1"}
-))
+global BlowUpAndDieChallengeMrBeastV2 := [false,0,false]
 
+ReturnedUIObject := CreateBaseUI(Map(
+    "Main", {Title:"AvIgrosMacro", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Public Version`n`nF3 to Start (After enabling macro)`nF6 to Pause`nF8 to Close Macro", Version:MacroVersion, DescY:"250", MacroName:"AvIgrosMacro", IncludeFonts:false, MultiInstancing:false},
+    "Settings", [
+        {Map:Map("UnitMap", UnitMap, "UnitActionArray", UnitActionArray, "UnitEventArray", UnitEventArray), Name:"Unit Settings", Type:"UnitActionUI", SaveName:"UnitSettings", IsAdvanced:false},
+        {Map:NumberValueMap, Name:"Number Settings", Type:"Number", SaveName:"NumberSettings", IsAdvanced:false},
+        ; {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
+    ],
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AvIgrosMacroV1.1"}
+))
 
 EnableFunction() {
     global MacroEnabled
@@ -245,102 +285,81 @@ RouteStatues(Quadrant) {
     TpToSpawn()
 }
 
-Reconnection() {
-    if not ToggleMapValues["Auto-Reconnect"] {
-        return false
-    }
 
-    if ReconnecticalNightmares() {
-        Sleep(400)
-        PM_ClickPos("LegendStagesButton_Select")
-        Sleep(400)
-        PM_ClickPos("Dungeon_2_Select")
-        Sleep(400)
-        PM_ClickPos("Act3_Igros_Select")
-        Sleep(400)
-        PM_ClickPos("ConfirmButton")
-        Sleep(600)
-        PM_ClickPos("QueueStartButton")
-        SetPixelSearchLoop("AutoStart", 90000, 1)
-        SendEvent "{Tab Down}{Tab Up}"
-        Sleep(200)
-        PM_ClickPos("AutoStart")
-        Sleep(200)
-        return true
-    }
+ReturnedUIObject.BaseUI.Show()
+ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
+ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
 
-    return false
+F3::{
+    global BlowUpAndDieChallengeMrBeastV2
+    global MacroEnabled
 
-}
+    global ____BBDCHECK
+    global ____BBDTIMER
 
-Main() {
     if not MacroEnabled {
         return
     }
-    
 
-    try {
-        WinMove(,,800, 600, "ahk_exe RobloxPlayerBeta.exe")
-    }
-    
+    Sleep(200)
     CameraticView()
     Sleep(200)
 
-    if EvilSearch(PixelSearchTables["AutoStart"])[1] {
-        PM_ClickPos("AutoStart")
-        Sleep(200)
-    }
-
-
     loop {
-        if Reconnection() {
-            continue
-        }
-
         TpToSpawn()
         Sleep(500)
 
-        EnableWaveAutomation([15], true, 1, 15)
-        if Reconnection() {
-            ResetActions()
-            continue
-        }
+        Sleep(500)
+        PM_ClickPos("VoteStartButton", 1)
+        Sleep(200)
 
-        if not DetectEndRoundUI() {
-            TpToSpawn()
-            Sleep(500)
-            RouteStatues(1)
-            Sleep(500)
-            RouteStatues(2)
-            Sleep(500)
-            RouteStatues(3)
-            Sleep(500)
-            RouteStatues(4)
-        }
+        ReturnedArray_1 := EnableActionAutomation(ActionAutomationSettings)
+        BreakID := ReturnedArray_1[2]
 
         loop {
             if DetectEndRoundUI() {
                 break
             }
 
-            SendEvent "{Click,416, 156, 1}"
+            if BlowUpAndDieChallengeMrBeastV2[1] and not BlowUpAndDieChallengeMrBeastV2[3] {
+                TpToSpawn()
+                Sleep(500)
+                RouteStatues(1)
+                Sleep(500)
+                RouteStatues(2)
+                Sleep(500)
+                RouteStatues(3)
+                Sleep(500)
+                RouteStatues(4)
+
+                BlowUpAndDieChallengeMrBeastV2[3] := true
+            } else if not BlowUpAndDieChallengeMrBeastV2[1] {
+                if BossBarBreak_Double() {
+                    BlowUpAndDieChallengeMrBeastV2[1] := true
+                    BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                }
+            }
+
+            SendEvent "{Click, 769, 581, 1}"
             Sleep(100)
         }
+        
         Sleep(1000)
-
         PM_ClickPos("RetryButton", 1)
-        Sleep(1000)
-        PM_ClickPos("VoteStartButton", 1)
         ResetActions()
+        global BlowUpAndDieChallengeMrBeastV2 := [false,0,false]
+        global ____BBDCHECK := false
     }
 }
 
-ReturnedUIObject.BaseUI.Show()
-ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
-ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
-
-
-F3::Main()
-
 F8::ExitApp()
 F6::Pause -1
+
+; F5::{
+;     BaseUnitAction("Blossom 1", "Placement", true, ActionAutomationSettings)
+;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+;     Sleep(600)
+;     BaseUnitAction("Blossom 1", "Ability", true, ActionAutomationSettings)
+; }
