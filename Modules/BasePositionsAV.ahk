@@ -59,7 +59,7 @@ global PositionMap := Map(
     "0.9xLeave", {Position:[614, 451]},
 
     ;-- Shibuya Inf Releated
-    "BossBarPixel", {Position:[406, 376]},
+    "BossBarPixel", {Position:[210, 381]},
     "HairColorSukunaTL", {Position:[498, 351]},
     "HairColorSukunaBR", {Position:[581, 391]},
     "SkinColorSukunaTL", {Position:[481, 392]},
