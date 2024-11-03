@@ -23,7 +23,7 @@ ____PSCreationMap := [
     ["0.9xConfirm", 0x53DC4D, 15, 2],
     ["0.9xLeave", 0xC2393C, 15, 2],
     ["UnitUpgradeGreenCheck", 0x39D038, 4, 1],
-    ["BossBarPixel", 0xE62E30, 20, 2],
+    ["BossBarPixel", 0xE62E30, 25, 2],
     ["HairColorSukuna", 0x76524D, 1, 1],
     ["SkinColorSukuna", 0xE4B28E, 2, 1],
 ]
@@ -46,6 +46,7 @@ DetectEndRoundUI() {
 global WAVE_DETECTION_CD := 0
 global LAST_WAVE_DETECTION_RESULT := 0
 global ChosenDetection := 1
+global CurrentSelectedUnit := ""
 
 WaveSetDetection(LoopAmount := 3) {
     global ChosenDetection
@@ -259,6 +260,10 @@ TpToSpawn() {
 
 ResetActions() {
     for _UnitName, UnitObject in UnitMap {
+        try {
+            UnitObject.IsPlaced := false
+        }
+
         for _, ActionObject in UnitObject.UnitData {
             ActionObject.ActionCompleted := false
         }
@@ -342,7 +347,7 @@ BreakChecks(T_A_C, A_B_N, U_A_A) {
     return false
 }
 
-PresenceInShibuya() {
+PresenceInShibuya(*) {
     ; return false
     Arg1 := EvilSearch(PixelSearchTables["BossBarPixel"])[1]
     Arg2 := EvilSearch(PixelSearchTables["HairColorSukuna"])[1]
@@ -352,6 +357,14 @@ PresenceInShibuya() {
 
     ; OutputDebug("Arguments Found`nArg1: " Arg1 "`nArg2: " Arg2 "`nArg3: " Arg3)
     if AddArgAmount >= 3 {
+        return true
+    }
+
+    return false
+}
+
+BossBarBreak(*) {
+    if EvilSearch(PixelSearchTables["BossBarPixel"])[1] {
         return true
     }
 
@@ -369,16 +382,206 @@ EventActionSimplicity(Action) {
     }
 }
 
+BaseUnitAction(UnitID, Action, IncludeBreaks := false, SettingsTable := Map()) {
+    global CurrentSelectedUnit
+
+    FailedPlacements := 0
+    CurrentBreak := ""
+
+    ; Break Variables
+
+    CurrentSelectedUnit := PlacementCheck(UnitID)
+
+    switch Action {
+        case "Placement":
+            UnitPlacementFails := 0
+
+            loop {
+                for Name, BreakObject in BreakMap {
+                    if not IncludeBreaks {
+                        break
+                    }
+
+                    if not BreakObject.OverwriteTime and BlowUpAndDieChallengeMrBeastV2[1] {
+                        continue
+                    }
+                    
+                    if SettingsTable.Has(Name) and SettingsTable[Name] {
+                        if BreakObject.Func() {
+                            BlowUpAndDieChallengeMrBeastV2[1] := true
+                            BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                            CurrentBreak := Name
+                        }
+                    }
+                }
+        
+                if not (CurrentBreak = "") and BreakMap.Has(CurrentBreak) {
+                    if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= BreakMap[CurrentBreak].BreakTime {
+                        BreakID := BreakMap[CurrentBreak].BreakID
+                        break
+                    }
+                }
+
+                if DetectEndRoundUI() or DisconnectedCheck() {
+                    BreakID := 1
+                    break
+                }
+
+                if not DetectPlacementIcons() {
+                    SendEvent UnitMap[UnitID].Slot
+                }
+
+                Sleep(100)
+
+                SendEvent "{Click, " UnitMap[UnitID].Pos[1] ", " UnitMap[UnitID].Pos[2] ", 0}"
+                Sleep(15)
+                SendEvent "{Click, " UnitMap[UnitID].Pos[1] ", " UnitMap[UnitID].Pos[2] ", 1}"
+
+                Sleep(500)
+                FoundUnitX := EvilSearch(PixelSearchTables["UnitX"])[1]
+                FoundPlacementIcons := DetectPlacementIcons()
+                
+                if FoundPlacementIcons and FoundUnitX {
+                    ; We probably already placed this unit, but due to lag some stupid stuff happened
+                    ; (or user is trying to place a unit on another unit [Which is not my problem.])
+
+                    UnitMap[UnitID].IsPlaced := true
+                    SendEvent UnitMap[UnitID].Slot
+                    CurrentSelectedUnit := UnitID
+                    break
+                } else if not FoundPlacementIcons and FoundUnitX {
+                    ; Unit has been placed
+
+                    UnitMap[UnitID].IsPlaced := true
+                    CurrentSelectedUnit := UnitID
+                    break
+                } else if FoundPlacementIcons and not FoundUnitX {
+                    ; Probably placing unit in a spot we cant
+
+                    UnitPlacementFails++
+
+                    if UnitPlacementFails >= 8 {
+                        ; FailedPlacements.Push(UnitID)
+                        SendEvent UnitMap[UnitID].Slot
+                        break
+                    }
+                } else {
+                    ; Unit failed to place due to invalid money count / max units placed
+
+                    ; No clue what to put here as of now but yeah were goated
+                    Sleep(200)
+                }
+            }
+        
+            Sleep(100)
+        case "Upgrade":
+            UpgradeRunTime := A_TickCount
+            loop {
+                for Name, BreakObject in BreakMap {
+                    if not IncludeBreaks {
+                        break
+                    }
+
+                    if not BreakObject.OverwriteTime and BlowUpAndDieChallengeMrBeastV2[1] {
+                        continue
+                    }
+                    
+                    if SettingsTable.Has(Name) and SettingsTable[Name] {
+                        if BreakObject.Func() {
+                            BlowUpAndDieChallengeMrBeastV2[1] := true
+                            BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                            CurrentBreak := Name
+                        }
+                    }
+                }
+        
+                if not (CurrentBreak = "") and BreakMap.Has(CurrentBreak) {
+                    if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= BreakMap[CurrentBreak].BreakTime {
+                        BreakID := BreakMap[CurrentBreak].BreakID
+                        break
+                    }
+                }
+
+                if DetectEndRoundUI() or DisconnectedCheck() {
+                    BreakID := 1
+                    break
+                }
+
+                if EvilSearch(PixelSearchTables["UnitUpgradeGreenCheck"])[1] {
+                    SendEvent "T"
+                    break
+                }
+
+                if (A_TickCount - UpgradeRunTime) >= 30000 {
+                    LowerRunTime := A_TickCount
+
+                    loop {
+                        SendEvent "{Click, 769, 581, 1}"
+
+                        if (A_TickCount - LowerRunTime >= 6000) or DetectEndRoundUI() or DisconnectedCheck() {
+                            break
+                        }
+                    }
+
+                    if DetectEndRoundUI() or DisconnectedCheck() {
+                        break
+                    }
+
+                    CurrentSelectedUnit := PlacementCheck(UnitID)
+                    UpgradeRunTime := A_TickCount
+                }
+
+                Sleep(60)
+            }
+        default:
+            EventActionSimplicity(Action)
+    }
+}
+
+
+PlacementCheck(UnitID) {
+    global CurrentSelectedUnit
+    global UnitMap
+
+    ReturnedUnitID := CurrentSelectedUnit
+    if (((not CurrentSelectedUnit) and EvilSearch(PixelSearchTables["UnitX"])[1]) or (CurrentSelectedUnit != UnitID)) and UnitMap[UnitID].IsPlaced {
+        if EvilSearch(PixelSearchTables["UnitX"])[1] {
+            PM_ClickPos("UnitX")
+            Sleep(10)
+        }
+
+        loop 6 {
+            SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (A_Index - 1) ", " UnitMap[UnitID].Pos[2] + (A_Index - 1) ", 0}"
+            Sleep(15)
+            SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (A_Index - 1) ", " UnitMap[UnitID].Pos[2] + (A_Index - 1) ", 1}"
+
+            Sleep(300)
+            if EvilSearch(PixelSearchTables["UnitX"])[1] {
+                ReturnedUnitID := UnitID
+                break
+            }
+        }
+    }
+
+    return ReturnedUnitID
+}
+
+BreakMap := Map(
+    "FingerCheckBreak", {Func:PresenceInShibuya, BreakID:100, OverwriteTime:false, BreakTime:200000},
+    "BossBarBreak", {Func:BossBarBreak, BreakID:101, OverwriteTime:false, BreakTime:200000},
+)
+
 EnableActionAutomation(SettingsTable := Map()) {
     ; Global Values
     global BlowUpAndDieChallengeMrBeastV2
+    global CurrentSelectedUnit := ""
 
     ; Setting Values
     ActionBreakNumber := SettingsTable["ActionBreakNumber"]
     PreviousCompletedActions := SettingsTable["PreviousCompletedActions"]
 
     ; Settings that dont need to be set
-    FingerCheckBreak := false
+    CurrentBreak := ""
 
 
     if SettingsTable.Has("FingerCheckBreak") {
@@ -389,33 +592,8 @@ EnableActionAutomation(SettingsTable := Map()) {
     FailedPlacements := []
     CompletedPlacements := []
     TotalActionsCompleted := (0 + PreviousCompletedActions)
-    CurrentSelectedUnit := ""
+    ; CurrentSelectedUnit := ""
     BreakID := -1
-
-    PlacementCheck(UnitID, CurrentSelectedUnit_F) {
-        ReturnedUnitID := CurrentSelectedUnit_F
-
-        if (((not CurrentSelectedUnit) and EvilSearch(PixelSearchTables["UnitX"])[1]) or (CurrentSelectedUnit != UnitID)) and UnitMap[UnitID].IsPlaced {
-            if EvilSearch(PixelSearchTables["UnitX"])[1] {
-                PM_ClickPos("UnitX")
-                Sleep(10)
-            }
-
-            loop 6 {
-                SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (A_Index - 1) ", " UnitMap[UnitID].Pos[2] + (A_Index - 1) ", 0}"
-                Sleep(15)
-                SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (A_Index - 1) ", " UnitMap[UnitID].Pos[2] + (A_Index - 1) ", 1}"
-
-                Sleep(300)
-                if EvilSearch(PixelSearchTables["UnitX"])[1] {
-                    ReturnedUnitID := UnitID
-                    break
-                }
-            }
-        }
-
-        return ReturnedUnitID
-    }
 
     for _, ActionObject in UnitActionArray {
         if ActionObject.ActionCompleted {
@@ -428,35 +606,58 @@ EnableActionAutomation(SettingsTable := Map()) {
             break
         }
 
-        if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
-            if PresenceInShibuya() {
-                BlowUpAndDieChallengeMrBeastV2[1] := true
-                BlowUpAndDieChallengeMrBeastV2[2]:= A_TickCount
+        ; Checks breakmap to see if any valid breaks are at hand
+        for Name, BreakObject in BreakMap {
+            OutputDebug("a")
+            if not BreakObject.OverwriteTime and BlowUpAndDieChallengeMrBeastV2[1] {
+                continue
             }
-        } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
-            ; OutputDebug("Checking Finger Time")
-            if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
-                BreakID := 100
+            
+            OutputDebug("B")
+            if SettingsTable.Has(Name) and SettingsTable[Name] {
+                OutputDebug("C")
+                if BreakObject.Func() {
+                    OutputDebug("Break for " Name)
+                    BlowUpAndDieChallengeMrBeastV2[1] := true
+                    BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                    CurrentBreak := Name
+                }
+            }
+        }
+
+        if not (CurrentBreak = "") and BreakMap.Has(CurrentBreak) {
+            if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= BreakMap[CurrentBreak].BreakTime {
+                BreakID := BreakMap[CurrentBreak].BreakID
                 break
             }
         }
+
         ; Checks if Unit is placed, and is not currently selected. If so then select unit
-        CurrentSelectedUnit := PlacementCheck(ActionObject.Unit, CurrentSelectedUnit)
+        
+        CurrentSelectedUnit := PlacementCheck(ActionObject.Unit)
 
         switch ActionObject.Action {
             case "Placement":
                 UnitPlacementFails := 0
 
                 loop {
-                    if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
-                        if PresenceInShibuya() {
-                            BlowUpAndDieChallengeMrBeastV2[1] := true
-                            BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                    for Name, BreakObject in BreakMap {
+                        if not BreakObject.OverwriteTime and BlowUpAndDieChallengeMrBeastV2[1] {
+                            continue
                         }
-                    } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
-                    ; OutputDebug("Checking Finger Time")
-                    if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
-                            BreakID := 100
+                        
+                        if SettingsTable.Has(Name) and SettingsTable[Name] {
+                            if BreakObject.Func() {
+                                BlowUpAndDieChallengeMrBeastV2[1] := true
+                                BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                                CurrentBreak := Name
+                            }
+                        }
+                    }
+            
+                    if not (CurrentBreak = "") and BreakMap.Has(CurrentBreak) {
+                        if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= BreakMap[CurrentBreak].BreakTime {
+                            BreakID := BreakMap[CurrentBreak].BreakID
                             break 2
                         }
                     }
@@ -513,17 +714,26 @@ EnableActionAutomation(SettingsTable := Map()) {
             
                 Sleep(100)
             case "Upgrade":
+                UpgradeRunTime := A_TickCount
+
                 loop {
-                    if FingerCheckBreak and not BlowUpAndDieChallengeMrBeastV2[1] {
-                        if PresenceInShibuya() {
-                            OutputDebug("Set Finger Time")
-                            BlowUpAndDieChallengeMrBeastV2[1] := true
-                            BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                    for Name, BreakObject in BreakMap {
+                        if not BreakObject.OverwriteTime and BlowUpAndDieChallengeMrBeastV2[1] {
+                            continue
                         }
-                    } else if FingerCheckBreak and BlowUpAndDieChallengeMrBeastV2[1] {
-                        ; OutputDebug("Checking Finger Time")
-                        if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= 200000 {
-                            BreakID := 100
+                        
+                        if SettingsTable.Has(Name) and SettingsTable[Name] {
+                            if BreakObject.Func() {
+                                BlowUpAndDieChallengeMrBeastV2[1] := true
+                                BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                                CurrentBreak := Name
+                            }
+                        }
+                    }
+            
+                    if not (CurrentBreak = "") and BreakMap.Has(CurrentBreak) {
+                        if (A_TickCount - BlowUpAndDieChallengeMrBeastV2[2]) >= BreakMap[CurrentBreak].BreakTime {
+                            BreakID := BreakMap[CurrentBreak].BreakID
                             break 2
                         }
                     }
@@ -537,6 +747,26 @@ EnableActionAutomation(SettingsTable := Map()) {
                         SendEvent "T"
                         break
                     }
+
+                    if (A_TickCount - UpgradeRunTime) >= 30000 {
+                        LowerRunTime := A_TickCount
+    
+                        loop {
+                            SendEvent "{Click, 769, 581, 1}"
+    
+                            if (A_TickCount - LowerRunTime >= 6000) or DetectEndRoundUI() or DisconnectedCheck() {
+                                break
+                            }
+                        }
+    
+                        if DetectEndRoundUI() or DisconnectedCheck() {
+                            break 2
+                        }
+    
+                        CurrentSelectedUnit := PlacementCheck(ActionObject.Unit)
+                        UpgradeRunTime := A_TickCount
+                    }
+
                     Sleep(60)
                 }
 
@@ -556,13 +786,13 @@ EnableActionAutomation(SettingsTable := Map()) {
                         }
 
                         if (A_TickCount - EventObject.LastDelay) >= EventObject.LoopDelay {
-                            CurrentSelectedUnit := PlacementCheck(EventObject.Unit, CurrentSelectedUnit)
+                            CurrentSelectedUnit := PlacementCheck(EventObject.Unit)
 
                             EventActionSimplicity(EventObject.Action)
                             EventObject.LastDelay := A_TickCount
                         }
                     case false:
-                        CurrentSelectedUnit := PlacementCheck(EventObject.Unit, CurrentSelectedUnit)
+                        CurrentSelectedUnit := PlacementCheck(EventObject.Unit)
 
                         EventActionSimplicity(EventObject.Action)
                 }
