@@ -1,4 +1,4 @@
-; /[V1.0.5]\
+; /[V1.0.6]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -10,215 +10,123 @@ SetMouseDelay -1
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
 
-global MacroVersion := "1.0.0"
+global MacroVersion := "1.0.2"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
-global MacroEnabled := false
 global UnitMap := Map(
-    ; SprintWagon 1
-    "Unit_1", {
-        Slot:4, Pos:[352, 234], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:3, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:5, ActionCompleted:false, Delay:15000},
-            {Type:"Upgrade", Wave:7, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:0},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:0},
-        ]
-    },
+    ; SprintWagons
+    "SprintWagon 1", {Slot:3, Pos:[392, 143], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 2", {Slot:3, Pos:[418, 129], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 3", {Slot:3, Pos:[443, 118], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
-    ; SprintWagon 2
-    "Unit_2", {
-        Slot:4, Pos:[373, 195], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:1, ActionCompleted:false, Delay:15000},
-            {Type:"Upgrade", Wave:3, ActionCompleted:false, Delay:15000},
-            {Type:"Upgrade", Wave:5, ActionCompleted:false, Delay:15000},
-            {Type:"Upgrade", Wave:7, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:0},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:0},
-        ]  
-    },
-
-    ; SprintWagon 3
-    "Unit_3", {
-        Slot:4, Pos:[400, 234], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:2, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:4, ActionCompleted:false, Delay:15000},
-            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:7, ActionCompleted:false, Delay:15000},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:15000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:0},
-        ]
-    },
-
-    ; Takaroda
-    "Unit_4", {
-        Slot:5, Pos:[422, 144], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:2, ActionCompleted:false, Delay:15000},
-            {Type:"Upgrade", Wave:9, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:9, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:9, ActionCompleted:false, Delay:15000},
-            {Type:"Upgrade", Wave:10, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:0},
-        ]
-    },
-
-    ; Tengon 1
-    "Unit_5", {
-        Slot:1, Pos:[482, 211], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:4, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:13, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:16, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:17, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-        ]
-    },
-
-    ; Tengon 2
-    "Unit_6", {
-        Slot:1, Pos:[506, 241], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:5, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:12, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:13, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:16, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:17, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:0},
-        ]
-    },
-
-    ; Tengon 3
-    "Unit_7", {
-        Slot:1, Pos:[473, 312], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false, Delay:8000},
-            {Type:"Upgrade", Wave:11, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:13, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:13, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:14, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:16, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:17, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:18, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:19, ActionCompleted:false, Delay:0},
-        ]
-    },
-
-    ; Haruka
-    "Unit_8", {
-        Slot:3, Pos:[475, 255], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:9, ActionCompleted:false, Delay:0},
-        ]
-    },
+    ; Vogitas
+    "Vogita 1", {Slot:1, Pos:[476, 334], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 2", {Slot:1, Pos:[510, 342], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 3", {Slot:1, Pos:[476, 282], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 4", {Slot:1, Pos:[508, 286], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
     ; Blossom
-    "Unit_9", {
-        Slot:2, Pos:[492, 283], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:80000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:80000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:80000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:80000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:80000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:80000},
+    "Blossom 1", {Slot:2, Pos:[494, 312], MovementFromSpawn:[], UnitData:[], IsPlaced:false}
+)
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:83000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:83000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:83000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:83000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:83000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:83000},
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:86000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:86000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:86000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:86000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:86000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:86000},
+global UnitActionArray := [
+    ; Farms
+    {Unit:"SprintWagon 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Placement", ActionCompleted:false},
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:89000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:89000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:89000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:89000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:89000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:89000},
+    ; 4 x 1 Upgrade
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    
+    {Unit:"Vogita 1", Action:"Placement", ActionCompleted:false},
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:92000},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:95000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:95000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:95000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:95000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:95000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:95000},
+    {Unit:"Vogita 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Placement", ActionCompleted:false},
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:98000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:98000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:98000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:98000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:98000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:98000},
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:101000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:101000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:101000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:101000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:101000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:101000},
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:104000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:104000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:104000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:104000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:104000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:104000},
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
 
-            {Type:"Placement", Wave:20, ActionCompleted:false, Delay:107000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:107000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:107000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:107000},
-            {Type:"Ability", Wave:20, ActionCompleted:false, Delay:107000},
-            {Type:"Sell", Wave:20, ActionCompleted:false, Delay:107000},
-        ]
-    },
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+]
+
+global UnitEventArray := [
+    ; {Unit:"Igros 1", AfterAction:25, Action:"Sell", IsLooped:false, LoopDelay:100000, LastDelay:0}
+]
+
+global WaveAutomationSettings := Map(
+    ; "WavesToBreak", [],
+    ; "BreakOnLose", true,
+    ; "WaveDetectionRange", 1,
+    ; "MaxWave", 35,
+    ; "DelayBreakTime", 0,
+    ; "Debug", false,
+    ; "EnableSecondaryJump", true,
+    ; "WaveCheckDelays", {},
+    ; "TimedWaveDelays", {}
+)
+
+global ActionAutomationSettings := Map(
+    "ActionBreakNumber", -1,
+    "PreviousCompletedActions", 0,
+    "BossBarBreak", true
 )
 
 global ToggleMapValues := Map(
-    "NoMovementReset", true,
-    "SecondaryOCR", false,
-    "WaveDebug", true,
+    ; "NoMovementReset", true,
+    ; "SecondaryOCR", false,
+    ; "WaveDebug", true,
 )
 
+global BlowUpAndDieChallengeMrBeastV2 := [false,0,false]
 global NumberValueMap := Map()
 
 ReturnedUIObject := CreateBaseUI(Map(
-    "Main", {Title:"AVRengokuMacro", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6 : Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!", Version:MacroVersion, DescY:"250", MacroName:"AVRengokuMacro", IncludeFonts:true, MultiInstancing:false},
+    "Main", {Title:"AVRengokuMacro", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Public Version`n`nF3 to Start (After enabling macro)`nF6 to Pause`nF8 to Close Macro", Version:MacroVersion, DescY:"250", MacroName:"AVRengokuMacro", IncludeFonts:false, MultiInstancing:false},
     "Settings", [
-        {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
-        {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
+        {Map:Map("UnitMap", UnitMap, "UnitActionArray", UnitActionArray, "UnitEventArray", UnitEventArray), Name:"Unit Settings", Type:"UnitActionUI", SaveName:"UnitSettings", IsAdvanced:false},
+        ; {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_RENGOKUTEST_3"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AvRengokuMacroV1.1"}
 ))
-
 
 EnableFunction() {
     global MacroEnabled
@@ -235,27 +143,35 @@ EnableFunction() {
     }
 }
 
+SellAllUnits() {
+    SendEvent 'F'
+    Sleep(650)
+    SendEvent "{Click, 627, 595, 0}"
+    Sleep(15)
+    SendEvent "{Click, 627, 595, 1}"
+    Sleep(400)
+    SendEvent "{Click, 326, 352, 0}"
+    Sleep(15)
+    SendEvent "{Click, 326, 352, 1}"
+    Sleep(500)
+    SendEvent 'F'
+}
 
 ReturnedUIObject.BaseUI.Show()
 ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
 ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
 
 F3::{
+    global BlowUpAndDieChallengeMrBeastV2
     global MacroEnabled
 
     if not MacroEnabled {
         return
     }
 
-    ; loop {
-    ;     WaveDetection()
-    ;     Sleep(1)
-    ; }
-
     TpToSpawn()
     Sleep(500)
 
-    Sleep(200)
     SendEvent "{a Down}"
     Sleep(2000)
     SendEvent "{a Up}"
@@ -266,36 +182,72 @@ F3::{
 
     Sleep(200)
     CameraticView()
-    Sleep(500)
-
-    if EvilSearch(PixelSearchTables["AutoStart"])[1] {
-        PM_ClickPos("AutoStart")
-        Sleep(200)
-    }
-
+    Sleep(200)
 
     loop {
         Sleep(500)
+        PM_ClickPos("VoteStartButton", 1)
+        Sleep(200)
 
-        WaveSetDetection(5)
-        EnableWaveAutomation([125], true, 20, 30, 20000, ToggleMapValues["WaveDebug"], true)
+        ReturnedArray_1 := EnableActionAutomation(ActionAutomationSettings)
+        BreakID := ReturnedArray_1[2]
 
         loop {
             if DetectEndRoundUI() {
                 break
             }
 
-            SendEvent "{Click,416, 156, 1}"
+            if BlowUpAndDieChallengeMrBeastV2[1] and not BlowUpAndDieChallengeMrBeastV2[3] {
+                if A_TickCount - BlowUpAndDieChallengeMrBeastV2[2] >= 66000 {
+                    loop 20 {
+                        BaseUnitAction("Blossom 1", "Placement", true, ActionAutomationSettings)
+                        BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+                        BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+                        BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+                        Sleep(1200)
+                        BaseUnitAction("Blossom 1", "Ability", true, ActionAutomationSettings)
+                        Sleep(400)
+                        BaseUnitAction("Blossom 1", "Sell", true, ActionAutomationSettings)
+                        
+                        loop 5 {
+                            SendEvent "{Click, 769, 581, 1}"
+                            Sleep(100) 
+                        }
+
+                        if DetectEndRoundUI() {
+                            break
+                        }
+
+                        Sleep(1000)
+                    }
+                    BlowUpAndDieChallengeMrBeastV2[3] := true
+                }
+            } else if not BlowUpAndDieChallengeMrBeastV2[1] {
+                if BossBarBreak() {
+                    BlowUpAndDieChallengeMrBeastV2[1] := true
+                    BlowUpAndDieChallengeMrBeastV2[2] := A_TickCount
+                }
+            }
+
+            SendEvent "{Click, 769, 581, 1}"
             Sleep(100)
         }
+        
         Sleep(1000)
-
         PM_ClickPos("RetryButton", 1)
-        Sleep(1000)
-        PM_ClickPos("VoteStartButton", 1)
         ResetActions()
+        global BlowUpAndDieChallengeMrBeastV2 := [false,0,false]
     }
 }
 
 F8::ExitApp()
 F6::Pause -1
+
+; F5::{
+;     BaseUnitAction("Blossom 1", "Placement", true, ActionAutomationSettings)
+;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
+;     Sleep(600)
+;     BaseUnitAction("Blossom 1", "Ability", true, ActionAutomationSettings)
+; }
