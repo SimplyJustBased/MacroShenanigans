@@ -1,4 +1,4 @@
-; /[V1.0.9]\
+; /[V1.0.10]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -10,7 +10,7 @@ SetMouseDelay -1
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
 
-global MacroVersion := "1.0.1"
+global MacroVersion := "1.0.2"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
 global UnitMap := Map(
@@ -355,11 +355,10 @@ F3::{
 F8::ExitApp()
 F6::Pause -1
 
-; F5::{
-;     BaseUnitAction("Blossom 1", "Placement", true, ActionAutomationSettings)
-;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
-;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
-;     BaseUnitAction("Blossom 1", "Upgrade", true, ActionAutomationSettings)
-;     Sleep(600)
-;     BaseUnitAction("Blossom 1", "Ability", true, ActionAutomationSettings)
-; }
+F5::{
+    loop {
+        if BossBarBreak() {
+            ToolTip("Found Pixel")
+        }
+    }
+}
