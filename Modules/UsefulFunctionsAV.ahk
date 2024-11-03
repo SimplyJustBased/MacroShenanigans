@@ -23,7 +23,7 @@ ____PSCreationMap := [
     ["0.9xConfirm", 0x53DC4D, 15, 2],
     ["0.9xLeave", 0xC2393C, 15, 2],
     ["UnitUpgradeGreenCheck", 0x39D038, 4, 1],
-    ["BossBarPixel", 0xE62E30, 25, 2],
+    ["BossBarPixel", 0xE6292C, 25, 2],
     ["HairColorSukuna", 0x76524D, 1, 1],
     ["SkinColorSukuna", 0xE4B28E, 2, 1],
 ]
