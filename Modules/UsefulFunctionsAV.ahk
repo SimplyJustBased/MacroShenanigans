@@ -371,6 +371,24 @@ BossBarBreak(*) {
     return false
 }
 
+global ____BBDCHECK := false
+global ____BBDTIMER := 0
+BossBarBreak_Double(*) {
+    global ____BBDCHECK
+    global ____BBDTIMER
+
+    if EvilSearch(PixelSearchTables["BossBarPixel"])[1] {
+        if ____BBDCHECK and (A_TickCount - ____BBDTIMER >= 15000) {
+            return true
+        } else if not ____BBDCHECK {
+            ____BBDCHECK := true
+            ____BBDTIMER := A_TickCount
+        }
+    }
+
+    return false
+}
+
 EventActionSimplicity(Action) {
     switch Action {
         case "Sell":
@@ -551,9 +569,9 @@ PlacementCheck(UnitID) {
         }
 
         loop 6 {
-            SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (A_Index - 1) ", " UnitMap[UnitID].Pos[2] + (A_Index - 1) ", 0}"
+            SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (1 - (A_Index*2)) ", " UnitMap[UnitID].Pos[2] + (1 - (A_Index*2)) ", 0}"
             Sleep(15)
-            SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (A_Index - 1) ", " UnitMap[UnitID].Pos[2] + (A_Index - 1) ", 1}"
+            SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (1- (A_Index*2)) ", " UnitMap[UnitID].Pos[2] + (1 - (A_Index*2)) ", 1}"
 
             Sleep(300)
             if EvilSearch(PixelSearchTables["UnitX"])[1] {
@@ -569,6 +587,7 @@ PlacementCheck(UnitID) {
 BreakMap := Map(
     "FingerCheckBreak", {Func:PresenceInShibuya, BreakID:100, OverwriteTime:false, BreakTime:200000},
     "BossBarBreak", {Func:BossBarBreak, BreakID:101, OverwriteTime:false, BreakTime:200000},
+    "BossBarBreak_Double", {Func:BossBarBreak_Double, BreakID:102, OverwriteTime:true, BreakTime:-1}
 )
 
 EnableActionAutomation(SettingsTable := Map()) {
