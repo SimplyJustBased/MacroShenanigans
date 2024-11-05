@@ -248,6 +248,13 @@ TpToSpawn() {
     Sleep(400)
     PM_ClickPos("SettingMiddle")
     Sleep(300)
+
+    loop 15 {
+        SendEvent "{WheelUp}"
+        Sleep(10)
+    }
+
+    Sleep(200)
     PM_ClickPos("TeleportToSpawnButton")
     Sleep(200)
     loop 3 {
