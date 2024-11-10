@@ -325,9 +325,21 @@ UnitActionArray := [
 DetectPlacementIcons() {
     MouseGetPos(&MouseX, &MouseY)
 
-    OffsetCoords := [MouseX + 43, MouseY - 8]
+    OffsetCoords := [MouseX + 64, MouseY + 27]
 
-    if PixelSearch(&u,&u,OffsetCoords[1], OffsetCoords[2], OffsetCoords[1], OffsetCoords[2], 0x1F1F1F, 3) {
+    ColorArray := [
+        0xF5F5F5, 0x666666, 0x0F0F0F
+    ]
+
+    colorNum := 0
+
+    for _, Color in ColorArray {
+        if PixelSearch(&u,&u,MouseX, MouseY, OffsetCoords[1], OffsetCoords[2], Color, 3) {
+            colorNum++
+        }
+    }
+
+    if colorNum = 3 {
         return true
     }
 
@@ -580,7 +592,7 @@ PlacementCheck(UnitID) {
             Sleep(15)
             SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (1- (A_Index*2)) ", " UnitMap[UnitID].Pos[2] + (1 - (A_Index*2)) ", 1}"
 
-            Sleep(300)
+            Sleep(600)
             if EvilSearch(PixelSearchTables["UnitX"])[1] {
                 ReturnedUnitID := UnitID
                 break
@@ -634,14 +646,11 @@ EnableActionAutomation(SettingsTable := Map()) {
 
         ; Checks breakmap to see if any valid breaks are at hand
         for Name, BreakObject in BreakMap {
-            OutputDebug("a")
             if not BreakObject.OverwriteTime and BlowUpAndDieChallengeMrBeastV2[1] {
                 continue
             }
             
-            OutputDebug("B")
             if SettingsTable.Has(Name) and SettingsTable[Name] {
-                OutputDebug("C")
                 if BreakObject.Func() {
                     OutputDebug("Break for " Name)
                     BlowUpAndDieChallengeMrBeastV2[1] := true
@@ -699,10 +708,10 @@ EnableActionAutomation(SettingsTable := Map()) {
                     Sleep(100)
 
                     SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] ", " UnitMap[ActionObject.Unit].Pos[2] ", 0}"
-                    Sleep(15)
+                    Sleep(100)
                     SendEvent "{Click, " UnitMap[ActionObject.Unit].Pos[1] ", " UnitMap[ActionObject.Unit].Pos[2] ", 1}"
 
-                    Sleep(500)
+                    Sleep(700)
                     FoundUnitX := EvilSearch(PixelSearchTables["UnitX"])[1]
                     FoundPlacementIcons := DetectPlacementIcons()
                     
@@ -771,6 +780,7 @@ EnableActionAutomation(SettingsTable := Map()) {
 
                     if EvilSearch(PixelSearchTables["UnitUpgradeGreenCheck"])[1] {
                         SendEvent "T"
+                        Sleep(300)
                         break
                     }
 
@@ -800,11 +810,12 @@ EnableActionAutomation(SettingsTable := Map()) {
                 ; SendEvent "R"
         }
 
+        OutputDebug("`n Action Completed: " ActionObject.Action)
         TotalActionsCompleted += 1
         ActionObject.ActionCompleted := true
 
         for _, EventObject in UnitEventArray {
-            if EventObject.AfterAction >= TotalActionsCompleted {
+            if TotalActionsCompleted >= EventObject.AfterAction {
                 switch EventObject.IsLooped {
                     case true:
                         if EventObject.LastDelay = 0 {
