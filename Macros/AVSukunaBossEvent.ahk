@@ -208,12 +208,12 @@ global BlowUpAndDieChallengeMrBeastV2 := [false,0,false]
 global NumberValueMap := Map()
 
 ReturnedUIObject := CreateBaseUI(Map(
-    "Main", {Title:"AVShibuyaLegend", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6 : Pause`nF8 : Stop", Version:MacroVersion, DescY:"250", MacroName:"AVShibuyaLegend", IncludeFonts:true, MultiInstancing:false},
+    "Main", {Title:"AVSukunaBossEvent", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6 : Pause`nF8 : Stop", Version:MacroVersion, DescY:"250", MacroName:"AVSukunaBossEvent", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
         {Map:Map("UnitMap", UnitMap, "UnitActionArray", UnitActionArray, "UnitEventArray", UnitEventArray), Name:"Unit Settings", Type:"UnitActionUI", SaveName:"UnitSettings", IsAdvanced:false},
         ; {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_LStage_1_3"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AVSukunaBossEvent"}
 ))
 
 EnableFunction() {
@@ -309,3 +309,21 @@ F3::{
 
 F8::ExitApp()
 F6::Pause -1
+
+F5::{
+    ; OutputDebug(DetectPlacementIcons())
+
+    SendEvent "{A Down}"
+    Sleep(2000)
+    SendEvent "{A Up}"
+    
+    Sleep(1000)
+
+    SendEvent "{A Down}"
+    Sleep(1000)
+    SendEvent "{A Up}"
+    Sleep(300)
+    SendEvent "{S Down}"
+    Sleep(2000)
+    SendEvent "{S Up}"
+}   
