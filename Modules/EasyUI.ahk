@@ -3210,8 +3210,8 @@ CreateActionUnitUI(_MapOBJFalse, BaseUI, PreviousObject := {}, ShowUI := true, V
 
     RedoLists() {
         for _, ListView in [Unit_Map_LV, Unit_Action_LV, Unit_Event_LV] {
-            loop 100 {
-                ListView.Delete(101-A_Index)
+            loop 250 {
+                ListView.Delete(251-A_Index)
             }
         }
 
@@ -3241,8 +3241,8 @@ CreateActionUnitUI(_MapOBJFalse, BaseUI, PreviousObject := {}, ShowUI := true, V
             ObjectArray[3].ConfirmButton.Enabled := false
 
             for _, ListView in [ListViewRemoval, ListViewClone] {
-                loop 100 {
-                    ListView.Delete(101-A_Index)
+                loop 250 {
+                    ListView.Delete(251-A_Index)
                 }
             }
 
