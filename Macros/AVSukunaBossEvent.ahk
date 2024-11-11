@@ -1,4 +1,4 @@
-; /[V1.0.0]\
+; /[V1.0.1]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -205,12 +205,15 @@ global ToggleMapValues := Map(
 )
 
 global BlowUpAndDieChallengeMrBeastV2 := [false,0,false]
-global NumberValueMap := Map()
+global NumberValueMap := Map(
+    "UnitXCheckDelay", 800
+)
 
 ReturnedUIObject := CreateBaseUI(Map(
     "Main", {Title:"AVSukunaBossEvent", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"Experimental Version`nF3 : Start`nF6 : Pause`nF8 : Stop", Version:MacroVersion, DescY:"250", MacroName:"AVSukunaBossEvent", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
         {Map:Map("UnitMap", UnitMap, "UnitActionArray", UnitActionArray, "UnitEventArray", UnitEventArray), Name:"Unit Settings", Type:"UnitActionUI", SaveName:"UnitSettings", IsAdvanced:false},
+        ; {Map:NumberValueMap, Name:"Number Settings", Type:"Number", SaveName:"NumberValues", IsAdvanced:false},
         ; {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
     ],
     "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AVSukunaBossEvent"}
