@@ -583,19 +583,23 @@ PlacementCheck(UnitID) {
     ReturnedUnitID := CurrentSelectedUnit
     if (((not CurrentSelectedUnit) and EvilSearch(PixelSearchTables["UnitX"])[1]) or (CurrentSelectedUnit != UnitID)) and UnitMap[UnitID].IsPlaced {
         if EvilSearch(PixelSearchTables["UnitX"])[1] {
+            ; ToolTip("Clicking X")
             PM_ClickPos("UnitX")
             Sleep(10)
         }
 
         loop 6 {
+            ; ToolTip("Moving to Unit: " UnitID ", Pos: [" UnitMap[UnitID].Pos[1] + (1 - (A_Index*2)) ", " UnitMap[UnitID].Pos[2] + (1 - (A_Index*2)) "]")
             SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (1 - (A_Index*2)) ", " UnitMap[UnitID].Pos[2] + (1 - (A_Index*2)) ", 0}"
-            Sleep(15)
+            Sleep(100)
             SendEvent "{Click, " UnitMap[UnitID].Pos[1] + (1- (A_Index*2)) ", " UnitMap[UnitID].Pos[2] + (1 - (A_Index*2)) ", 1}"
 
-            Sleep(600)
+            Sleep(900)
             if EvilSearch(PixelSearchTables["UnitX"])[1] {
-                ReturnedUnitID := UnitID
-                break
+                ; ReturnedUnitID := UnitID
+                ; break
+
+                return UnitID
             }
         }
     }
@@ -787,12 +791,10 @@ EnableActionAutomation(SettingsTable := Map()) {
                     if (A_TickCount - UpgradeRunTime) >= 30000 {
                         LowerRunTime := A_TickCount
     
-                        loop {
+                        loop 10 {
+                            ; ToolTip("A2")
                             SendEvent "{Click, 769, 581, 1}"
-    
-                            if (A_TickCount - LowerRunTime >= 6000) or DetectEndRoundUI() or DisconnectedCheck() {
-                                break
-                            }
+                            Sleep(600)
                         }
     
                         if DetectEndRoundUI() or DisconnectedCheck() {
