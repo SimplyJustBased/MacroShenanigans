@@ -64,4 +64,9 @@ global PositionMap := Map(
     "HairColorSukunaBR", {Position:[581, 391]},
     "SkinColorSukunaTL", {Position:[481, 392]},
     "SkinColorSukunaBR", {Position:[592, 509]},
+
+    ;-- Sukuna Event Related
+    "AdaptationWheelCheck1", {Position:[192, 291]},
+    "AdaptationWheelCheck2", {Position:[350, 455]},
+    "DisablationSukunaAttackButton", {Position:[425, 228]},
 )
