@@ -1,4 +1,4 @@
-; /[V1.0.1]\
+; /[V1.0.2]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -10,302 +10,209 @@ SetMouseDelay -1
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
 
-; 461, 117
-
-global MacroVersion := "1.0.1 [Experimental]"
+global MacroVersion := "1.1.0"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
-
-; Placement | Upgrade | Sell
 global UnitMap := Map(
-    ;SprintWagon1
-    "Unit_1", {
-        Slot:5, Pos:[496, 130], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:0},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:27180},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:41000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:60260},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:81220},
-            {Type:"Sell", Wave:0, ActionCompleted:false, Delay:650000},
-        ]
-    },
+    ; Tengons
+    "Tengon 1", {Slot:1, Pos:[375, 306], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Tengon 2", {Slot:1, Pos:[375, 339], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Tengon 3", {Slot:1, Pos:[377, 372], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
-    ;SprintWagon2
-    "Unit_2", {
-        Slot:5, Pos:[499, 80], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:20230},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:27180},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:46120},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:68260},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:90000},
-            {Type:"Sell", Wave:0, ActionCompleted:false, Delay:650000},
-        ]
-    },
+    ; Julias - es
+    "Julias 1", {Slot:2, Pos:[335, 303], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Julias 2", {Slot:2, Pos:[333, 339], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Julias 3", {Slot:2, Pos:[331, 369], MovemeAntFromSpawn:[], UnitData:[], IsPlaced:false},
 
-    ;SprintWagon3
-    "Unit_3", {
-        Slot:5, Pos:[197, 185], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:20230},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:41000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:46120},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:68260},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:90000},
-            {Type:"Sell", Wave:0, ActionCompleted:false, Delay:650000},
-        ]
-    },
+    ; Vogitas
+    "Vogita 1", {Slot:3, Pos:[443, 349], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 2", {Slot:3, Pos:[443, 314], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 3", {Slot:3, Pos:[443, 388], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 4", {Slot:3, Pos:[481, 351], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
-    ;StupidCoolMerchantGuy
-    "Unit_4", {
-        Slot:4, Pos:[269, 132], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:20230},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:121000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:129000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:129000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:161000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:180500},
-        ]
-    },
+    ; SprintWagons
+    "SprintWagon 1", {Slot:4, Pos:[192, 236], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 2", {Slot:4, Pos:[224, 208], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "SprintWagon 3", {Slot:4, Pos:[258, 190], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
-    ;Cha-in 1
-    "Unit_5", {
-        Slot:2, Pos:[355, 315], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:126000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:20000},
-        ]
-    },
-    
-    ;Cha-in 2
-    "Unit_6", {
-        Slot:2, Pos:[336, 296], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:6, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:6, ActionCompleted:false, Delay:2000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:126000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:20000},
-        ]
-    },
-
-    ;Cha-in 3
-    "Unit_7", {
-        Slot:2, Pos:[365, 364], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:7, ActionCompleted:false, Delay:8000},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:1000},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:1000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:126000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:20000},
-        ]
-    },
-
-    ;Cha-in 4
-    "Unit_8", {
-        Slot:2, Pos:[345, 385], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:7, ActionCompleted:false, Delay:8000},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:1000},
-            {Type:"Upgrade", Wave:8, ActionCompleted:false, Delay:1000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:92000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:126000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:144000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:168000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:75000},
-        ]
-    },
-
-    ;Cha-in 5
-    "Unit_Not8", {
-        Slot:2, Pos:[291, 337], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-            {Type:"Upgrade", Wave:30, ActionCompleted:false, Delay:166000},
-        ]
-    },
-
-    ;Tengon 1
-    "Unit_9", {
-        Slot:1, Pos:[342, 343], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:190000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:190000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:190000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:190000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:190000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:208000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:208000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:248000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:248000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:248000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:268000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:268000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:268000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:268000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:268000},
-        ]
-    },
-
-    ;Tengon 2
-    "Unit_10", {
-        Slot:1, Pos:[317, 321], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:288000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:300000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:300000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:300000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:300000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Target", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Target", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Target", Wave:20, ActionCompleted:false, Delay:5000},
-        ]
-    },
-
-    ;Tengon 3
-    "Unit_11", {
-        Slot:1, Pos:[316, 368], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:288000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:308000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:308000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:308000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:308000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:5000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:23000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:23000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:45000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:45000},
-            {Type:"Upgrade", Wave:20, ActionCompleted:false, Delay:65000},
-            {Type:"Target", Wave:20, ActionCompleted:false, Delay:65000},
-            {Type:"Target", Wave:20, ActionCompleted:false, Delay:65000},
-            {Type:"Target", Wave:20, ActionCompleted:false, Delay:65000},
-        ]
-    },
-
-    ; Haruka
-    "Unit_12", {
-        Slot:3, Pos:[373, 336], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:5, ActionCompleted:false, Delay:18000},
-        ]
-    },
-
-    ; Croc 1
-    "Unit_13", {
-        Slot:6, Pos:[342, 143], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:215000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-        ]
-    },
-
-    ; Croc 2
-    "Unit_14", {
-        Slot:6, Pos:[478, 275], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:215000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-        ]
-    },
-
-    ; Croc 3
-    "Unit_15", {
-        Slot:6, Pos:[472, 430], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:215000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-        ]
-    },
-
-    ; Croc 4
-    "Unit_16", {
-        Slot:6, Pos:[292, 608], MovementFromSpawn:[],
-        UnitData:[
-            {Type:"Placement", Wave:0, ActionCompleted:false, Delay:215000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Upgrade", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-            {Type:"Target", Wave:0, ActionCompleted:false, Delay:230000},
-        ]
-    },
+    ; Takaroda
+    "Takaroda", {Slot:5, Pos:[193, 159], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 )
 
+global UnitActionArray := [
+    ; Start placing money units
+    {Unit:"SprintWagon 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Placement", ActionCompleted:false},
+    {Unit:"Takaroda", Action:"Placement", ActionCompleted:false},
+
+    ; money unit upgrades of absolute destruction and death and malice and death or something
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+
+    ; VOGITIAISRTOASI
+    {Unit:"Vogita 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Placement", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Placement", ActionCompleted:false},
+
+    ; Back to being money hungry x2
+    {Unit:"SprintWagon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"SprintWagon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Takaroda", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Takaroda", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Takaroda", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Takaroda", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Takaroda", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Takaroda", Action:"Upgrade", ActionCompleted:false},
+
+    ; TRI-TENGON OF DESTRUCTION
+    {Unit:"Tengon 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Placement", ActionCompleted:false},
+
+    ; Upgrades of 10x ville USA
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 1", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 2", Action:"Upgrade", ActionCompleted:false},
+
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Tengon 3", Action:"Upgrade", ActionCompleted:false},
+
+    ; Julili of doom
+    {Unit:"Julias 1", Action:"Placement", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Placement", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Placement", ActionCompleted:false},
+
+    ; (9x3)
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Julias 3", Action:"Upgrade", ActionCompleted:false},
+
+    ; Vegetas! Save me!!!
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 1", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
+    {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+]
+
+global UnitEventArray := [
+    {Unit:"SprintWagon 1", AfterAction:101, Action:"Sell", IsLooped:false, LoopDelay:100000, LastDelay:0},
+    {Unit:"SprintWagon 2", AfterAction:101, Action:"Sell", IsLooped:false, LoopDelay:100000, LastDelay:0},
+    {Unit:"SprintWagon 3", AfterAction:101, Action:"Sell", IsLooped:false, LoopDelay:100000, LastDelay:0},
+]
+
+global WaveAutomationSettings := Map(
+    "WavesToBreak", [],
+    "BreakOnLose", true,
+    "WaveDetectionRange", 1,
+    "MaxWave", 35,
+    "DelayBreakTime", 0,
+    "Debug", false,
+    "EnableSecondaryJump", true,
+    "WaveCheckDelays", {},
+    "TimedWaveDelays", {}
+)
+
+global ActionAutomationSettings := Map(
+    "ActionBreakNumber", -1,
+    "PreviousCompletedActions", 0,
+    "FingerCheckBreak", false
+)
 
 global ToggleMapValues := Map(
     "NoMovementReset", true,
-    ; "Auto-Reconnect", true,
     "SecondaryOCR", false,
-    "WaveDebug", false
+    "WaveDebug", true,
 )
 
+global BlowUpAndDieChallengeMrBeastV2 := [false,0,false]
 global NumberValueMap := Map()
 
 ReturnedUIObject := CreateBaseUI(Map(
-    "Main", {Title:"AVIgrosEventMacro", Video:"https://www.youtube.com/watch?v=Oq3mnED6Ym8", Description:"Public Version`nF3 : Start`nF6:Pause`nF8 : Stop`n`nMake sure to set font to times new roman in extras tab!", Version:MacroVersion, DescY:"250", MacroName:"AVIgrosEventMacro", IncludeFonts:true, MultiInstancing:false},
+    "Main", {Title:"AVIgrosEventMacro", Video:"https://www.youtube.com/watch?v=xwUe6zqHPTA", Description:"F3 : Start`nF6 : Pause`nF8 : Stop", Version:MacroVersion, DescY:"250", MacroName:"AVIgrosEventMacro", IncludeFonts:true, MultiInstancing:false},
     "Settings", [
-        {Map:UnitMap, Name:"Unit Settings", Type:"UnitUI", SaveName:"UnitSettings", IsAdvanced:false},
-        {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
+        {Map:Map("UnitMap", UnitMap, "UnitActionArray", UnitActionArray, "UnitEventArray", UnitEventArray), Name:"Unit Settings", Type:"UnitActionUI", SaveName:"UnitSettings", IsAdvanced:false},
+        ; {Map:ToggleMapValues, Name:"Toggle Settings", Type:"Toggle", SaveName:"ToggleSettings", IsAdvanced:false},
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_PUBLICTEST_IGROSEVENT_2"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"AV_PUBLICTEST_IGROSEVENT_3"}
 ))
-
 
 EnableFunction() {
     global MacroEnabled
@@ -322,68 +229,64 @@ EnableFunction() {
     }
 }
 
+ReturnedUIObject.BaseUI.Show()
+ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
+ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
 
+F3::{
+    global BlowUpAndDieChallengeMrBeastV2
+    global MacroEnabled
 
-Main() {
     if not MacroEnabled {
         return
     }
 
-    try {
-        WinMove(,,800, 600, "ahk_exe RobloxPlayerBeta.exe")
-    }
+    CameraticView()
+    Sleep(500)
 
-    Sleep(200)
+    TpToSpawn()
+    Sleep(500)
+    
     SendEvent "{s Down}"
     Sleep(4180)
     SendEvent "{s Up}"
-
-    Sleep(200)
-    CameraticView()
     Sleep(500)
-    
-    if EvilSearch(PixelSearchTables["AutoStart"])[1] {
-        PM_ClickPos("AutoStart")
-        Sleep(200)
-    }
-
 
     loop {
-        Sleep(500)
+        Sleep(900)
+        PM_ClickPos("VoteStartButton", 1)
+        Sleep(200)
+    
+        ReturnedArray_1 := EnableActionAutomation(ActionAutomationSettings)
 
-        EnableWaveAutomation([125], true, 20, 30, 20000, ToggleMapValues["WaveDebug"], false)
-
+        Sleep(300)
         loop {
             if DetectEndRoundUI() {
                 break
             }
 
-            SendEvent "{Click,416, 156, 1}"
+            SendEvent "{Click, 769, 581, 1}"
             Sleep(100)
         }
+        
         Sleep(1000)
-
         PM_ClickPos("RetryButton", 1)
-        Sleep(1000)
-        PM_ClickPos("VoteStartButton", 1)
         ResetActions()
     }
 }
 
-ReturnedUIObject.BaseUI.Show()
-ReturnedUIObject.BaseUI.OnEvent("Close", (*) => ExitApp())
-ReturnedUIObject.EnableButton.OnEvent("Click", (*) => EnableFunction())
-
-
-F3::Main()
-F5::{
-    for _UnitData, UnitObject in UnitMap {
-        OutputDebug("`nInfo For " _UnitData)
-
-        for I, V in UnitObject.UnitData {
-            OutputDebug("`n[" I "]:" V.ActionCompleted)
-        }
-    }
-}
 F8::ExitApp()
 F6::Pause -1
+
+F5::{
+    TpToSpawn()
+    Sleep(800)
+    
+    CameraticView()
+    Sleep(500)
+
+    Sleep(200)
+    SendEvent "{s Down}"
+    Sleep(4180)
+    SendEvent "{s Up}"
+}   
