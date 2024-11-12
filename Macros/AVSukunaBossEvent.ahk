@@ -1,4 +1,4 @@
-; /[V1.0.1]\
+; /[V1.0.2]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -10,7 +10,7 @@ SetMouseDelay -1
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UWBOCRLib.ahk"
 
-global MacroVersion := "1.0.0"
+global MacroVersion := "1.0.1"
 global PlayerPositionFromSpawn := {W:0, A:0, S:0, D:0}
 global MacroEnabled := false
 global UnitMap := Map(
@@ -26,10 +26,10 @@ global UnitMap := Map(
     "Julias 3", {Slot:2, Pos:[510, 217], MovemeAntFromSpawn:[], UnitData:[], IsPlaced:false},
 
     ; Vogitas
-    "Vogita 1", {Slot:3, Pos:[546, 287], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Vogita 2", {Slot:3, Pos:[549, 326], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Vogita 3", {Slot:3, Pos:[550, 365], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
-    "Vogita 4", {Slot:3, Pos:[561, 397], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 1", {Slot:3, Pos:[384, 348], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 2", {Slot:3, Pos:[423, 347], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 3", {Slot:3, Pos:[382, 316], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Vogita 4", {Slot:3, Pos:[431, 314], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
     ; SprintWagons
     "SprintWagon 1", {Slot:4, Pos:[203, 172], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
@@ -38,6 +38,8 @@ global UnitMap := Map(
 
     ; Takaroda
     "Takaroda", {Slot:5, Pos:[292, 282], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+
+    ; "Yuji", {Slot:6, Pos:[412, 313], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 )
 
 global UnitActionArray := [
@@ -172,6 +174,8 @@ global UnitActionArray := [
     {Unit:"Vogita 2", Action:"Upgrade", ActionCompleted:false},
     {Unit:"Vogita 3", Action:"Upgrade", ActionCompleted:false},
     {Unit:"Vogita 4", Action:"Upgrade", ActionCompleted:false},
+
+    ; {Unit:"Yuji", Action:"Placement", ActionCompleted:false},
 ]
 
 global UnitEventArray := [
@@ -313,20 +317,23 @@ F3::{
 F8::ExitApp()
 F6::Pause -1
 
-F5::{
-    ; OutputDebug(DetectPlacementIcons())
+; F5::{
+;     ; OutputDebug(DetectPlacementIcons())
 
-    SendEvent "{A Down}"
-    Sleep(2000)
-    SendEvent "{A Up}"
+;     CameraticView()
+;     Sleep(500)
+
+;     SendEvent "{A Down}"
+;     Sleep(2000)
+;     SendEvent "{A Up}"
     
-    Sleep(1000)
+;     Sleep(1000)
 
-    SendEvent "{A Down}"
-    Sleep(1000)
-    SendEvent "{A Up}"
-    Sleep(300)
-    SendEvent "{S Down}"
-    Sleep(2000)
-    SendEvent "{S Up}"
-}   
+;     SendEvent "{A Down}"
+;     Sleep(1000)
+;     SendEvent "{A Up}"
+;     Sleep(300)
+;     SendEvent "{S Down}"
+;     Sleep(2000)
+;     SendEvent "{S Up}"
+; }   
