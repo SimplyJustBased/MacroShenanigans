@@ -1,4 +1,4 @@
-; /[V1.1.12]\
+; /[V1.1.13]\
 #Requires AutoHotkey v2.0 
 
 global Macro_Hub_Version := "1.0.4"
@@ -644,7 +644,7 @@ GameObjAddTo("Pet Simulator 99", "MultiMacroV4", "Unstable | Unmaintained", "A a
 GameObjAddTo("Pet Simulator 99", "EventMultiMacroV4", "Disabled", "A MultiMacroV4 Port for the EventWorld.", "V1?", "black", 2, ["EasyUI", "BasePositionsPS99", "UsefulFunctions", "UsefulFunctionsPS99"], "KLkE6DMxtss")
 GameObjAddTo("Pet Simulator 99", "TreeHouseMacroV2", "Unstable | Unmaintained", "A Macro for automating usage of secret keys in the Secret TreeHouse Zone!", "V2", "ff4400", 1, ["EasyUI", "BasePositionsPS99", "_JXON", "Router", "UWBOCRLib"], "9hHHg_fG36Q")
 GameObjAddTo("Anime Vanguards", "AVIgrosMacro", "Stable", "A Macro for automating the farming of Secret unit Igros", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
-; GameObjAddTo("Anime Vanguards", "AVIgrosEventMacro", "Broken", "A Macro for automating the limited time Igros boss event.", "V1", "red", 2, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "23_S_cJxkDI")
+GameObjAddTo("Anime Vanguards", "AVIgrosEventMacro", "Stable", "A Macro for automating the limited time Igros boss event.", "V1.1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "23_S_cJxkDI")
 GameObjAddTo("Anime Vanguards", "RengokuMacro", "Stable", "A Macro for automating Act 4.", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
 GameObjAddTo("Anime Vanguards", "AVParagonic", "Broken", "A Macro for automating Paragons.", "V1", "red", 2, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
 GameObjAddTo("Anime Vanguards", "AVInfSquared", "Stable", "A Macro For Farming fingers in Shibuya Infinite.", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
