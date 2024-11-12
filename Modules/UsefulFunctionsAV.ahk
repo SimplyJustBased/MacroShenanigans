@@ -26,6 +26,8 @@ ____PSCreationMap := [
     ["BossBarPixel", 0xE6292C, 25, 2],
     ["HairColorSukuna", 0x76524D, 1, 1],
     ["SkinColorSukuna", 0xE4B28E, 2, 1],
+    ["AdaptationWheelCheck1", 0xFFE300, 15, 2],
+    ["AdaptationWheelCheck2", 0xFFD110, 15, 2],
 ]
 
 DetectEndRoundUI() {
@@ -384,6 +386,23 @@ PresenceInShibuya(*) {
 
 BossBarBreak(*) {
     if EvilSearch(PixelSearchTables["BossBarPixel"])[1] {
+        return true
+    }
+
+    return false
+}
+
+
+AdaptationWheelOfDestruction(*) {
+    Arg1 := EvilSearch(PixelSearchTables["AdaptationWheelCheck1"])[1]
+    Arg2 := EvilSearch(PixelSearchTables["AdaptationWheelCheck2"])[1]
+
+    if Arg1 and Arg2 {
+        loop 50 {
+            PM_ClickPos("DisablationSukunaAttackButton")
+            Sleep(100)
+        }
+
         return true
     }
 
@@ -788,19 +807,32 @@ EnableActionAutomation(SettingsTable := Map()) {
                         break
                     }
 
+                    __St := A_TickCount
+                    if AdaptationWheelOfDestruction() {
+                        loop 10 {
+                            SendEvent "{Click, 769, 581, 1}"
+                            Sleep(200)
+                        }
+
+                        global CurrentSelectedUnit := ""
+                        UpgradeRunTime := UpgradeRunTime + (A_TickCount - __St)
+                        CurrentSelectedUnit := PlacementCheck(ActionObject.Unit)
+                    }
+
                     if (A_TickCount - UpgradeRunTime) >= 30000 {
                         LowerRunTime := A_TickCount
     
                         loop 10 {
                             ; ToolTip("A2")
                             SendEvent "{Click, 769, 581, 1}"
-                            Sleep(600)
+                            Sleep(300)
                         }
     
                         if DetectEndRoundUI() or DisconnectedCheck() {
                             break 2
                         }
     
+                        global CurrentSelectedUnit := ""
                         CurrentSelectedUnit := PlacementCheck(ActionObject.Unit)
                         UpgradeRunTime := A_TickCount
                     }
@@ -831,9 +863,14 @@ EnableActionAutomation(SettingsTable := Map()) {
                             EventObject.LastDelay := A_TickCount
                         }
                     case false:
+                        if EventObject.LastDelay = 99999 {
+                            continue
+                        }
+
                         CurrentSelectedUnit := PlacementCheck(EventObject.Unit)
 
                         EventActionSimplicity(EventObject.Action)
+                        EventObject.LastDelay := 99999
                 }
 
             }
