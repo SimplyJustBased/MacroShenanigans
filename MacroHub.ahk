@@ -1,4 +1,4 @@
-; /[V1.1.13]\
+; /[V1.1.14]\
 #Requires AutoHotkey v2.0 
 
 global Macro_Hub_Version := "1.0.4"
@@ -649,7 +649,7 @@ GameObjAddTo("Anime Vanguards", "RengokuMacro", "Stable", "A Macro for automatin
 GameObjAddTo("Anime Vanguards", "AVParagonic", "Broken", "A Macro for automating Paragons.", "V1", "red", 2, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
 GameObjAddTo("Anime Vanguards", "AVInfSquared", "Stable", "A Macro For Farming fingers in Shibuya Infinite.", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
 GameObjAddTo("Anime Vanguards", "AVShibuyaLegend", "Stable", "A Macro For Farming Shibuya Legend Stages.", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
-GameObjAddTo("Anime Vanguards", "AVSukunaBossEvent", "Experimental", "A Macro For Farming The Sukuna Boss Event.", "V1", "007f90", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
+GameObjAddTo("Anime Vanguards", "AVSukunaBossEvent", "Stable", "A Macro For Farming The Sukuna Boss Event.", "V1", "green", 1, ["EasyUI", "BasePositionsAV", "UsefulFunctions", "UsefulFunctionsAV", "UWBOCRLib"], "xwUe6zqHPTA")
 
 
 GameArray := []
