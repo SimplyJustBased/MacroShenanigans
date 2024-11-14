@@ -1,4 +1,4 @@
-; /[V1.0.2]\
+; /[V1.0.3]\
 
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
@@ -36,7 +36,7 @@ global UnitMap := Map(
     "SprintWagon 3", {Slot:4, Pos:[258, 190], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 
     ; Takaroda
-    "Takaroda", {Slot:5, Pos:[193, 159], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
+    "Takaroda", {Slot:5, Pos:[184, 355], MovementFromSpawn:[], UnitData:[], IsPlaced:false},
 )
 
 global UnitActionArray := [
