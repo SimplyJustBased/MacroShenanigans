@@ -1,9 +1,13 @@
-; /[V1.0.1]\ (Used for auto-update)
+; /[V1.0.2]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
+
+CoordMode "Mouse", "Screen"
+CoordMode "Pixel", "Screen"
+SetMouseDelay -1
 
 global MacroEnabled := false
 global MultiInstancingEnabled := false
@@ -14,8 +18,8 @@ global userRoutes := Map(
     "sw_SpawnToEvent", "tp:Green Forest|w_nV:TpWaitTime|tp:Spawn|w_nV:TpWaitTime|r:[0%Q10&10%W230&240%D1900]",
     "tw_SpawnToEvent", "tp:Mushroom Lab|w_nV:TpWaitTime|tp:Tech Spawn|w_nV:TpWaitTime|r:[0%Q10&10%D1900]",
     "vw_SpawnToEvent", "tp:Prison Tower|w_nV:TpWaitTime|w:3|w_nV:TpWaitTime|r:[0%Q10&20%A500&590%S1600]",
-    "EventSpawnToMidZone", "spl:TpButton|sc:[115,223]|spl:X|sc:[674,390]|w_nV:TpWaitTime|r:[0%Q10&20%W800]",
-    "EventZoneToOuterEventZone", "spl:TpButton|sc:[115,223]|spl:X|sc:[147, 236]|w_nV:TpWaitTime|r:[0%Q10&20%W900]",
+    "EventSpawnToMidZone", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[674,390]|w_nV:TpWaitTime|r:[0%Q10&20%W800]",
+    "EventZoneToOuterEventZone", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[147, 236]|w_nV:TpWaitTime|r:[0%Q10&20%W900]",
     "ToEgg", "r:[0%A700]",
     "AwayFromEgg", "r:[0%D700]",
     "MinorlyAwayFromEgg", "r:[0%D300]"
@@ -438,6 +442,7 @@ Main() {
                     WinActivate("ahk_id " InstanceID)
                     Sleep(100)
                 } until  WinActive("ahk_id " InstanceID)
+                WinMove(,,800,600,"ahk_id " InstanceID)
 
                 SetPixelSearchLoop("TpButton", 20000, 1,,,150,,[{Func:Clean_UI, Time:10000}])
                 LeaderBoardThingy()
