@@ -1,4 +1,4 @@
-; /[V1.0.0]\ (Used for auto-update)
+; /[V1.0.1]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
@@ -22,7 +22,7 @@ global userRoutes := Map(
 )
 
 global NumberValueMap := Map(
-    "LoopDelayTime", 10,
+    "LoopDelayTime", 600,
     "TpWaitTime", 7000,
 )
 
