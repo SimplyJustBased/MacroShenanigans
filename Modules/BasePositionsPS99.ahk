@@ -1,7 +1,7 @@
 ; V1.01
 
 global PositionMap := Map(
-    "TpButton", {Macros:["All"], Position:[118, 200], Version:"BF_V1.0.0"},
+    "TpButton", {Macros:["All"], Position:[118, 223], Version:"BF_V1.0.0"},
     "TpButtonTL", {Macros:["All"], Position:[112, 216], Version:"BF_V1.0.0"},
     "TpButtonBR", {Macros:["All"], Position:[120, 223], Version:"BF_V1.0.0"},
     "TpButtonCheckTL", {Macros:["All"], Position:[63, 133], Version:"BF_V1.0.0"},
@@ -9,7 +9,7 @@ global PositionMap := Map(
     "SearchField", {Macros:["All"], Position:[621, 136], Version:"BF_V1.0.0"},
     "SearchFieldTL", {Macros:["All"], Position:[596, 125], Version:"BF_V1.0.0"},
     "SearchFieldBR", {Macros:["All"], Position:[696, 146], Version:"BF_V1.0.0"},
-    "TpMiddle", {Macros:["All"], Position:[231, 229], Version:"BF_V1.0.0"},
+    "TpMiddle", {Macros:["All"], Position:[411, 224], Version:"BF_V1.0.0"},
     "StupidCatTL", {Macros:["All"], Position:[357, 308], Version:"BF_V1.0.0"},
     "StupidCatBR", {Macros:["All"], Position:[435, 384], Version:"BF_V1.0.0"},
     "MiniX", {Macros:["All"], Position:[632, 144], Version:"BF_V1.0.0"},
@@ -67,9 +67,12 @@ global PositionMap := Map(
     "DisconnectBG_LS", {Macros:["MultiMacro"], Position:[212, 337], Version:"MM_V4.0.0"},
     "DisconnectBG_RS", {Macros:["MultiMacro"], Position:[599, 337], Version:"MM_V4.0.0"},
     "ReconnectButton", {Macros:["MultiMacro"], Position:[546, 420], Version:"MM_V4.0.0"},
-    "LB_Star", {Macros:["MultiMacro"], Position:[676, 83], Version:"MM_V4.0.0"},
-    "LB_Diamond", {Macros:["MultiMacro"], Position:[728, 81], Version:"MM_V4.0.0"},
+    "LB_StarOld", {Macros:["MultiMacro"], Position:[676, 83], Version:"MM_V4.0.0"},
+    "LB_DiamondOld", {Macros:["MultiMacro"], Position:[728, 81], Version:"MM_V4.0.0"},
+    "LB_Star", {Macros:["MultiMacro"], Position:[677, 118], Version:"MM_V4.0.0"},
+    "LB_Diamond", {Macros:["MultiMacro"], Position:[730, 119], Version:"MM_V4.0.0"},
     "UpperMiddle", {Macros:["MultiMacro"], Position:[502, 41], Version:"MM_V4.0.0"},
+    "TpButtonGreenCheck", {Macros:["EventMacro"], Position:[441, 214], Version:"EVMV1.0.0"},
 )
 
 global X_PositionMap := Map(
