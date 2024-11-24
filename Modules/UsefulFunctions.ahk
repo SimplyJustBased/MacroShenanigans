@@ -1,3 +1,5 @@
+#Warn VarUnset, Off
+
 CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
 CoordMode "ToolTip", "Window"
@@ -99,7 +101,7 @@ SetPixelSearchLoop(
 
     for _, CoolArray in [ExtendedFunctionObject, KeysToPress] {
         for _, ArrayObj in CoolArray {
-            ArrayObj.StartTime := A_TickCount
+            ArrayObj.StartTime := 0
         }
     }
 
