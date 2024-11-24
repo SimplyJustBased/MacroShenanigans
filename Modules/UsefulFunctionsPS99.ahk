@@ -1,3 +1,5 @@
+#Warn VarUnset, Off
+
 /**
  * @param TableInfo [NameFromPosMap, Color, Variation, ID, Re-Name]
  * 
@@ -25,8 +27,11 @@ ____PSCreationMap := [
     ["AutoHatch_InternalCheck", 0xFF145C, 5, 2],
     ["AutoHatch_InternalChargedCheck", 0xFF145C, 5, 2],
     ["AutoHatch_InternalGoldenCheck", 0xFF145C, 5, 2],
+    ["LB_StarOld", 0xCE9440, 35, 2],
+    ["LB_DiamondOld", 0x4C93B7, 35, 2],
     ["LB_Star", 0xCE9440, 35, 2],
     ["LB_Diamond", 0x4C93B7, 35, 2],
+    ["TpButtonGreenCheck", 0x8CF813, 10, 2]
 ]
 
 /**
@@ -34,11 +39,10 @@ ____PSCreationMap := [
  * 
  * Added : V1 | Modified : V1
  */
-Clean_UI() {
+Clean_UI(*) {
     SetPixelSearchLoop("X", 10000, 2, PM_GetPos("X"),,,10,)
     SetPixelSearchLoop("MiniX", 10000, 2, PM_GetPos("MiniX"),,,10,)
 }
-
 
 /**
  * Checks if the StupidCat is on screen
@@ -56,12 +60,65 @@ StupidCatCheck() {
 LeaderBoardThingy() {
     Arg1 := EvilSearch(PixelSearchTables["LB_Star"])
     Arg2 := EvilSearch(PixelSearchTables["LB_Diamond"])
+    Arg3 := EvilSearch(PixelSearchTables["LB_StarOld"])
+    Arg4 := EvilSearch(PixelSearchTables["LB_DiamondOld"])
 
     OutputDebug(Arg1[1] " : " Arg2[1] "`n")
+    OutputDebug(Arg3[1] " : " Arg4[1] "`n")
 
-    if Arg1[1] and Arg2[1] {
+    if (Arg1[1] and Arg2[1]) or (Arg3[1] and Arg4[1]) {
         SendEvent "{Tab Down}{Tab Up}"
     }
+}
+
+____TP(Value) {
+    SetPixelSearchLoop("TpButton", 20000, 1)
+
+    Sleep(400)
+    PM_ClickPos("TpButton")
+    Sleep(400)
+
+    SetPixelSearchLoop("X", 20000, 1,,,150,,[{Func:____TP_1, Time:6000}])
+    PM_ClickPos("SearchField")
+    Sleep(200)
+    SendText Value
+
+    SetPixelSearchLoop("SearchField", 5000,1,,,,)
+    loop 3 {
+        Sleep(250)
+        PM_ClickPos("TpMiddle")
+    }
+    Sleep(500)
+
+    try {
+        if StupidCatCheck() {
+            Clean_UI()
+        }
+    }
+}
+
+____TP_1(*) {
+    Clean_UI()
+    PM_ClickPos("TpButton")
+}
+
+____W(Value) {
+    SetPixelSearchLoop("TpButton", 20000, 1)
+
+    Sleep(400)
+    PM_ClickPos("TpButton")
+    Sleep(400)
+
+    SetPixelSearchLoop("X", 20000, 1,,,150,,[{Func:____TP_1, Time:6000}])
+
+    ButtonOrder := ["SpawnButton", "TechButton", "VoidButton"]
+    PositionToUse := ButtonOrder[Value]
+
+    Sleep(200)
+    PM_ClickPos(PositionToUse)
+    Sleep(400)
+
+    SetPixelSearchLoop("MiniX", 15000, 2, PM_GetPos("YesButton"))
 }
 
 ;-- Main
@@ -69,3 +126,5 @@ for _, CreationArray in ____PSCreationMap {
     ____CreatePSInstance(CreationArray)
 }
 
+____ADVTextToFunctionMap["Tp:"] := ____TP
+____ADVTextToFunctionMap["w:"] := ____W
