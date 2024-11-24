@@ -1,12 +1,12 @@
-; /[V1.0.2]\ (Used for auto-update)
+; /[V1.0.3]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 
-CoordMode "Mouse", "Screen"
-CoordMode "Pixel", "Screen"
+CoordMode "Mouse", "Window"
+CoordMode "Pixel", "Window"
 SetMouseDelay -1
 
 global MacroEnabled := false
