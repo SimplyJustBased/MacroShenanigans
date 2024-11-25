@@ -1,11 +1,11 @@
-; /[V1.0.3]\ (Used for auto-update)
+; /[V1.0.4]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 
-global Version := "V1.0.0"
+global Version := "V1.0.4"
 global MacroEnabled := false
 global CheckPixel := false
 
@@ -163,7 +163,7 @@ CreationMap := Map(
         {Map:userRoutes, Name:"Routes", Type:"Text", SaveName:"Routes", IsAdvanced:true},
 
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EvilChestMacro"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EvilChestMacroV104"}
 )
 
 ReturnedUITable := CreateBaseUI(CreationMap)
