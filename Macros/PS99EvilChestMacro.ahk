@@ -1,4 +1,4 @@
-; /[V1.0.2]\ (Used for auto-update)
+; /[V1.0.3]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
@@ -46,14 +46,12 @@ JoinNewServer() {
                 OutputDebug("A")
                 WinActivate Id
                 Sleep(500)
-                try {
-                    ControlClick("WindowsForms10.BUTTON.app.0.3917f2_r8_ad114", Id)
-                } catch as e {
-                    WinMove ,,800,340,Id
-                    Sleep(500)
-                    SendEvent "{Click, 610, 105, 0}"
-                    Sleep(100)
-                    SendEvent "{Click, 610, 105, 1}"
+
+                for Number, ControlName in WinGetControls(Id) {
+                    if InStr(ControlGetText(ControlName, Id), "Join") and InStr(ControlGetText(ControlName, Id), "Server") {
+                        ControlClick(ControlName, Id)
+                        break
+                    }
                 }
             }
         }
@@ -72,14 +70,12 @@ JoinNewServer() {
                             OutputDebug("A")
                             WinActivate Id
                             Sleep(500)
-                            try {
-                                ControlClick("WindowsForms10.BUTTON.app.0.3917f2_r8_ad114", Id)
-                            } catch as e {
-                                WinMove ,,800,340,Id
-                                Sleep(500)
-                                SendEvent "{Click, 610, 105, 0}"
-                                Sleep(100)
-                                SendEvent "{Click, 610, 105, 1}"
+
+                            for Number, ControlName in WinGetControls(Id) {
+                                if InStr(ControlGetText(ControlName, Id), "Join") and InStr(ControlGetText(ControlName, Id), "Server") {
+                                    ControlClick(ControlName, Id)
+                                    break
+                                }
                             }
                         }
                     }
