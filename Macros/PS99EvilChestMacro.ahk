@@ -1,4 +1,4 @@
-; /[V1.0.0]\ (Used for auto-update)
+; /[V1.0.1]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
@@ -18,7 +18,7 @@ global userRoutes := Map(
     "sw_SpawnToEvent", "tp:Green Forest|w_nV:TpWaitTime|tp:Spawn|w_nV:TpWaitTime|r:[0%Q10&10%W230&240%D1900]",
     "tw_SpawnToEvent", "tp:Mushroom Lab|w_nV:TpWaitTime|tp:Tech Spawn|w_nV:TpWaitTime|r:[0%Q10&10%D1900]",
     "vw_SpawnToEvent", "tp:Prison Tower|w_nV:TpWaitTime|w:3|w_nV:TpWaitTime|r:[0%Q10&20%A500&590%S1600]",
-    "rToChest", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[674,390]|w_nV:TpWaitTime|r:[0%Q10&20%W950&980%D1200]"
+    "rToChest", "spl:TpButton|wt:1000|sc:[115,223]|spl:X|wt:500|sc:[674,390]|w_nV:TpWaitTime|r:[0%Q10&20%W950&980%D1200&2200%Q10]"
 )
 
 global NumberValueMap := Map(
