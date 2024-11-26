@@ -164,7 +164,7 @@ CreationMap := Map(
     "Main", {Title:"EvilChestMacro", Video:"", Description:"F3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:Version, DescY:250, MacroName:"EvilChestMacro", IncludeFonts:false, MultiInstancing:false},
     "Settings", [
         {Map:NumberValueMap, Name:"Number Settings", Type:"Number", SaveName:"NumberValues", IsAdvanced:false},
-        {Map:ToggleValuesMap, Name:"Toggles", Type:"Toggle", SaveName:"Toggles", IsAdvanced:false}
+        {Map:ToggleValuesMap, Name:"Toggles", Type:"Toggle", SaveName:"Toggles", IsAdvanced:false},
         {Map:userRoutes, Name:"Routes", Type:"Text", SaveName:"Routes", IsAdvanced:true},
     ],
     "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EvilChestMacroV104"}
