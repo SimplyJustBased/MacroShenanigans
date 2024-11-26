@@ -1,4 +1,4 @@
-; /[V1.0.5]\ (Used for auto-update)
+; /[V1.0.55]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
@@ -167,7 +167,7 @@ CreationMap := Map(
         {Map:ToggleValuesMap, Name:"Toggles", Type:"Toggle", SaveName:"Toggles", IsAdvanced:false}
         {Map:userRoutes, Name:"Routes", Type:"Text", SaveName:"Routes", IsAdvanced:true},
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EvilChestMacro"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EvilChestMacroV104"}
 )
 
 ReturnedUITable := CreateBaseUI(CreationMap)
