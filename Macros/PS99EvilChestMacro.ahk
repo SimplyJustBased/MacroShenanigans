@@ -1,11 +1,11 @@
-; /[V1.0.4]\ (Used for auto-update)
+; /[V1.0.5]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\EasyUI.ahk"
 
-global Version := "V1.0.4"
+global Version := "V1.0.5"
 global MacroEnabled := false
 global CheckPixel := false
 
@@ -25,6 +25,10 @@ global NumberValueMap := Map(
     "TpWaitTime", 7000,
     "BreakTime", 600000,
     "World", 1
+)
+
+global ToggleValuesMap := Map(
+    "BasicLeaderboardSwitch", false
 )
 
 JoinNewServer() {
@@ -160,10 +164,10 @@ CreationMap := Map(
     "Main", {Title:"EvilChestMacro", Video:"", Description:"F3 : Start`nF6 : Pause`nF8 : Stop/Close Macro", Version:Version, DescY:250, MacroName:"EvilChestMacro", IncludeFonts:false, MultiInstancing:false},
     "Settings", [
         {Map:NumberValueMap, Name:"Number Settings", Type:"Number", SaveName:"NumberValues", IsAdvanced:false},
+        {Map:ToggleValuesMap, Name:"Toggles", Type:"Toggle", SaveName:"Toggles", IsAdvanced:false}
         {Map:userRoutes, Name:"Routes", Type:"Text", SaveName:"Routes", IsAdvanced:true},
-
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EvilChestMacroV104"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EvilChestMacro"}
 )
 
 ReturnedUITable := CreateBaseUI(CreationMap)
@@ -204,8 +208,13 @@ F3::{
     RouteToUse := userRoutes[(["sw_SpawnToEvent", "tw_SpawnToEvent", "vw_SpawnToEvent"][NumberValueMap["World"]])]
 
     loop {
-        LeaderBoardThingy()
-        Sleep(500)
+        if ToggleValuesMap["BasicLeaderboardSwitch"] {
+            SendEvent "{Tab Down}{Tab Up}"
+            Sleep(500)
+        } else {
+            LeaderBoardThingy()
+            Sleep(500)
+        }
 
         RouteUser(RouteToUse)
         Sleep(500)
