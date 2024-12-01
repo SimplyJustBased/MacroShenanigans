@@ -17,6 +17,12 @@ ____ADVTextToFunctionMap := Map(
     "ASpl:", ____ASPL,
 )
 
+;-- Debug Variables | EasyUI Debug
+global Debug_PmClickArray := []
+global Debug_PsLoopArray := []
+global Debug_CurrentPsLoop := {}
+global Debug_RouteArray := []
+
 ;-- Functions
 
 /**
@@ -41,14 +47,21 @@ PM_GetPos(Name := "") {
  * Added : V1 | Modified : V1
  */
 PM_ClickPos(Name := "", Amount := 1) {
+    global Debug_PmClickArray
+
     if PositionMap.Has(Name) {
         Pos := PM_GetPos(Name)
 
         SendEvent "{Click, " Pos[1] ", " Pos[2] ", 0}"
         Sleep(15)
         SendEvent "{Click, " Pos[1] ", " Pos[2] ", " Amount "}"
+        
+        Debug_PmClickArray.InsertAt(1, {Name:Name, Time:A_TickCount, S:true})
     } else {
         OutputDebug("Failure to click position : " Name)
+
+        Debug_PmClickArray.InsertAt(1, {Name:Name, Time:A_TickCount, S:false})
+
     }
 }
 
@@ -94,6 +107,9 @@ SetPixelSearchLoop(
     SleepTime := 100,
     ExtendedFunctionObject := []
 ) {
+    global Debug_CurrentPsLoop
+    global Debug_PsLoopArray
+
     if not PixelSearchTables.Has(Key) {
         OutputDebug("Invalid Key")
         return false
@@ -106,13 +122,19 @@ SetPixelSearchLoop(
     }
 
     StartTime := A_TickCount
+    Debug_CurrentPsLoop := {Name:Key, Time:StartTime}
+
     if (not EvilSearch(PixelSearchTables[Key], false)[1] and Type = 1) or (EvilSearch(PixelSearchTables[Key], false)[1] and Type = 2) {
         loop {
             if (A_TickCount - StartTime) >= (BreakTime) {
+                Debug_CurrentPsLoop := {Name:"None", Time:0}
+                Debug_PsLoopArray.InsertAt(1, {Name:Key, Time:A_TickCount, Rt:A_TickCount - StartTime, S:false})
                 return false
             }
 
             if (EvilSearch(PixelSearchTables[Key], false)[1] and Type = 1) or (not EvilSearch(PixelSearchTables[Key], false)[1] and Type = 2) {
+                Debug_CurrentPsLoop := {Name:"None", Time:0}
+                Debug_PsLoopArray.InsertAt(1, {Name:Key, Time:A_TickCount, Rt:A_TickCount - StartTime, S:true})
                 return true
             }
 
@@ -151,6 +173,8 @@ SetPixelSearchLoop(
  */
 RouteUser(RouteText) {
     RouteArray := StrSplit(RouteText, "|")
+
+    Debug_RouteArray.InsertAt(1, {Name:RouteText})
 
     for _, RText in RouteArray {
         F_f := false
@@ -340,6 +364,123 @@ ____R(Value) {
     }
 }
 
+DebugBasicInfo_UsefulFunctions() {
+    MousePos := {
+        Name:"mPos", 
+        Type:"Text", 
+        Data:{
+            Amount:6,
+            3:{Opt:"Center", Font:"s11", Text:"Mouse Pos"},
+            4:{Opt:"Center", Font:"s10", Text:"[X, X]"},
+        }
+    }
+
+    Clicks := {
+        Name:"clicklist", 
+        Type:"Text", 
+        Data:{
+            Amount:4,
+            1:{Opt:"", Font:"s11", Text:"Prev. Clicks:"},
+            2:{Opt:"", Font:"s7", Text:"1: None"},
+            3:{Opt:"", Font:"s7", Text:"2: None"},
+            4:{Opt:"", Font:"s7", Text:"3: None"},
+        }
+    }
+
+    PsLoops := {
+        Name:"psloops", 
+        Type:"Text", 
+        Data:{
+            Amount:4,
+            1:{Opt:"", Font:"s11", Text:"Prev. Ps. Loops:"},
+            2:{Opt:"", Font:"s7", Text:"1: None"},
+            3:{Opt:"", Font:"s7", Text:"2: None"},
+            4:{Opt:"", Font:"s7", Text:"3: None"},
+        }
+    }
+    
+    CurrentPsLoop := {
+        Name:"currentPSLoop", 
+        Type:"Text", 
+        Data:{
+            Amount:5,
+            2:{Opt:"Center", Font:"s9", Text:"Current Ps. Loop"},
+            3:{Opt:"Center", Font:"s9", Text:"None"},
+            4:{Opt:"Center", Font:"s9", Text:"0"},
+        }
+    }
+    
+    RouteArray := {
+        Name:"routesArray", 
+        Type:"Text", 
+        Data:{
+            Amount:4,
+            1:{Opt:"", Font:"s11", Text:"Prev. Routes:"},
+            2:{Opt:"", Font:"s6", Text:"1: None"},
+            3:{Opt:"", Font:"s6", Text:"2: None"},
+            4:{Opt:"", Font:"s6", Text:"3: None"},
+        }
+    }
+
+    CreateDebugItems([Clicks, RouteArray, PsLoops, CurrentPsLoop, MousePos])
+    UsefulFuncDebugLoop() {
+        global Debug_PmClickArray
+        global Debug_PsLoopArray
+        global Debug_CurrentPsLoop
+        global Debug_RouteArray
+
+        for _Num, DebugArray in [Debug_RouteArray, Debug_PmClickArray, Debug_PsLoopArray] {
+            try {
+                if DebugArray.Length > 3 {
+                    Excess := DebugArray.Length - 3
+    
+                    loop Excess {
+                        DebugArray.RemoveAt(4, Excess)
+                    }
+                }
+            }
+        }
+
+        global EasyUI_Debug_Items
+
+        _PrevClicks := EasyUI_Debug_Items["clicklist"]
+        _PrevPsLoops := EasyUI_Debug_Items["psloops"]
+        _PrevRoutes := EasyUI_Debug_Items["routesArray"]
+        _CurrentPsLoop := EasyUI_Debug_Items["currentPSLoop"]
+        _MousePos := EasyUI_Debug_Items["mPos"]
+
+        for _1, Match in [[_PrevClicks, Debug_PmClickArray], [_PrevPsLoops, Debug_PsLoopArray], [_PrevRoutes, Debug_RouteArray]] {
+            loop 3 {
+                Match[1][A_Index + 1].Text := A_Index ": None"
+            }
+
+            for _2, Value in Match[2] {
+                try {
+                    switch _1 {
+                        case 1:
+                            Match[1][_2 + 1].Text := _2 ": " Value.Name " | " Floor((A_TickCount - Value.Time)/1000) " | " Value.S
+                        case 2:
+                            Match[1][_2 + 1].Text := _2 ": " Value.Name " | " Floor((A_TickCount - Value.Time)/1000) " | " Value.Rt " | " Value.S
+                        case 3:
+                            Match[1][_2 + 1].Text := _2 ": " Value.Name
+                    }
+                }
+            }
+        }
+
+        if Debug_CurrentPsLoop.HasOwnProp("Name") and Debug_CurrentPsLoop.Name != "None" {
+            _CurrentPsLoop[3].Text := Debug_CurrentPsLoop.Name
+            _CurrentPsLoop[4].Text := (A_TickCount - Debug_CurrentPsLoop.Time)
+        } else {
+            _CurrentPsLoop[3].Text := "None"
+            _CurrentPsLoop[4].Text := 0
+        }
+
+        MouseGetPos(&X, &Y)
+        _MousePos[4].Text := "[" X ", " Y "]"
+    }
+    SetTimer(UsefulFuncDebugLoop, 40)
+}
 
 ; Used for RouteUser
 ____SC(Value) {
