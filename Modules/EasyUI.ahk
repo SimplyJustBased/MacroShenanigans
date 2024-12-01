@@ -3289,6 +3289,221 @@ CreateActionUnitUI(_MapOBJFalse, BaseUI, PreviousObject := {}, ShowUI := true, V
     return TrueObject
 }
 
+global EasyUI_Debug_Items := Map()
+global EasyUI_Debug_Items_Order := []
+global EasyUI_CurrentWindowInformation := ["",false,[0,0], false]
+global DebugEnabled := false
+global __DebugGUI := ""
+
+CreateDebugGui() {
+    global __DebugGUI
+
+    __DebugGUI := Gui("-SysMenu -Caption -Border +Disabled","EASY_UI_DEBUG_WINDOW")
+    TextUI := __DebugGUI.AddText("x20 y5 h20 w400 Center", "EasyUI Debug Window | F5 To Close")
+    TextUI.SetFont("s12")
+    __DebugGUI.BackColor := "0xffffff"
+}
+
+AttachToWindow_MovementFunction() {
+    global __DebugGUI
+
+    try {
+        if not WinExist("ahk_id " EasyUI_CurrentWindowInformation[1]) {
+            Sleep(200)
+            return
+        }
+    
+        if WinGetMinMax("ahk_id " EasyUI_CurrentWindowInformation[1]) = -1  or not DebugEnabled {
+            Sleep(100)
+    
+            if not EasyUI_CurrentWindowInformation[4] {
+                __DebugGUI.Hide()
+                EasyUI_CurrentWindowInformation[4] := true
+            }
+    
+            return
+        }
+    
+        global EasyUI_CurrentWindowInformation
+    
+        WinGetClientPos(&W_ClientPosX, &W_ClientPosY, &W_ClientSizeX, &W_ClientSizeY, "ahk_id " EasyUI_CurrentWindowInformation[1])
+        WinGetPos(&W_PosX, &W_PosY, &W_SizeX, &W_SizeY, "ahk_id " EasyUI_CurrentWindowInformation[1])
+        __DebugGUI.GetPos(&G_PosX, &G_PosY, &G_SizeX, &G_SizeY)
+    
+        PlacementArray := [W_PosX + W_ClientSizeX, W_PosY]
+        for _Num, OffetAmount in EasyUI_CurrentWindowInformation[3] {
+            if _Num <= 2 {
+                PlacementArray[_Num] += OffetAmount
+            }
+        }
+    
+        __DebugGUI.Show("X" PlacementArray[1] " Y" PlacementArray[2] " H" W_SizeY - 9 " W" 435 " NoActivate")
+        EasyUI_CurrentWindowInformation[4] := false
+    }
+}
+
+AttachToWindow(WinId, OffsetArray := []) {
+    global EasyUI_CurrentWindowInformation
+    global __DebugGUI
+
+    if not WinExist("ahk_id " WinId) {
+        return
+    }
+
+    if not EasyUI_CurrentWindowInformation[1] = WinId {
+        __DebugGUI.Opt("+Owner" WinId)
+        EasyUI_CurrentWindowInformation[1] := WinId
+    }
+
+    tempArray := [0,0]
+    if OffsetArray.Length <= 2 {
+        for _Num, OffsetAmount in OffsetArray {
+            if _Num <= 2 {
+                tempArray[_Num] += OffsetAmount
+            }
+        }
+    }
+
+    EasyUI_CurrentWindowInformation[3] := tempArray
+
+    if not EasyUI_CurrentWindowInformation[2] {
+        EasyUI_CurrentWindowInformation[2] := true
+
+        SetTimer(AttachToWindow_MovementFunction, 1)
+    }
+}
+
+global _DebugItemTypeMap := Map(
+    "Text", CreateDebugItem_Text
+)
+
+/**
+ * {Name:"", Type:"", Data:""}\
+ */
+CreateDebugItems(Items := []) {
+    global EasyUI_Debug_Items_Order
+    global EasyUI_Debug_Items
+    global __DebugGUI
+
+    XArray := [10, 115, 220, 325]
+    YArray := [30, 135, 240, 345, 450, 555]
+    PreviouslyExistingItems := EasyUI_Debug_Items_Order.Length
+
+    for _ItemArrayNum, ItemObject in Items {
+        Sleep(100)
+        ExistingItems := _ItemArrayNum + PreviouslyExistingItems
+
+        Base_X_Number := XArray[ExistingItems - (4 * Max((Ceil(ExistingItems/4) - 1), 0))]
+        Base_Y_Number := YArray[Ceil(ExistingItems/4)]
+
+        OutputDebug(Base_Y_Number)
+        if _DebugItemTypeMap.Has(ItemObject.Type) {
+            GuiObjectArray := _DebugItemTypeMap[ItemObject.Type]([Base_X_Number, Base_Y_Number], ItemObject.Data)
+
+            EasyUI_Debug_Items[ItemObject.Name] := GuiObjectArray
+            EasyUI_Debug_Items_Order.Push(ItemObject.Name)
+        }
+    }
+}
+
+CreateDebugItem_Text(Offset := [], Data := {}) {
+    global __DebugGUI
+    TextArray := []
+
+    Border := __DebugGUI.AddGroupBox("w104 h110 X" Offset[1]-2  " Y" Offset[2]-8)
+
+    loop Data.Amount {
+        Height := Floor(100/Data.Amount)
+
+        NewText := __DebugGUI.AddText("w100 h" Height " X" Offset[1] " Y" Offset[2] + (Height * (A_Index - 1)), "")
+        OutputDebug(Offset[2])
+
+        if Data.HasOwnProp("" A_Index) {
+            TextData := Data.%A_Index%
+            NewText.Text := TextData.Text
+            NewText.SetFont(TextData.Font)
+            NewText.Opt(TextData.Opt)
+        }
+
+        TextArray.Push(NewText)
+    }
+
+    return TextArray
+}
+
+DebugBasicInfo() {
+    AutohotkeyVersion := {
+        Name:"ahk_Version", 
+        Type:"Text", 
+        Data:{
+            Amount:6,
+            3:{Opt:"Center", Font:"s11", Text:"AHK Version"},
+            4:{Opt:"Center", Font:"s12", Text:"v" A_AhkVersion},
+        }
+    }
+
+    ResolutionInfo := {
+        Name:"res_info", 
+        Type:"Text", 
+        Data:{
+            Amount:6,
+            3:{Opt:"Center", Font:"s11", Text:"Resolution"},
+            4:{Opt:"Center", Font:"s12", Text:A_ScreenWidth "x" A_ScreenHeight},
+        }
+    }
+    
+    DPIInfo := {
+        Name:"dpi_info", 
+        Type:"Text", 
+        Data:{
+            Amount:5,
+            2:{Opt:"Center", Font:"s13", Text:"DPI"},
+            3:{Opt:"Center", Font:"s12", Text:A_ScreenDPI},
+            4:{Opt:"Center", Font:"s11", Text:"(" (A_ScreenDPI / 96) * 100 "%)"},
+        }
+    }
+    
+    RobloxWindow := {
+        Name:"rblx_win", 
+        Type:"Text", 
+        Data:{
+            Amount:5,
+            1:{Opt:"", Font:"s11", Text:"Roblox Window:"},
+            2:{Opt:"", Font:"s11", Text:"Pos[X]:"},
+            3:{Opt:"", Font:"s11", Text:"Pos[Y]:"},
+            4:{Opt:"", Font:"s11", Text:"Size[X]:"},
+            5:{Opt:"", Font:"s11", Text:"Size[Y]:"},
+        }
+    }
+    
+
+    CreateDebugItems([AutohotkeyVersion, ResolutionInfo, DPIInfo, RobloxWindow])
+    BasicDebugLoop() {
+        global EasyUI_Debug_Items
+
+        Roblox_Window_Gui_Array := EasyUI_Debug_Items["rblx_win"]
+        DPI_Gui_Array := EasyUI_Debug_Items["dpi_info"]
+        Resoultion_Gui_Array := EasyUI_Debug_Items["res_info"]
+
+        try {
+            if WinExist("ahk_exe RobloxPlayerBeta.exe") {
+                WinGetPos(&X, &Y, &W, &H, "ahk_exe RobloxPlayerBeta.exe")
+    
+                Roblox_Window_Gui_Array[2].Text := "Pos[X]: " X
+                Roblox_Window_Gui_Array[3].Text := "Pos[Y]: " Y
+                Roblox_Window_Gui_Array[4].Text := "Size[X]: " W
+                Roblox_Window_Gui_Array[5].Text := "Size[Y]: " H
+            }
+        }
+
+        Resoultion_Gui_Array[4].Text := A_ScreenWidth "x" A_ScreenHeight
+        DPI_Gui_Array[3].Text := A_ScreenDPI
+        DPI_Gui_Array[4].Text := "(" (A_ScreenDPI / 96) * 100 "%)"
+    }
+
+    SetTimer(BasicDebugLoop, 100)
+}
+
 ^LButton::{
     try {
         OutputDebug(Type(CurrentPostionLabel))
