@@ -1,4 +1,4 @@
-; /[V1.0.3]\ (Used for auto-update)
+; /[V1.1.0]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
@@ -12,21 +12,21 @@ SetMouseDelay -1
 global MacroEnabled := false
 global MultiInstancingEnabled := false
 
-global Version := "1.0.0 [Autumn Event]"
+global Version := "1.1.0 [Autumn Event]"
 
 global userRoutes := Map(
-    "sw_SpawnToEvent", "tp:Green Forest|w_nV:TpWaitTime|tp:Spawn|w_nV:TpWaitTime|r:[0%Q10&10%W230&240%D1900]",
+    "sw_SpawnToEvent", "tp:Green Forest|w_nV:TpWaitTime|tp:Spawn|w_nV:TpWaitTime|r:[0%Q10&10%W180&240%D1900]",
     "tw_SpawnToEvent", "tp:Mushroom Lab|w_nV:TpWaitTime|tp:Tech Spawn|w_nV:TpWaitTime|r:[0%Q10&10%D1900]",
     "vw_SpawnToEvent", "tp:Prison Tower|w_nV:TpWaitTime|w:3|w_nV:TpWaitTime|r:[0%Q10&20%A500&590%S1600]",
-    "EventSpawnToMidZone", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[674,390]|w_nV:TpWaitTime|r:[0%Q10&20%W800]",
-    "EventZoneToOuterEventZone", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[147, 236]|w_nV:TpWaitTime|r:[0%Q10&20%W900]",
+    "EventSpawnToMidZone", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[138,394]|w_nV:TpWaitTime|r:[0%Q10&20%W700]",
+    "EventZoneToOuterEventZone", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[147,236]|w_nV:TpWaitTime|r:[0%Q10&20%W900]",
     "ToEgg", "r:[0%A700]",
     "AwayFromEgg", "r:[0%D700]",
     "MinorlyAwayFromEgg", "r:[0%D300]"
 )
 
 global NumberValueMap := Map(
-    "LoopDelayTime", 600,
+    "LoopDelayTime", 1,
     "TpWaitTime", 7000,
 )
 
@@ -38,6 +38,7 @@ global BooleanValueMap := Map(
     "EnableAutoHatch_Golden", false,
     "EnableAutoHatch_Charged", true,
     "ShinyFruitToggle", false,
+    "AutumnChestCheck", false,
 )
 
 global TextValueMap := Map(
@@ -298,7 +299,7 @@ CreationMap := Map(
         {Map:userRoutes, Name:"Routes", Type:"Text", SaveName:"Routes", IsAdvanced:true},
 
     ],
-    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EventMacro_AutumnEvent_1"}
+    "SettingsFolder", {Folder:A_MyDocuments "\MacroHubFiles\SavedSettings\", FolderName:"EventMacro_AutumnEvent_v1.1"}
 )
 
 ReturnedUITable := CreateBaseUI(CreationMap)
@@ -538,6 +539,10 @@ Main() {
             InstanceInfo["LastActivated"] := InstanceInfo["PreviousRunTime"] := A_TickCount
             InstanceInfo["IsHatching"] := true
 
+            if not InstanceInfo["BooleanValueMap"]["UserOwnsAutoFarm"] {
+                RouteUser(InstanceInfo["Routes"]["MinorlyAwayFromEgg"])
+            }
+
             if InstanceMap.Count = 1 {
                 loop {
                     PM_ClickPos("MiddleOfScreen")
@@ -549,5 +554,18 @@ Main() {
 }
 
 F3::Main()
+F5::{
+    global DebugEnabled
+    global __DebugGUI
+
+    if __DebugGUI = "" {
+        CreateDebugGui()
+        DebugBasicInfo_UsefulFunctions()
+        DebugBasicInfo()
+        AttachToWindow(WinGetID("ahk_exe RobloxPlayerBeta.exe"), [8,1])
+    }
+
+    DebugEnabled := !DebugEnabled
+}
 F6::Pause -1
 F8::ExitApp()
