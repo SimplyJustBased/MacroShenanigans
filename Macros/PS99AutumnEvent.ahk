@@ -1,4 +1,4 @@
-; /[V1.1.0]\ (Used for auto-update)
+; /[V1.1.1]\ (Used for auto-update)
 #Requires AutoHotkey v2.0
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\BasePositionsPS99.ahk"
 #Include "%A_MyDocuments%\MacroHubFiles\Modules\UsefulFunctions.ahk"
@@ -9,6 +9,7 @@ CoordMode "Mouse", "Window"
 CoordMode "Pixel", "Window"
 SetMouseDelay -1
 
+global evil := false
 global MacroEnabled := false
 global MultiInstancingEnabled := false
 
@@ -22,12 +23,15 @@ global userRoutes := Map(
     "EventZoneToOuterEventZone", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[147,236]|w_nV:TpWaitTime|r:[0%Q10&20%W900]",
     "ToEgg", "r:[0%A700]",
     "AwayFromEgg", "r:[0%D700]",
-    "MinorlyAwayFromEgg", "r:[0%D300]"
+    "MinorlyAwayFromEgg", "r:[0%D300]",
+    "rToEventChestHunt", "spl:TpButton|sc:[115,223]|spl:X|wt:500|sc:[490,392]|w_nV:TpWaitTime|r:[0%Q10&20%W700&900%D1500]",
+    "rToChestHunt2nd", "r:[0%W200&250%D2000]"
 )
 
 global NumberValueMap := Map(
-    "LoopDelayTime", 1,
+    "LoopDelayTime", 600,
     "TpWaitTime", 7000,
+    "ChestHuntAreaTime", 180000,
 )
 
 global BooleanValueMap := Map(
@@ -38,7 +42,7 @@ global BooleanValueMap := Map(
     "EnableAutoHatch_Golden", false,
     "EnableAutoHatch_Charged", true,
     "ShinyFruitToggle", false,
-    "AutumnChestCheck", false,
+    "DoChestHunt", false,
 )
 
 global TextValueMap := Map(
@@ -410,6 +414,51 @@ CheckForAntiAfk(InstanceMap := Map(), CurrentID := -1) {
     }
 }
 
+TimeDetection(Multi := false) {
+    if Multi {
+        if (A_Min = 59) or Mod(A_Min + 1, 15) = 0 {
+            return true
+        }
+    } else {
+        if Mod(A_Min, 15) = 0 {
+            return true
+        }
+    }
+}
+
+CleanHatching(InstanceInfo, UnRoute := false) {
+    if InstanceInfo["IsHatching"] {
+        RouteUser(InstanceInfo["Routes"]["AwayFromEgg"])
+        Sleep(1000)
+
+        TpDetections := 0
+        BreakTime_1 := A_TickCount
+        loop {
+            PM_ClickPos("MiddleOfScreen")
+
+            if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
+                TpDetections += 1
+            } else {
+                TpDetections := 0
+            }
+
+            if (A_TickCount - BreakTime_1) >= 20000 or TpDetections >= 40 {
+                break
+            }
+
+            Sleep(100)
+        }
+
+        LeaderBoardThingy()
+
+        if UnRoute {
+            RouteUser(InstanceInfo["Routes"]["EventZoneToOuterEventZone"])
+            Sleep(300)
+            RouteUser(InstanceInfo["Routes"]["EventSpawnToMidZone"])
+        }
+    }
+}
+
 Main() {
     Runtime := A_TickCount
     InstanceMap := Map(WinGetID("ahk_exe RobloxPlayerBeta.exe"), Map(
@@ -488,36 +537,7 @@ Main() {
                 Sleep(100)
             } until  WinActive("ahk_id " InstanceID)
 
-            if InstanceInfo["IsHatching"] {
-                RouteUser(InstanceInfo["Routes"]["AwayFromEgg"])
-                Sleep(1000)
-
-                TpDetections := 0
-                BreakTime_1 := A_TickCount
-                loop {
-                    PM_ClickPos("MiddleOfScreen")
-
-                    if EvilSearch(PixelSearchTables["TpButton"], false)[1] {
-                        TpDetections += 1
-                    } else {
-                        TpDetections := 0
-                    }
-
-                    if (A_TickCount - BreakTime_1) >= 20000 or TpDetections >= 40 {
-                        break
-                    }
-
-                    Sleep(100)
-                }
-
-                LeaderBoardThingy()
-
-                ; if not InstanceInfo["BooleanValueMap"]["UserOwnsAutoFarm"] {
-                RouteUser(InstanceInfo["Routes"]["EventZoneToOuterEventZone"])
-                Sleep(300)
-                RouteUser(InstanceInfo["Routes"]["EventSpawnToMidZone"])
-                ; }
-            }
+            CleanHatching(InstanceInfo, true)
 
             if InstanceInfo["BooleanValueMap"]["ConsumeFruits"] {
                 ItemUseicalFunction(["Apple", "Banana", "Pineapple", "Watermelon", "Orange", "Rainbow Fruit"], InstanceInfo["BooleanValueMap"]["ShinyFruitToggle"])
@@ -547,6 +567,38 @@ Main() {
                 loop {
                     PM_ClickPos("MiddleOfScreen")
                     Sleep(10)
+
+                    if TimeDetection(false) and InstanceInfo["BooleanValueMap"]["DoChestHunt"] {
+                        CleanHatching(InstanceInfo)
+                        InstanceInfo["IsHatching"] := false
+
+                        RouteUser(InstanceInfo["Routes"]["rToEventChestHunt"])
+                                                
+                        if InstanceInfo["BooleanValueMap"]["UserOwnsAutoFarm"] {
+                            PM_ClickPos("AutoFarm")
+                        }
+
+                        Sleep(InstanceInfo["NumberValueMap"]["ChestHuntAreaTime"]/2)
+                        RouteUser(InstanceInfo["Routes"]["rToChestHunt2nd"])
+                        Sleep(InstanceInfo["NumberValueMap"]["ChestHuntAreaTime"]/2)
+
+                        RouteUser(InstanceInfo["Routes"]["EventSpawnToMidZone"])
+                        Sleep(750)
+                        EnableAutofarm(InstanceInfo["BooleanValueMap"]["UserOwnsAutoFarm"])
+                        Sleep(750)
+                        RouteUser(InstanceInfo["Routes"]["ToEgg"])
+                        Sleep(500)
+                        SetPixelSearchLoop("MiniX", 20000, 1,,[{Key:"E", Time:200, DownTime:20}])
+                        Sleep(500)
+                        PM_ClickPos("EggMaxBuy")
+
+                        InstanceInfo["LastActivated"] := InstanceInfo["PreviousRunTime"] := A_TickCount
+                        InstanceInfo["IsHatching"] := true
+
+                        if not InstanceInfo["BooleanValueMap"]["UserOwnsAutoFarm"] {
+                            RouteUser(InstanceInfo["Routes"]["MinorlyAwayFromEgg"])
+                        }
+                    }
                 } until (A_TickCount - InstanceInfo["PreviousRunTime"]) >= InstanceInfo["NumberValueMap"]["LoopDelayTime"] * 1000
             }
         }
